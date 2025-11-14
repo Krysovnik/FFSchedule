@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System;
 using System.Data;
 using System.Windows;
 
@@ -9,5 +10,6 @@ namespace FFSchedule;
 /// </summary>
 public partial class App : Application
 {
+
 }
 

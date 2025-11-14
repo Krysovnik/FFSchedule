@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--Цвета - главные-->
+    <Color x:Key="BackgroundColor">#FFFAFAFA</Color>
+    <Color x:Key="ForegroundColor">#FF151719</Color>
+    <!--Цвета - текста-->
+    <Color x:Key="MainTextColor">#212121</Color>
+    <Color x:Key="SecTextColor">#757575</Color>
+    <!--Цвет - обводка-->
+    <Color x:Key="OutlinesColor">#E0E0E0</Color>
+    <!--Цвет - textBox-->
+    <Color x:Key="BackgroundTextBoxColor">#E5E4E2</Color>
+    <!--Цвета - акцентов (кнопки, навигация, предупреждение, экстренные действия)-->
+    <Color x:Key="RedColor">#C62D2D</Color>
+    <Color x:Key="BlueColor">#1565C0</Color>
+    <Color x:Key="OrangeColor">#FF8F00</Color>
+    <!--Цвета - статус-->
+    <Color x:Key="SuccessColor">#388E3C</Color>
+    <Color x:Key="AttentionColor">#FBC02D</Color>
+    <Color x:Key="ErrorColor">#D32F2F</Color>
+    <!--Кисти-->
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="OutlinesBrush" Color="{StaticResource OutlinesColor}"/>
+    <SolidColorBrush x:Key="BackgroundTextBoxBrush" Color="{StaticResource BackgroundTextBoxColor}"/>
+    <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}"/>
+
+</ResourceDictionary>

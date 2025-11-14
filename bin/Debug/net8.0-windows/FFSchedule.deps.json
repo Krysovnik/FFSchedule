@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "FFSchedule/1.0.0": {
+        "runtime": {
+          "FFSchedule.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FFSchedule/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
