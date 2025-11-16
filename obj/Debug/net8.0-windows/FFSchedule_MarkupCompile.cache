@@ -8,12 +8,12 @@ C:\Users\Иван\File\WPF\Проект\FFSchedule\obj\Debug\net8.0-windows\
 FFSchedule
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\Иван\File\WPF\Проект\FFSchedule\App.xaml
 6-631260514
-32114287638
+6-296590521
 7-878232203
-1981839832580
+228-1006761370
 Controls\ThemeToggleButton.xaml;LoginWindow.xaml;MainWindow.xaml;Styles.xaml;Themes\DarkThemes.xaml;Themes\LightThemes.xaml;
 
 False

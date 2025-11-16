@@ -11,5 +11,8 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/fire.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/password.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/user.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("map/3dmap.mbtiles")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("map/googlemap.mbtiles")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("map/openstreetmap.mbtiles")]
 
 

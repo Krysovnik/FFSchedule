@@ -12,6 +12,9 @@
     <None Remove="Images\fire.png" />
     <None Remove="Images\password.png" />
     <None Remove="Images\user.png" />
+    <None Remove="Map\3dMap.mbtiles" />
+    <None Remove="Map\GoogleMap.mbtiles" />
+    <None Remove="OpenStreetMap.mbtiles" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +27,22 @@
     <Content Include="Images\user.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Map\3dMap.mbtiles">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Map\GoogleMap.mbtiles">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Map\OpenStreetMap.mbtiles">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BruTile.MbTiles" Version="6.0.0" />
+    <PackageReference Include="Mapsui" Version="5.0.0" />
+    <PackageReference Include="Mapsui.Wpf" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

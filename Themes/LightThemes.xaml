@@ -14,6 +14,7 @@
     <Color x:Key="RedColor">#C62D2D</Color>
     <Color x:Key="BlueColor">#1565C0</Color>
     <Color x:Key="OrangeColor">#FF8F00</Color>
+    <Color x:Key="OrangeColorLight">#FFA533</Color>
     <!--Цвета - статус-->
     <Color x:Key="SuccessColor">#388E3C</Color>
     <Color x:Key="AttentionColor">#FBC02D</Color>
@@ -24,5 +25,8 @@
     <SolidColorBrush x:Key="OutlinesBrush" Color="{StaticResource OutlinesColor}"/>
     <SolidColorBrush x:Key="BackgroundTextBoxBrush" Color="{StaticResource BackgroundTextBoxColor}"/>
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}"/>
+    <SolidColorBrush x:Key="OrangeBrushLight" Color="{StaticResource OrangeColorLight}"/>
+    <SolidColorBrush x:Key="RedBrush" Color="{StaticResource RedColor}"/>
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}"/>
 
 </ResourceDictionary>
