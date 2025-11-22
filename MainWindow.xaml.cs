@@ -1,121 +1,156 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using BruTile.MbTiles;
-using Mapsui;
-using Mapsui.Extensions;
+﻿using Mapsui;
+using Mapsui.Geometries;
 using Mapsui.Layers;
-using Mapsui.Projections;
-using Mapsui.Tiling;
-using Mapsui.Tiling.Extensions;
-using Mapsui.Tiling.Layers;
+using Mapsui.Projection;
+using Mapsui.Providers;
+using Mapsui.Styles;
 using Mapsui.UI.Wpf;
 using Mapsui.Utilities;
-using Microsoft.Data.Sqlite;
-using SQLite;
-using System;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
+using System.Collections.Generic;
 using System.IO;
-
-namespace FFSchedule;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
-{
-    public MainWindow()
-    {
-        InitializeComponent();
-        string mbTilesPath = @"Map\OpenStreetMap.mbtiles";
-
-        if (!File.Exists(mbTilesPath))
-        {
-            MessageBox.Show("Файл .mbtiles не найден. Проверьте путь.");
-            return;
-        }
-
-        try
-        {
-            var connectionString = new SQLiteConnectionString(mbTilesPath);
-            var mbTilesSource = new MbTilesTileSource(connectionString);
-
-            var tileLayer = new TileLayer(mbTilesSource);
-
-            var map = new Map();
-            map.Layers.Add(tileLayer);
-
-            MapControl.Map = map;
-
-            var extent = mbTilesSource.Schema.Extent;
-            MapControl.Map.Navigator.ZoomToBox(extent.ToMRect());
-
-            Console.WriteLine($"Extent: {extent}");
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Ошибка загрузки .mbtiles: {ex.Message}\nПроверьте путь к файлу и его формат. Стек: {ex.StackTrace}");
-        }
-    }
-}
-/*using BruTile.MbTiles;
-using Mapsui;
-using Mapsui.Extensions;
-using Mapsui.Layers;
-using Mapsui.Projections;
-using Mapsui.Tiling;
-using Mapsui.Tiling.Extensions;
-using Mapsui.Tiling.Layers;
-using Mapsui.UI.Wpf;
-using Mapsui.Utilities;
-using Microsoft.Data.Sqlite;
-using SQLite;
-using System;
-using System.IO;
+using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 
-namespace MapsuiMbTilesDemo
+namespace FFSchedule
 {
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            string mbTilesPath = @"C:\Users\Иван\source\repos\MapsuiMbTilesDemo\MapsuiMbTilesDemo\MapsuiMbTilesDemo\Map\OpenStreetMap.mbtiles";
 
-            if (!File.Exists(mbTilesPath))
+            var map = new Map();
+            map.Layers.Add(OpenStreetMap.CreateTileLayer());
+
+            // читаем GeoJSON
+            var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
+            string geojson = File.ReadAllText(geojsonPath);
+
+            var reader = new GeoJsonReader();
+            FeatureCollection fc = reader.Read<FeatureCollection>(geojson);
+
+            // список Mapsui Feature
+            var mapsuiFeatures = new List<Mapsui.Providers.Feature>();
+
+            foreach (NetTopologySuite.Features.IFeature f in fc)
             {
-                MessageBox.Show("Файл .mbtiles не найден. Проверьте путь.");
-                return;
+                var geom = f.Geometry;
+                var polygons = ConvertGeometry(geom);
+
+                // Цвет для границы и заливки
+                string name = f.Attributes.Exists("name")
+              ? f.Attributes["name"].ToString()
+              : "Unknown";
+
+
+                var borderColor = GetColorByName(name);
+
+
+                foreach (var p in polygons)
+                {
+                    var feature = new Mapsui.Providers.Feature
+                    {
+                        Geometry = p
+                    };
+
+                    var layer = new MemoryLayer
+                    {
+                        Name = f.Attributes["name"].ToString(),
+                        DataSource = new MemoryProvider(new List<Mapsui.Providers.Feature> { feature }),
+                        Style = new VectorStyle
+                        {
+                            Fill = new Brush(Color.FromArgb(60, borderColor.R, borderColor.G, borderColor.B)), // заливка
+                            Line = new Pen(borderColor, 2) // граница опаа
+                        }
+                    };
+
+                    map.Layers.Add(layer);
+                }
             }
 
-            try
+
+            //map.Layers.Add(layer);
+
+            // центровка не але вообще надо переделать
+            // Zoom
+            double lon = 82.92043;
+            double lat = 55.03020;
+
+            // Переводим в WebMercator (Mapsui так работает)
+            var centerPoint = SphericalMercator.FromLonLat(lon, lat);
+
+            // Центрируем карту
+            MapControl.Navigator.CenterOn(centerPoint);
+
+            // Можно сразу поставить масштаб (опционально)
+            MapControl.Navigator.ZoomTo(200); // чем меньше число — тем ближе
+
+
+
+            MapControl.Map = map;
+        }
+
+        private Color GetColorByName(string name)
+        {
+            var hash = name.GetHashCode();
+            byte a = 245;
+            byte r = (byte)((hash & 0xFF0000) >> 16);
+            byte g = (byte)((hash & 0x00FF00) >> 8);
+            byte b = (byte)(hash & 0x0000FF);
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        // ---------- КОНВЕРТАЦИЯ NTS → Mapsui ----------
+        private List<Mapsui.Geometries.Polygon> ConvertGeometry(NetTopologySuite.Geometries.Geometry geom)
+        {
+            var result = new List<Mapsui.Geometries.Polygon>();
+
+            if (geom is NetTopologySuite.Geometries.Polygon poly)
             {
-                var connectionString = new SQLiteConnectionString(mbTilesPath);
-                var mbTilesSource = new MbTilesTileSource(connectionString);
-
-                var tileLayer = new TileLayer(mbTilesSource);
-
-                var map = new Map();
-                map.Layers.Add(tileLayer);
-
-                MapControl.Map = map;
-
-                var extent = mbTilesSource.Schema.Extent;
-                MapControl.Map.Navigator.ZoomToBox(extent.ToMRect());
-
-                Console.WriteLine($"Extent: {extent}");
+                result.Add(ConvertPolygon(poly));
             }
-            catch (Exception ex)
+            else if (geom is NetTopologySuite.Geometries.MultiPolygon multi)
             {
-                MessageBox.Show($"Ошибка загрузки .mbtiles: {ex.Message}\nПроверьте путь к файлу и его формат. Стек: {ex.StackTrace}");
+                foreach (var g in multi.Geometries)
+                {
+                    result.Add(ConvertPolygon((NetTopologySuite.Geometries.Polygon)g));
+                }
             }
+
+            return result;
+        }
+
+        private Mapsui.Geometries.Polygon ConvertPolygon(NetTopologySuite.Geometries.Polygon poly)
+        {
+            // внешнее кольцо
+            var shellPoints = new List<Mapsui.Geometries.Point>();
+
+            foreach (var c in poly.ExteriorRing.Coordinates)
+            {
+                var m = SphericalMercator.FromLonLat(c.X, c.Y);
+                shellPoints.Add(new Mapsui.Geometries.Point(m.X, m.Y));
+            }
+
+            var shell = new Mapsui.Geometries.LinearRing(shellPoints);
+
+            // внутренние кольца
+            var holes = new List<Mapsui.Geometries.LinearRing>();
+
+            for (int i = 0; i < poly.NumInteriorRings; i++)
+            {
+                var ringPoints = new List<Mapsui.Geometries.Point>();
+                foreach (var c in poly.GetInteriorRingN(i).Coordinates)
+                {
+                    var m = SphericalMercator.FromLonLat(c.X, c.Y);
+                    ringPoints.Add(new Mapsui.Geometries.Point(m.X, m.Y));
+                }
+                holes.Add(new Mapsui.Geometries.LinearRing(ringPoints));
+            }
+
+            return new Mapsui.Geometries.Polygon(shell, holes);
         }
     }
-}*/
+}

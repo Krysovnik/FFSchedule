@@ -1,45 +1,52 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\",
+  "WorkspaceRootPath": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\themes\\darkthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\themes\\darkthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:themes\\darkthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\themes\\lightthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\themes\\lightthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:themes\\lightthemes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\themes\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\themes\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:themes\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\controls\\themetogglebutton.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\controls\\themetogglebutton.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:controls\\themetogglebutton.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\controls\\themetogglebutton.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\controls\\themetogglebutton.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:controls\\themetogglebutton.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\wpf\\\u043F\u0440\u043E\u0435\u043A\u0442\\ffschedule\\ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
@@ -54,15 +61,41 @@
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
+              "Title": "Microsoft.Common.CurrentVersion.targets",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeToolTip": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ViewState": "AgIAACEVAAAAAAAAAAAUwDQVAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-11-22T16:38:53.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABwAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T16:26:11.423Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "Styles.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Styles.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Styles.xaml",
               "RelativeDocumentMoniker": "Styles.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Styles.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Styles.xaml",
               "RelativeToolTip": "Styles.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-11-13T14:02:55.583Z",
@@ -70,11 +103,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "LoginWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\LoginWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml",
               "RelativeDocumentMoniker": "LoginWindow.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\LoginWindow.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml",
               "RelativeToolTip": "LoginWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-11-14T12:59:04.452Z",
@@ -84,9 +117,9 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "LightThemes.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\LightThemes.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\LightThemes.xaml",
               "RelativeDocumentMoniker": "Themes\\LightThemes.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\LightThemes.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\LightThemes.xaml",
               "RelativeToolTip": "Themes\\LightThemes.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-11-14T13:59:20.203Z",
@@ -96,9 +129,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "DarkThemes.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\DarkThemes.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\DarkThemes.xaml",
               "RelativeDocumentMoniker": "Themes\\DarkThemes.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\DarkThemes.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\DarkThemes.xaml",
               "RelativeToolTip": "Themes\\DarkThemes.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-11-14T13:00:08.75Z",
@@ -106,58 +139,62 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "ThemeManager.cs",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\ThemeManager.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\ThemeManager.cs",
               "RelativeDocumentMoniker": "Themes\\ThemeManager.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Themes\\ThemeManager.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\ThemeManager.cs",
               "RelativeToolTip": "Themes\\ThemeManager.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAB8AAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:01:26.733Z"
+              "WhenOpened": "2025-11-14T13:01:26.733Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "LoginWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\LoginWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml.cs",
               "RelativeDocumentMoniker": "LoginWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\LoginWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml.cs",
               "RelativeToolTip": "LoginWindow.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:51:39.804Z"
+              "WhenOpened": "2025-11-14T13:51:39.804Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T14:48:47.25Z"
+              "WhenOpened": "2025-11-14T14:48:47.25Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "ThemeToggleButton.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Controls\\ThemeToggleButton.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml.cs",
               "RelativeDocumentMoniker": "Controls\\ThemeToggleButton.xaml.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Controls\\ThemeToggleButton.xaml.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml.cs",
               "RelativeToolTip": "Controls\\ThemeToggleButton.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:47:30.713Z"
+              "WhenOpened": "2025-11-14T13:47:30.713Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "ThemeToggleButton.xaml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
               "RelativeDocumentMoniker": "Controls\\ThemeToggleButton.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
               "RelativeToolTip": "Controls\\ThemeToggleButton.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-11-14T13:46:23.944Z",
@@ -165,15 +202,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "FFSchedule.csproj",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\FFSchedule.csproj",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\FFSchedule.csproj",
               "RelativeDocumentMoniker": "FFSchedule.csproj",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\WPF\\\u041F\u0440\u043E\u0435\u043A\u0442\\FFSchedule\\FFSchedule.csproj",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\FFSchedule.csproj",
               "RelativeToolTip": "FFSchedule.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-14T13:51:47.314Z"
+              "WhenOpened": "2025-11-14T13:51:47.314Z",
+              "EditorCaption": ""
             }
           ]
         }
