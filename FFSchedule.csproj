@@ -34,10 +34,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BruTile" Version="4.0.0" />
-    <PackageReference Include="BruTile.MbTiles" Version="4.0.0" />
-    <PackageReference Include="Mapsui" Version="3.0.0" />
-    <PackageReference Include="Mapsui.Wpf" Version="3.0.0" />
+    <PackageReference Include="BruTile" Version="6.0.0" />
+    <PackageReference Include="BruTile.MbTiles" Version="6.0.0" />
+    <PackageReference Include="Mapsui" Version="5.0.0" />
+    <PackageReference Include="Mapsui.Extensions" Version="5.0.0" />
+    <PackageReference Include="Mapsui.Nts" Version="5.0.0" />
+    <PackageReference Include="Mapsui.Tiling" Version="5.0.0" />
+    <PackageReference Include="Mapsui.Wpf" Version="5.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />

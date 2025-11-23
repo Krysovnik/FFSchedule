@@ -12,12 +12,12 @@
       }
     ],
     "additionalProbingPaths": [
-      "C:\\Users\\ДЭН\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\ДЭН\\.nuget\\packages",
+      "C:\\Users\\Иван\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Иван\\.nuget\\packages",
       "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
     ],
     "configProperties": {
-      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": true,
+      "CSWINRT_USE_WINDOWS_UI_XAML_PROJECTIONS": false,
       "Microsoft.NETCore.DotNetHostPolicy.SetAppPaths": true
     }
   }
