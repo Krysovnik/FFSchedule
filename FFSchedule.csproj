@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -42,6 +42,8 @@
     <PackageReference Include="Mapsui.Tiling" Version="5.0.0" />
     <PackageReference Include="Mapsui.Wpf" Version="5.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="10.0.1" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
