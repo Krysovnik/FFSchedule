@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FFSchedule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9cef65a1a037d121896a4e99d6a80b18830b3738")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da03be98bacb4daebd1b3d50e424ea3ebeb45c3e")]
 [assembly: System.Reflection.AssemblyProductAttribute("FFSchedule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FFSchedule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
