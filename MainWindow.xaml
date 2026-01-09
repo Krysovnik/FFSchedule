@@ -7,12 +7,57 @@
         xmlns:controls="clr-namespace:FFSchedule.Controls"
         xmlns:mapsui="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <mapsui:MapControl x:Name="MapControl"/>
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,0,10">
-            <Button Content="+" Click="ZoomIn_Click" Style="{StaticResource ZoomButtonStyle}"/>
-            <Button Content="-" Click="ZoomOut_Click" Style="{StaticResource ZoomButtonStyle}" Margin="0,2,0,0"/>
-        </StackPanel>
-    </Grid>
+        Title="MainWindow" Height="450" Width="800" Background="{DynamicResource BackgroundBrush}">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top" Background="#F0F0F0">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Новый проект"/>
+                <MenuItem Header="Открыть проект"/>
+                <MenuItem Header="Сохранить проект"/>
+                <Separator/>
+                <MenuItem Header="Выход"/>
+            </MenuItem>
+            <MenuItem Header="Правка">
+                <MenuItem Header="Отменить"/>
+                <MenuItem Header="Повторить"/>
+            </MenuItem>
+            <MenuItem Header="Карта">
+                <MenuItem Header="Добавить маркер"/>
+                <MenuItem Header="Удалить маркер"/>
+                <MenuItem Header="Обновить карту"/>
+                <MenuItem Header="Очистить карту"/>
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="О программе"/>
+            </MenuItem>
+        </Menu>
+
+        <ToolBar DockPanel.Dock="Top" Height="35" Background="{DynamicResource BackgroundBrush}">
+            <Button Content="➕" ToolTip="Добавить точку" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="✏️" ToolTip="Редактировать" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="🗑️" ToolTip="Удалить" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Separator/>
+            <Button Content="📁" ToolTip="Загрузить карту" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="💾" ToolTip="Сохранить" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Separator/>
+            <controls:ThemeToggleButton/>
+        </ToolBar>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Width="500" Grid.Column="0" Background="{DynamicResource OutlinesBrush}"/>
+
+            <Grid Grid.Column="1">
+                <mapsui:MapControl x:Name="MapControl"/>
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,0,10">
+                    <Button Content="+" Click="ZoomIn_Click" Style="{StaticResource ZoomButtonStyle}"/>
+                    <Button Content="-" Click="ZoomOut_Click" Style="{StaticResource ZoomButtonStyle}" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>
