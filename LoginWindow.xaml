@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Width="35" Height="36" Background="{DynamicResource OrangeBrush}">
+                    <Border Width="35" Height="35" Background="{DynamicResource OrangeBrush}" CornerRadius="2,0,0,2">
                         <Image Source="/Images/user.png" Height="24" Width="24"/>
                     </Border>
                     <TextBox 
@@ -53,7 +53,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Width="35" Height="36" Background="{DynamicResource OrangeBrush}">
+                    <Border Width="35" Height="35" Background="{DynamicResource OrangeBrush}" CornerRadius="2,0,0,2">
                         <Image Source="/Images/password.png" Height="24" Width="24"/>
                     </Border>
                     <PasswordBox 
@@ -66,6 +66,7 @@
                         BorderBrush="{DynamicResource OrangeBrush}" 
                         BorderThickness="1"/>
                 </Grid>
+                <Button Height="35" Width="150" Margin="20"></Button>
             </StackPanel>
         </Grid>
     </Grid>

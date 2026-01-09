@@ -24,18 +24,33 @@ namespace FFSchedule
         public MainWindow()
         {
             InitializeComponent();
-
+            InitializeMap();
+        }
+        public void InitializeMap()
+        {
             var map = new Map();
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
 
-            // читаем GeoJSON
-            var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
-            string geojson = File.ReadAllText(geojsonPath);
+            LoadGeoJsonLayer(map);
 
+            SetInitialView(map);
+
+            MapControl.Map = map;
+        }
+        private void LoadGeoJsonLayer(Map map)
+        {
+            // Путь к GeoJSON файлу
+            var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
+            if (!File.Exists(geojsonPath))
+            {
+                MessageBox.Show("Файл GeoJSON не найден.");
+                return;
+            }
+
+            string geojson = File.ReadAllText(geojsonPath);
             var reader = new GeoJsonReader();
             FeatureCollection fc = reader.Read<FeatureCollection>(geojson);
 
-            // список Mapsui Feature
             var features = new List<GeometryFeature>();
 
             foreach (NetTopologySuite.Features.IFeature f in fc)
@@ -73,27 +88,26 @@ namespace FFSchedule
                 }
             }
 
-
-            // Создаем один слой для всех features
             var layer = new MemoryLayer
             {
                 Name = "GeoJSON Layer",
-                Features = features, // Используем свойство Features вместо DataSource
-                Style = null // Стили заданы на уровне features
+                Features = features,
+                Style = null
             };
 
             map.Layers.Add(layer);
-
-            // центровка и зум
+        }
+        private void SetInitialView(Map map)
+        {
             double lon = 82.92043;
             double lat = 55.03020;
 
             var centerPoint = SphericalMercator.FromLonLat(lon, lat);
             map.Navigator.CenterOn(centerPoint.x, centerPoint.y);
-            map.Navigator.ZoomTo(200); 
-
-            MapControl.Map = map;
+            map.Navigator.ZoomTo(200);
         }
+
+        #region Вспомогательные методы
 
         private Color GetColorByName(string name)
         {
@@ -105,7 +119,6 @@ namespace FFSchedule
             return Color.FromArgb(a, r, g, b);
         }
 
-        // ---------- КОНВЕРТАЦИЯ NTS → Mapsui ----------
         private List<Polygon> ConvertGeometry(Geometry geom)
         {
             var result = new List<Polygon>();
@@ -132,11 +145,13 @@ namespace FFSchedule
                 var projected = SphericalMercator.FromLonLat(coordinates[i].X, coordinates[i].Y);
                 projectedCoordinates[i] = new Coordinate(projected.x, projected.y);
             }
-            // Сохраняем тип геометрии
+
             if (geometry is Polygon)
                 return geometry.Factory.CreatePolygon(projectedCoordinates);
             else
                 return geometry.Factory.CreateLineString(projectedCoordinates);
         }
+
+        #endregion
     }
 }
