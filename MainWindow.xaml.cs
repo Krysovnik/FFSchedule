@@ -37,6 +37,26 @@ namespace FFSchedule
 
             MapControl.Map = map;
         }
+        //Menu
+        private void RefreshMap_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (MapControl.Map?.Layers != null)
+                {
+                    MapControl.Map.Layers.Clear();
+                    MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+                    LoadGeoJsonLayer(MapControl.Map);
+                    SetInitialView(MapControl.Map);
+                    MapControl.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении карты: {ex.Message}",
+                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         //Кнопки
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
@@ -56,64 +76,75 @@ namespace FFSchedule
         //Отображение карты
         private void LoadGeoJsonLayer(Map map)
         {
-            // Путь к GeoJSON файлу
-            var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
-            if (!File.Exists(geojsonPath))
+            if (map == null) return;
+
+            try
             {
-                MessageBox.Show("Файл GeoJSON не найден.");
-                return;
-            }
-
-            string geojson = File.ReadAllText(geojsonPath);
-            var reader = new GeoJsonReader();
-            FeatureCollection fc = reader.Read<FeatureCollection>(geojson);
-
-            var features = new List<GeometryFeature>();
-
-            foreach (NetTopologySuite.Features.IFeature f in fc)
-            {
-                var geom = f.Geometry;
-                var polygons = ConvertGeometry(geom);
-
-                string name = f.Attributes.Exists("name")
-                    ? f.Attributes["name"].ToString()
-                    : "Unknown";
-
-                var borderColor = GetColorByName(name);
-
-                foreach (var polygon in polygons)
+                // Путь к GeoJSON файлу
+                var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
+                if (!File.Exists(geojsonPath))
                 {
-                    var projectedPolygon = ProjectGeometry(polygon);
-                    var feature = new GeometryFeature
-                    {
-                        Geometry = projectedPolygon
-                    };
-
-                    var fillColor = new Color(borderColor.R, borderColor.G, borderColor.B, 60);
-
-                    feature.Styles = new List<IStyle>
-                    {
-                        new VectorStyle
-                        {
-                            Fill = new Brush(fillColor),
-                            Line = new Pen(borderColor, 2),
-                            Outline = new Pen(borderColor, 2)
-                        }
-                    };
-
-                    features.Add(feature);
+                    MessageBox.Show("Файл GeoJSON не найден.", "Ошибка",
+                                   MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
+
+                string geojson = File.ReadAllText(geojsonPath);
+                var reader = new GeoJsonReader();
+                FeatureCollection fc = reader.Read<FeatureCollection>(geojson);
+
+                var features = new List<GeometryFeature>();
+
+                foreach (NetTopologySuite.Features.IFeature f in fc)
+                {
+                    var geom = f.Geometry;
+                    var polygons = ConvertGeometry(geom);
+
+                    string name = f.Attributes.Exists("name")
+                        ? f.Attributes["name"].ToString()
+                        : "Unknown";
+
+                    var borderColor = GetColorByName(name);
+
+                    foreach (var polygon in polygons)
+                    {
+                        var projectedPolygon = ProjectGeometry(polygon);
+                        var feature = new GeometryFeature
+                        {
+                            Geometry = projectedPolygon
+                        };
+
+                        var fillColor = new Color(borderColor.R, borderColor.G, borderColor.B, 60);
+
+                        feature.Styles = new List<IStyle>
+                {
+                    new VectorStyle
+                    {
+                        Fill = new Brush(fillColor),
+                        Line = new Pen(borderColor, 2),
+                        Outline = new Pen(borderColor, 2)
+                    }
+                };
+
+                        features.Add(feature);
+                    }
+                }
+
+                var layer = new MemoryLayer
+                {
+                    Name = "GeoJSON Layer",
+                    Features = features,
+                    Style = null
+                };
+
+                map.Layers.Add(layer);
             }
-
-            var layer = new MemoryLayer
+            catch (Exception ex)
             {
-                Name = "GeoJSON Layer",
-                Features = features,
-                Style = null
-            };
-
-            map.Layers.Add(layer);
-        }
+                MessageBox.Show($"Ошибка загрузки GeoJSON: {ex.Message}",
+                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        } 
         private void SetInitialView(Map map)
         {
             double lon = 82.92043;

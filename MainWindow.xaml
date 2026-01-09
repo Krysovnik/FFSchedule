@@ -24,7 +24,7 @@
             <MenuItem Header="Карта">
                 <MenuItem Header="Добавить маркер"/>
                 <MenuItem Header="Удалить маркер"/>
-                <MenuItem Header="Обновить карту"/>
+                <MenuItem Header="Обновить карту" Click="RefreshMap_Click"/>
                 <MenuItem Header="Очистить карту"/>
             </MenuItem>
             <MenuItem Header="Справка">
