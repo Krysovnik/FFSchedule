@@ -37,6 +37,23 @@ namespace FFSchedule
 
             MapControl.Map = map;
         }
+        //Кнопки
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapControl.Map?.Navigator != null)
+            {
+                MapControl.Map.Navigator.ZoomIn();
+            }
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapControl.Map?.Navigator != null)
+            {
+                MapControl.Map.Navigator.ZoomOut();
+            }
+        }
+        //Отображение карты
         private void LoadGeoJsonLayer(Map map)
         {
             // Путь к GeoJSON файлу
