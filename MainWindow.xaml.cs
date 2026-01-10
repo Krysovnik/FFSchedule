@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace FFSchedule
 {
@@ -29,12 +31,20 @@ namespace FFSchedule
         public void InitializeMap()
         {
             var map = new Map();
+
+            //Тайловая подложка
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
 
-            LoadGeoJsonLayer(map);
+            //Районы
+            LoadGeoJsonLayer(map, @"MapVector\nskDISTandKSTV.geojson");
 
+            //Точки пч/псч
+            LoadGeoJsonLayer(map, @"MapVector\FireStationPoints.geojson");
+
+            //Начальный вид
             SetInitialView(map);
 
+            //Контролер lib
             MapControl.Map = map;
         }
         //Menu
@@ -46,7 +56,8 @@ namespace FFSchedule
                 {
                     MapControl.Map.Layers.Clear();
                     MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
-                    LoadGeoJsonLayer(MapControl.Map);
+                    LoadGeoJsonLayer(MapControl.Map, @"MapVector\nskDISTandKSTV.geojson");
+                    LoadGeoJsonLayer(MapControl.Map, @"MapVector\FireStationPoints.geojson");
                     SetInitialView(MapControl.Map);
                     MapControl.Refresh();
                 }
@@ -73,78 +84,102 @@ namespace FFSchedule
                 MapControl.Map.Navigator.ZoomOut();
             }
         }
-        //Отображение карты
-        private void LoadGeoJsonLayer(Map map)
+
+        //загрузка и отрисовка векторного слоя
+        private void LoadGeoJsonLayer(Map map, string geojsonPath)
         {
-            if (map == null) return;
+            if (map == null || string.IsNullOrEmpty(geojsonPath)) return;
+            if (!File.Exists(geojsonPath))
+            {
+                MessageBox.Show($"Файл GeoJSON не найден: {geojsonPath}");
+                return;
+            }
 
             try
             {
-                // Путь к GeoJSON файлу
-                var geojsonPath = @"MapVector\nskDISTandKSTV.geojson";
-                if (!File.Exists(geojsonPath))
-                {
-                    MessageBox.Show("Файл GeoJSON не найден.", "Ошибка",
-                                   MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
                 string geojson = File.ReadAllText(geojsonPath);
-                var reader = new GeoJsonReader();
-                FeatureCollection fc = reader.Read<FeatureCollection>(geojson);
+                var reader = new NetTopologySuite.IO.GeoJsonReader();
+                var fc = reader.Read<NetTopologySuite.Features.FeatureCollection>(geojson);
 
-                var features = new List<GeometryFeature>();
+                var polygonFeatures = new List<Mapsui.Nts.GeometryFeature>();
+                var pointFeatures = new List<Mapsui.Nts.GeometryFeature>();
 
-                foreach (NetTopologySuite.Features.IFeature f in fc)
+                foreach (var f in fc)
                 {
                     var geom = f.Geometry;
-                    var polygons = ConvertGeometry(geom);
 
-                    string name = f.Attributes.Exists("name")
-                        ? f.Attributes["name"].ToString()
-                        : "Unknown";
-
-                    var borderColor = GetColorByName(name);
-
-                    foreach (var polygon in polygons)
+                    // Полигоны
+                    if (geom is NetTopologySuite.Geometries.Polygon || geom is NetTopologySuite.Geometries.MultiPolygon)
                     {
-                        var projectedPolygon = ProjectGeometry(polygon);
-                        var feature = new GeometryFeature
+                        foreach (var polygon in ConvertGeometry(geom))
                         {
-                            Geometry = projectedPolygon
-                        };
+                            var projectedCoords = polygon.Coordinates
+                                .Select(c =>
+                                {
+                                    var p = Mapsui.Projections.SphericalMercator.FromLonLat(c.X, c.Y);
+                                    return new NetTopologySuite.Geometries.Coordinate(p.x, p.y);
+                                }).ToArray();
 
-                        var fillColor = new Color(borderColor.R, borderColor.G, borderColor.B, 60);
+                            var projectedPolygon = polygon.Factory.CreatePolygon(projectedCoords);
 
-                        feature.Styles = new List<IStyle>
-                {
-                    new VectorStyle
-                    {
-                        Fill = new Brush(fillColor),
-                        Line = new Pen(borderColor, 2),
-                        Outline = new Pen(borderColor, 2)
+                            string nameAttr = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
+
+                            var feature = new Mapsui.Nts.GeometryFeature
+                            {
+                                Geometry = projectedPolygon,
+                                Styles = new List<IStyle>
+                        {
+                            VectorStyles.GetPolygonStyle(nameAttr),
+                            VectorStyles.GetLabelStyle(nameAttr)
+                        }
+                            };
+                            polygonFeatures.Add(feature);
+                        }
                     }
-                };
+                    // Точки
+                    else if (geom is NetTopologySuite.Geometries.Point point)
+                    {
+                        var p = Mapsui.Projections.SphericalMercator.FromLonLat(point.X, point.Y);
+                        var projectedPoint = new NetTopologySuite.Geometries.Point(p.x, p.y);
 
-                        features.Add(feature);
+                        string label = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
+
+                        var feature = new Mapsui.Nts.GeometryFeature
+                        {
+                            Geometry = projectedPoint,
+                            Styles = VectorStyles.GetPointStylesWithLabel(label)
+                        };
+                        pointFeatures.Add(feature);
                     }
                 }
 
-                var layer = new MemoryLayer
+                if (polygonFeatures.Count > 0)
                 {
-                    Name = "GeoJSON Layer",
-                    Features = features,
-                    Style = null
-                };
+                    map.Layers.Add(new Mapsui.Layers.MemoryLayer
+                    {
+                        Name = "Polygons",
+                        Features = polygonFeatures,
+                        Style = null // каждый feature имеет свой стиль
+                    });
+                }
 
-                map.Layers.Add(layer);
+                if (pointFeatures.Count > 0)
+                {
+                    map.Layers.Add(new Mapsui.Layers.MemoryLayer
+                    {
+                        Name = "Points",
+                        Features = pointFeatures,
+                        Style = null
+                    });
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки GeoJSON: {ex.Message}",
-                               "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка загрузки GeoJSON: {ex.Message}");
             }
-        } 
+        }
+
+
         private void SetInitialView(Map map)
         {
             double lon = 82.92043;
@@ -157,7 +192,7 @@ namespace FFSchedule
 
         #region Вспомогательные методы
 
-        private Color GetColorByName(string name)
+        /*private Color GetColorByName(string name)
         {
             var hash = name.GetHashCode();
             byte a = 100;
@@ -165,7 +200,7 @@ namespace FFSchedule
             byte g = (byte)((hash & 0x00FF00) >> 8);
             byte b = (byte)(hash & 0x0000FF);
             return Color.FromArgb(a, r, g, b);
-        }
+        }*/
 
         private List<Polygon> ConvertGeometry(Geometry geom)
         {
