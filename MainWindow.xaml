@@ -45,13 +45,19 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.6*" MinWidth="200"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Width="500" Grid.Column="0" Background="{DynamicResource OutlinesBrush}"/>
+            <Border Grid.Column="0" Background="{DynamicResource OutlinesBrush}"/>
 
-            <Grid Grid.Column="1">
+            <GridSplitter Grid.Column="1" 
+                  Width="2" 
+                  HorizontalAlignment="Stretch" 
+                  Background="Gray"/>
+
+            <Grid Grid.Column="2">
                 <mapsui:MapControl x:Name="MapControl"/>
                 <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,0,10">
                     <Button Content="+" Click="ZoomIn_Click" Style="{StaticResource ZoomButtonStyle}"/>
