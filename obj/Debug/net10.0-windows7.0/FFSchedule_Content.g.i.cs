@@ -57,6 +57,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/fire.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/password.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/user.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("mapvector/firestationpoints.geojson")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("mapvector/nskdistandkstv.geojson")]
 
 

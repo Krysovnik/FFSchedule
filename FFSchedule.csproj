@@ -13,6 +13,7 @@
     <None Remove="Images\password.png" />
     <None Remove="Images\user.png" />
     <None Remove="MapVector\3dMap.mbtiles" />
+    <None Remove="MapVector\FireStationPoints.geojson" />
     <None Remove="MapVector\GoogleMap.mbtiles" />
     <None Remove="MapVector\nskDISTandKSTV.geojson" />
     <None Remove="OpenStreetMap.mbtiles" />
@@ -27,6 +28,9 @@
     </Content>
     <Content Include="Images\user.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MapVector\FireStationPoints.geojson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="MapVector\nskDISTandKSTV.geojson">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
