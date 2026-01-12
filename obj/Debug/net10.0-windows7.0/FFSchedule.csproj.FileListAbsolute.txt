@@ -542,3 +542,4 @@ C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\FFSchedule.genruntimecon
 C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\ref\FFSchedule.dll
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\MapVector\FireStationPoints.geojson
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\MapVector\FireStationPoints.geojson
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Images\firestation.png

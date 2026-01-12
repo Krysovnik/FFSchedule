@@ -7,16 +7,19 @@ using Mapsui.Projections;
 using Mapsui.Providers;
 using Mapsui.Styles;
 using Mapsui.Tiling;
+using Mapsui.UI;
 using Mapsui.UI.Wpf;
 using Mapsui.Utilities;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace FFSchedule
@@ -48,6 +51,35 @@ namespace FFSchedule
 
             //Контролер lib
             MapControl.Map = map;
+
+            MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
+        }
+        private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var screenPosition = e.GetPosition(MapControl);
+            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
+                screenPosition.X,
+                screenPosition.Y
+            );
+
+            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
+            if (layer is MemoryLayer memoryLayer)
+            {
+                var features = memoryLayer.GetFeatures(
+                    new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
+                    MapControl.Map.Navigator.Viewport.Resolution
+                );
+
+                var closest = features.FirstOrDefault();
+
+                if (closest != null)
+                {
+                    var name = closest["name"]?.ToString()
+                            ?? "Без названия";
+
+                    MessageBox.Show(name, "Маркер", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
         }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
@@ -100,7 +132,7 @@ namespace FFSchedule
         private void ToggleVillageCouncilsVisibility()
         {
             villageCouncilsVisible = !villageCouncilsVisible;
-            VillageCouncilsToggleButton.Content = villageCouncilsVisible ? "✎" : "✏";
+            VillageCouncilsToggleButton.Content = villageCouncilsVisible ? "📖" : "📕";
             VillageCouncilsToggleButton.ToolTip = villageCouncilsVisible
                 ? "Скрыть сельсоветы"
                 : "Показать сельсоветы";
@@ -181,6 +213,10 @@ namespace FFSchedule
                             VectorStyles.GetLabelStyle(nameAttr)
                         }
                             };
+                            foreach (var attributeName in f.Attributes.GetNames())
+                            {
+                                feature[attributeName] = f.Attributes[attributeName];
+                            }
                             polygonFeatures.Add(feature);
                         }
                     }
@@ -197,6 +233,10 @@ namespace FFSchedule
                             Geometry = projectedPoint,
                             Styles = VectorStyles.GetPointStylesWithLabel(label)
                         };
+                        foreach (var attributeName in f.Attributes.GetNames())
+                        {
+                            feature[attributeName] = f.Attributes[attributeName];
+                        }
                         pointFeatures.Add(feature);
                     }
                 }

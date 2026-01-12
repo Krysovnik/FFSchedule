@@ -52,7 +52,7 @@ namespace FFSchedule
                 new SymbolStyle
                 {
                     SymbolType = SymbolType.Ellipse,
-                    Fill = new Brush(new Color(255,69,0,255)), // оранжевый
+                    Fill = new Brush(new Color(255,69,0,255)), 
                     Outline = new Pen(new Color(139,0,0,255), 1),
                     SymbolScale = 0.3
                 },
@@ -63,7 +63,7 @@ namespace FFSchedule
                     ForeColor = new Color(0,0,0),
                     BackColor = new Brush(new Color(255,255,255,200)),
                     Halo = new Pen(new Color(255,255,255), 1),
-                    Offset = new Offset(0.0, -15) // сдвиг текста над точкой
+                    Offset = new Offset(0.0, -15) 
                 }
 
             };
