@@ -52,34 +52,8 @@ namespace FFSchedule
             //Контролер lib
             MapControl.Map = map;
 
+            FireStationInfoPanel.Visibility = Visibility.Collapsed;
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
-        }
-        private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var screenPosition = e.GetPosition(MapControl);
-            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
-                screenPosition.X,
-                screenPosition.Y
-            );
-
-            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
-            if (layer is MemoryLayer memoryLayer)
-            {
-                var features = memoryLayer.GetFeatures(
-                    new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
-                    MapControl.Map.Navigator.Viewport.Resolution
-                );
-
-                var closest = features.FirstOrDefault();
-
-                if (closest != null)
-                {
-                    var name = closest["name"]?.ToString()
-                            ?? "Без названия";
-
-                    MessageBox.Show(name, "Маркер", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
         }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
@@ -105,6 +79,54 @@ namespace FFSchedule
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        //Карта
+        private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {           
+            var screenPosition = e.GetPosition(MapControl);
+            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
+                screenPosition.X,
+                screenPosition.Y
+            );
+
+            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
+            if (layer is MemoryLayer memoryLayer)
+            {
+                var features = memoryLayer.GetFeatures(
+                    new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
+                    MapControl.Map.Navigator.Viewport.Resolution
+                );
+
+                var closest = features.FirstOrDefault();
+
+                if (closest != null)
+                {
+                    var name = closest["name"]?.ToString() ?? "Без названия";
+                    var address = closest["address"]?.ToString() ?? "Не указан";
+                    var district = closest["district"]?.ToString() ?? "Не указан";
+                    var type = closest["type"]?.ToString() ?? "Не указан";
+                    var phone = closest["phone"]?.ToString() ?? "Не указан";
+
+                    FireStationName.Text = name;
+                    FireStationAddress.Text = address;
+                    FireStationDistrict.Text = district;
+                    FireStationType.Text = type;
+                    FireStationPhone.Text = phone;
+
+                    FireStationInfoPanel.Visibility = Visibility.Visible;
+                    NoSelectionText.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    FireStationInfoPanel.Visibility = Visibility.Collapsed;
+                    NoSelectionText.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                FireStationInfoPanel.Visibility = Visibility.Collapsed;
+                NoSelectionText.Visibility = Visibility.Visible;
+            }
+        }      
         //Кнопки
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
