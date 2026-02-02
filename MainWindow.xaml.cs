@@ -1,4 +1,8 @@
-﻿using Mapsui;
+﻿using BruTile;
+using BruTile.Predefined;
+using BruTile.Web;
+using Mapsui;
+using Mapsui.Animations;
 using Mapsui.Extensions;
 using Mapsui.Layers;
 using Mapsui.Nts;
@@ -7,6 +11,7 @@ using Mapsui.Projections;
 using Mapsui.Providers;
 using Mapsui.Styles;
 using Mapsui.Tiling;
+using Mapsui.Tiling.Layers;
 using Mapsui.UI;
 using Mapsui.UI.Wpf;
 using Mapsui.Utilities;
@@ -28,6 +33,8 @@ namespace FFSchedule
     {
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
+        private MemoryLayer _hoverLayer; 
+        private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
         public MainWindow()
         {
             InitializeComponent();
@@ -39,7 +46,6 @@ namespace FFSchedule
 
             //Тайловая подложка
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
-
             //Районы
             LoadGeoJsonLayer(map, @"MapVector\nskDISTandKSTV.geojson");
 
@@ -54,7 +60,8 @@ namespace FFSchedule
 
             FireStationInfoPanel.Visibility = Visibility.Collapsed;
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
-        }
+            MapControl.MouseMove += MapControl_MouseMove;
+        }     
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
         {
@@ -81,7 +88,7 @@ namespace FFSchedule
         }
         //Карта
         private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {           
+        {
             var screenPosition = e.GetPosition(MapControl);
             var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
                 screenPosition.X,
@@ -126,7 +133,85 @@ namespace FFSchedule
                 FireStationInfoPanel.Visibility = Visibility.Collapsed;
                 NoSelectionText.Visibility = Visibility.Visible;
             }
-        }      
+        }
+        private void MapControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (MapControl.Map?.Layers == null) return;
+
+            if (_hoverLayer != null)
+            {
+                MapControl.Map.Layers.Remove(_hoverLayer);
+                _hoverLayer = null;
+            }
+
+            var screenPosition = e.GetPosition(MapControl);
+            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
+                screenPosition.X,
+                screenPosition.Y
+            );
+
+            var pointsLayer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points") as MemoryLayer;
+            if (pointsLayer == null) return;
+
+            var features = pointsLayer.GetFeatures(
+                new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
+                MapControl.Map.Navigator.Viewport.Resolution
+            );
+
+            var hoveredFeature = features.FirstOrDefault();
+
+            if (hoveredFeature != null && hoveredFeature is GeometryFeature geometryFeature)
+            {
+                if (!_originalStyles.TryGetValue(geometryFeature, out var originalStyles))
+                    return;
+
+                _hoverLayer = new MemoryLayer
+                {
+                    Name = "HoverLayer",
+                    Enabled = true
+                };
+
+                var highlightedStyle = new List<IStyle>();
+
+                foreach (var style in originalStyles)
+                {
+                    if (style is SymbolStyle symbolStyle)
+                    {
+                        var originalFill = symbolStyle.Fill.Color;
+                        var originalOutline = symbolStyle.Outline.Color;
+
+                        int r = Math.Min(255, (int)(originalFill.Value.R * 2));
+                        int g = Math.Min(255, (int)(originalFill.Value.G * 2));
+                        int b = Math.Min(255, (int)(originalFill.Value.B * 2));
+                        var highlightedFill = new Color(r, g, b, 2);
+
+                        highlightedStyle.Add(new SymbolStyle
+                        {
+                            SymbolType = symbolStyle.SymbolType,
+                            Fill = new Brush(highlightedFill),
+                            SymbolScale = symbolStyle.SymbolScale,
+                            Opacity = symbolStyle.Opacity,
+                            MinVisible = symbolStyle.MinVisible,
+                            MaxVisible = symbolStyle.MaxVisible
+                        });
+                    }
+                    else if (style is LabelStyle labelStyle)
+                    {
+                        highlightedStyle.Add(labelStyle);
+                    }
+                }
+
+                _hoverLayer.Features = new List<GeometryFeature> { geometryFeature };
+                _hoverLayer.Style = null;
+                MapControl.Map.Layers.Add(_hoverLayer);
+
+                MapControl.Cursor = Cursors.Hand;
+            }
+            else
+            {
+                MapControl.Cursor = Cursors.Arrow;
+            }
+        }
         //Кнопки
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
@@ -248,17 +333,22 @@ namespace FFSchedule
                         var p = Mapsui.Projections.SphericalMercator.FromLonLat(point.X, point.Y);
                         var projectedPoint = new NetTopologySuite.Geometries.Point(p.x, p.y);
 
-                        string label = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
+                        string name = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
+                        string type = f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : null;
 
                         var feature = new Mapsui.Nts.GeometryFeature
                         {
                             Geometry = projectedPoint,
-                            Styles = VectorStyles.GetPointStylesWithLabel(label)
+                            Styles = VectorStyles.GetPointStylesWithLabel(name, type)
                         };
+
                         foreach (var attributeName in f.Attributes.GetNames())
                         {
                             feature[attributeName] = f.Attributes[attributeName];
                         }
+
+                        _originalStyles[feature] = new List<IStyle>(feature.Styles);
+
                         pointFeatures.Add(feature);
                     }
                 }
