@@ -101,7 +101,7 @@ namespace FFSchedule
                     SymbolScale = symbolScale,
                     Opacity = 0.7f,
                     MinVisible = 1,
-                    MaxVisible = double.MaxValue
+                    MaxVisible = 500
                 },
                 new LabelStyle
                 {

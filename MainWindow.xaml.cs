@@ -89,6 +89,7 @@ namespace FFSchedule
         //Карта
         private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (!fireStationsVisible) return;
             var screenPosition = e.GetPosition(MapControl);
             var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
                 screenPosition.X,
@@ -136,6 +137,17 @@ namespace FFSchedule
         }
         private void MapControl_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!fireStationsVisible)
+            {
+                if (_hoverLayer != null)
+                {
+                    MapControl.Map.Layers.Remove(_hoverLayer);
+                    _hoverLayer = null;
+                    MapControl.Refresh();
+                }
+                MapControl.Cursor = Cursors.Arrow;
+                return;
+            }
             if (MapControl.Map?.Layers == null) return;
 
             if (_hoverLayer != null)
