@@ -27,6 +27,20 @@
                 <MenuItem Header="Обновить карту" Click="RefreshMap_Click"/>
                 <MenuItem Header="Очистить карту"/>
             </MenuItem>
+
+            <MenuItem Header="Вид">
+                <MenuItem Header="Заливка полигонов" IsCheckable="True" IsChecked="True" Click="TogglePolygonFill_Click"/>
+
+                <Separator/>
+
+                <MenuItem Header="Толщина границы">
+                    <MenuItem Header="Тонкая" Click="BorderWidth_Thin_Click"/>
+                    <MenuItem Header="Средняя" Click="BorderWidth_Medium_Click"/>
+                    <MenuItem Header="Толстая" Click="BorderWidth_Thick_Click"/>
+                </MenuItem>
+            </MenuItem>
+
+
             <MenuItem Header="Справка">
                 <MenuItem Header="О программе"/>
             </MenuItem>

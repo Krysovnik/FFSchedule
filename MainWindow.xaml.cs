@@ -35,6 +35,14 @@ namespace FFSchedule
         private bool villageCouncilsVisible = true;
         private MemoryLayer _hoverLayer; 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
+
+        private Mapsui.Layers.MemoryLayer _polygonLayer;
+
+        private bool _polygonFillEnabled = true;
+        private double _polygonBorderWidth = 0.5;
+
+        private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -315,11 +323,18 @@ namespace FFSchedule
                             {
                                 Geometry = projectedPolygon,
                                 Styles = new List<IStyle>
-                        {
-                            VectorStyles.GetPolygonStyle(nameAttr),
-                            VectorStyles.GetLabelStyle(nameAttr)
-                        }
+                                {
+                                    VectorStyles.GetPolygonStyle(nameAttr),
+                                    VectorStyles.GetLabelStyle(nameAttr)
+                                }
                             };
+
+                            var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
+                            if (vs != null)
+                            {
+                                _originalFills[feature] = vs.Fill;
+                            }
+
                             foreach (var attributeName in f.Attributes.GetNames())
                             {
                                 feature[attributeName] = f.Attributes[attributeName];
@@ -355,13 +370,18 @@ namespace FFSchedule
 
                 if (polygonFeatures.Count > 0)
                 {
-                    map.Layers.Add(new Mapsui.Layers.MemoryLayer
+                    _polygonLayer = new Mapsui.Layers.MemoryLayer
                     {
                         Name = "Polygons",
                         Features = polygonFeatures,
                         Style = null,
                         Enabled = villageCouncilsVisible
-                    });
+                    };
+
+
+
+                    map.Layers.Add(_polygonLayer);
+
                 }
 
                 if (pointFeatures.Count > 0)
@@ -381,6 +401,53 @@ namespace FFSchedule
             }
         }
 
+        private void UpdatePolygonStyles()
+        {
+            if (_polygonLayer == null) return;
+
+            foreach (var feature in _polygonLayer.Features)
+            {
+                if (feature.Styles == null || feature.Styles.Count == 0) continue;
+
+                var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
+                if (vs == null) continue;
+
+                vs.Fill = _polygonFillEnabled ? _originalFills[feature] : null;
+
+                if (vs.Outline != null)
+                {
+                    vs.Outline.Width = (float)_polygonBorderWidth;
+                    vs.Outline.PenStyle = PenStyle.Solid;
+                }
+            }
+            MapControl.Refresh(); 
+        }
+
+
+        private void TogglePolygonFill_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = sender as MenuItem;
+            _polygonFillEnabled = menu.IsChecked;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Thin_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 0.5;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Medium_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 1.5;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Thick_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 2.5;
+            UpdatePolygonStyles();
+        }
 
         private void SetInitialView(Map map)
         {
