@@ -555,19 +555,20 @@ namespace FFSchedule
             SearchButton.IsEnabled = false;
             SearchResultsLb.ItemsSource = null;
 
-            const double west = 78.5;
-            const double south = 53.75;
-            const double east = 84.0;
-            const double north = 56.2;
+            const double west = 78;
+            const double south = 53;
+            const double east = 84;
+            const double north = 56;
 
             var url = $"https://nominatim.openstreetmap.org/search" +
                       $"?q={Uri.EscapeDataString(query)}" +
                       $"&format=jsonv2" + 
-                      $"&addressdetails=0" +
+                      $"&addressdetails=1" +
                       $"&extratags=1" +
                       $"&countrycodes=RU" +
                       $"&bounded=1" +
-                      $"&viewbox={west:F6},{south:F6},{east:F6},{north:F6}" +
+                      $"&viewbox={78},{56},{84},{53}" +
+                      $"&bounded=1" +
                       $"&limit=5";
 
             try
