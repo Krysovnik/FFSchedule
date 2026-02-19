@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+RcDrIZ++pA=",
+  "dgSpecHash": "aygLDlWmcwg=",
   "success": true,
   "projectFilePath": "C:\\Users\\Иван\\File\\FFSchedule\\FFSchedule.csproj",
   "expectedPackageFiles": [
@@ -83,10 +83,23 @@
     "C:\\Users\\Иван\\.nuget\\packages\\system.composition.hosting\\9.0.0\\system.composition.hosting.9.0.0.nupkg.sha512",
     "C:\\Users\\Иван\\.nuget\\packages\\system.composition.runtime\\9.0.0\\system.composition.runtime.9.0.0.nupkg.sha512",
     "C:\\Users\\Иван\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
+    "C:\\Users\\Иван\\.nuget\\packages\\system.net.http.json\\10.0.3\\system.net.http.json.10.0.3.nupkg.sha512",
     "C:\\Users\\Иван\\.nuget\\packages\\system.reflection.metadataloadcontext\\7.0.0\\system.reflection.metadataloadcontext.7.0.0.nupkg.sha512",
     "C:\\Users\\Иван\\.nuget\\packages\\topten.richtextkit\\0.4.167\\topten.richtextkit.0.4.167.nupkg.sha512"
   ],
   "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference System.Net.Http.Json не будет урезано. Рассмотрите возможность удаления этого пакета из зависимостей, так как он, вероятно, не требуется.",
+      "projectPath": "C:\\Users\\Иван\\File\\FFSchedule\\FFSchedule.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Иван\\File\\FFSchedule\\FFSchedule.csproj",
+      "libraryId": "System.Net.Http.Json",
+      "targetGraphs": [
+        "net10.0-windows7.0"
+      ]
+    },
     {
       "code": "NU1701",
       "level": "Warning",

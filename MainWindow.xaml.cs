@@ -18,10 +18,16 @@ using Mapsui.Utilities;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using OpenTK.Graphics.OpenGL;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Runtime.InteropServices.Marshalling;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,8 +39,32 @@ namespace FFSchedule
     {
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
-        private MemoryLayer _hoverLayer; 
+
+        private MemoryLayer _hoverLayer;
+
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
+
+        private readonly HttpClient httpClient = new HttpClient();
+        private MemoryLayer searchLayer;
+
+        private Mapsui.Layers.MemoryLayer _polygonLayer;
+
+        private bool _polygonFillEnabled = true;
+        private double _polygonBorderWidth = 0.5;
+
+        private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
+
+        public record NominatimResult(
+            [property: JsonPropertyName("display_name")] string DisplayName,
+            double Lat,
+            double Lon,
+            [property: JsonPropertyName("type")] string Type,
+            [property: JsonPropertyName("class")] string Class,
+            [property: JsonPropertyName("importance")] double Importance,
+            [property: JsonPropertyName("extratags")] Dictionary<string, string>? Extratags);
+
+        private const string SEARCH_PIN_LAYER = "SearchPin";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -61,7 +91,7 @@ namespace FFSchedule
             FireStationInfoPanel.Visibility = Visibility.Collapsed;
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
             MapControl.MouseMove += MapControl_MouseMove;
-        }     
+        }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
         {
@@ -87,6 +117,7 @@ namespace FFSchedule
             }
         }
         //Карта
+
         private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!fireStationsVisible) return;
@@ -327,11 +358,18 @@ namespace FFSchedule
                             {
                                 Geometry = projectedPolygon,
                                 Styles = new List<IStyle>
-                        {
-                            VectorStyles.GetPolygonStyle(nameAttr),
-                            VectorStyles.GetLabelStyle(nameAttr)
-                        }
+                                {
+                                    VectorStyles.GetPolygonStyle(nameAttr),
+                                    VectorStyles.GetLabelStyle(nameAttr)
+                                }
                             };
+
+                            var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
+                            if (vs != null)
+                            {
+                                _originalFills[feature] = vs.Fill;
+                            }
+
                             foreach (var attributeName in f.Attributes.GetNames())
                             {
                                 feature[attributeName] = f.Attributes[attributeName];
@@ -367,13 +405,18 @@ namespace FFSchedule
 
                 if (polygonFeatures.Count > 0)
                 {
-                    map.Layers.Add(new Mapsui.Layers.MemoryLayer
+                    _polygonLayer = new Mapsui.Layers.MemoryLayer
                     {
                         Name = "Polygons",
                         Features = polygonFeatures,
                         Style = null,
                         Enabled = villageCouncilsVisible
-                    });
+                    };
+
+
+
+                    map.Layers.Add(_polygonLayer);
+
                 }
 
                 if (pointFeatures.Count > 0)
@@ -393,6 +436,53 @@ namespace FFSchedule
             }
         }
 
+        private void UpdatePolygonStyles()
+        {
+            if (_polygonLayer == null) return;
+
+            foreach (var feature in _polygonLayer.Features)
+            {
+                if (feature.Styles == null || feature.Styles.Count == 0) continue;
+
+                var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
+                if (vs == null) continue;
+
+                vs.Fill = _polygonFillEnabled ? _originalFills[feature] : null;
+
+                if (vs.Outline != null)
+                {
+                    vs.Outline.Width = (float)_polygonBorderWidth;
+                    vs.Outline.PenStyle = PenStyle.Solid;
+                }
+            }
+            MapControl.Refresh();
+        }
+
+
+        private void TogglePolygonFill_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = sender as MenuItem;
+            _polygonFillEnabled = menu.IsChecked;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Thin_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 0.5;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Medium_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 1.5;
+            UpdatePolygonStyles();
+        }
+
+        private void BorderWidth_Thick_Click(object sender, RoutedEventArgs e)
+        {
+            _polygonBorderWidth = 2.5;
+            UpdatePolygonStyles();
+        }
 
         private void SetInitialView(Map map)
         {
@@ -450,5 +540,102 @@ namespace FFSchedule
         }
 
         #endregion
+
+        private readonly HttpClient _nominatim = new()
+        {
+            Timeout = TimeSpan.FromSeconds(10),
+            DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
+        };
+
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            var query = SearchTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(query)) return;
+
+            SearchButton.IsEnabled = false;
+            SearchResultsLb.ItemsSource = null;
+
+            const double west = 78.5;
+            const double south = 53.75;
+            const double east = 84.0;
+            const double north = 56.2;
+
+            var url = $"https://nominatim.openstreetmap.org/search" +
+                      $"?q={Uri.EscapeDataString(query)}" +
+                      $"&format=jsonv2" + 
+                      $"&addressdetails=0" +
+                      $"&extratags=1" +
+                      $"&countrycodes=RU" +
+                      $"&bounded=1" +
+                      $"&viewbox={west:F6},{south:F6},{east:F6},{north:F6}" +
+                      $"&limit=5";
+
+            try
+            {
+                var results = await _nominatim.GetFromJsonAsync<List<NominatimResult>>(url);
+                if (results == null || results.Count == 0)
+                {
+                    SearchResultsLb.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                SearchResultsLb.ItemsSource = results.OrderByDescending(r => r.Importance);
+                SearchResultsLb.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
+                              MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                SearchButton.IsEnabled = true;
+            }
+        }
+
+        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
+
+            var merc = SphericalMercator.FromLonLat(res.Lon, res.Lat);
+
+            MapControl.Map?.Navigator?.FlyTo(
+                new MPoint(merc.x, merc.y), MapControl.Map.Navigator.Viewport.Resolution * 0.2, 500);
+
+            PutSearchPin(merc.x, merc.y, res.DisplayName);
+        }
+
+
+        private void PutSearchPin(double x, double y, string label)
+        {
+            var old = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
+            if (old != null) MapControl.Map.Layers.Remove(old);
+
+            var pin = new GeometryFeature
+            {
+                Geometry = new NetTopologySuite.Geometries.Point(x, y),
+                ["label"] = label
+            };
+            pin.Styles.Add(new SymbolStyle
+            {
+                SymbolScale = 0.8,
+                Fill = new Brush(Color.FromArgb(255, 255, 50, 50)),
+                Outline = new Pen(Color.Black, 2)
+            });
+            pin.Styles.Add(new LabelStyle
+            {
+                Text = label,
+                Offset = new Offset(0, -20),
+                BackColor = new Brush(Color.FromArgb(200, 255, 255, 255))
+            });
+
+            MapControl.Map?.Layers.Add(new MemoryLayer
+            {
+                Name = SEARCH_PIN_LAYER,
+                Features = new[] { pin },
+                Style = null
+            });
+        }
+
     }
 }
