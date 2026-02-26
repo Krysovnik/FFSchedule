@@ -572,9 +572,10 @@ namespace FFSchedule
             SearchButton.IsEnabled = false;
             SearchResultsLb.ItemsSource = null;
 
+
             var url = $"https://nominatim.openstreetmap.org/search" +
                       $"?q={Uri.EscapeDataString(query)}" +
-                      $"&format=jsonv2" +
+                      $"&format=jsonv2" + 
                       $"&addressdetails=1" +
                       $"&extratags=1" +
                       $"&countrycodes=RU" +
