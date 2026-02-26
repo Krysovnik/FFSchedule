@@ -55,13 +55,25 @@ namespace FFSchedule
         private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
 
         public record NominatimResult(
-            [property: JsonPropertyName("display_name")] string DisplayName,
-            double Lat,
-            double Lon,
-            [property: JsonPropertyName("type")] string Type,
-            [property: JsonPropertyName("class")] string Class,
-            [property: JsonPropertyName("importance")] double Importance,
-            [property: JsonPropertyName("extratags")] Dictionary<string, string>? Extratags);
+        [property: JsonPropertyName("display_name")] string DisplayName,
+        double Lat,
+        double Lon,
+        [property: JsonPropertyName("type")] string Type,
+        [property: JsonPropertyName("class")] string Class,
+        [property: JsonPropertyName("importance")] double Importance,
+        [property: JsonPropertyName("extratags")] Dictionary<string, string>? Extratags)
+        {
+            public string ShortDisplayName
+            {
+                get
+                {
+                    var parts = DisplayName?.Split(',') ?? Array.Empty<string>();
+                    if (parts.Length > 2)
+                        return string.Join(",", parts.Take(2)).Trim();
+                    return DisplayName ?? "";
+                }
+            }
+        }
 
         private const string SEARCH_PIN_LAYER = "SearchPin";
 
@@ -496,16 +508,6 @@ namespace FFSchedule
 
         #region Вспомогательные методы
 
-        /*private Color GetColorByName(string name)
-        {
-            var hash = name.GetHashCode();
-            byte a = 100;
-            byte r = (byte)((hash & 0xFF0000) >> 16);
-            byte g = (byte)((hash & 0x00FF00) >> 8);
-            byte b = (byte)(hash & 0x0000FF);
-            return Color.FromArgb(a, r, g, b);
-        }*/
-
         private List<Polygon> ConvertGeometry(Geometry geom)
         {
             var result = new List<Polygon>();
@@ -541,6 +543,7 @@ namespace FFSchedule
 
         #endregion
 
+        //Поиск
         private readonly HttpClient _nominatim = new()
         {
             Timeout = TimeSpan.FromSeconds(10),
@@ -550,24 +553,32 @@ namespace FFSchedule
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             var query = SearchTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(query)) return;
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
+                if (oldPinLayer != null)
+                {
+                    MapControl.Map.Layers.Remove(oldPinLayer);
+                    MapControl.Refresh();
+                }
+                SearchResultsLb.ItemsSource = null;
+                SearchResultsLb.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            query = $"{query}, Новосибирск";
 
             SearchButton.IsEnabled = false;
             SearchResultsLb.ItemsSource = null;
 
-            const double west = 78.5;
-            const double south = 53.75;
-            const double east = 84.0;
-            const double north = 56.2;
-
             var url = $"https://nominatim.openstreetmap.org/search" +
                       $"?q={Uri.EscapeDataString(query)}" +
-                      $"&format=jsonv2" + 
-                      $"&addressdetails=0" +
+                      $"&format=jsonv2" +
+                      $"&addressdetails=1" +
                       $"&extratags=1" +
                       $"&countrycodes=RU" +
                       $"&bounded=1" +
-                      $"&viewbox={west:F6},{south:F6},{east:F6},{north:F6}" +
                       $"&limit=5";
 
             try
@@ -602,11 +613,11 @@ namespace FFSchedule
             MapControl.Map?.Navigator?.FlyTo(
                 new MPoint(merc.x, merc.y), MapControl.Map.Navigator.Viewport.Resolution * 0.2, 500);
 
-            PutSearchPin(merc.x, merc.y, res.DisplayName);
+            PutSearchPin(merc.x, merc.y, res);
         }
 
 
-        private void PutSearchPin(double x, double y, string label)
+        private void PutSearchPin(double x, double y, NominatimResult result)
         {
             var old = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
             if (old != null) MapControl.Map.Layers.Remove(old);
@@ -614,19 +625,37 @@ namespace FFSchedule
             var pin = new GeometryFeature
             {
                 Geometry = new NetTopologySuite.Geometries.Point(x, y),
-                ["label"] = label
+                ["label"] = result.DisplayName,
+                ["shortLabel"] = result.ShortDisplayName
             };
             pin.Styles.Add(new SymbolStyle
             {
-                SymbolScale = 0.8,
+                SymbolType = SymbolType.Ellipse,
                 Fill = new Brush(Color.FromArgb(255, 255, 50, 50)),
-                Outline = new Pen(Color.Black, 2)
+                Outline = new Pen(new Color(255, 255, 255, 255), 3.0f)
+                {
+                    PenStyle = PenStyle.Solid
+                },
+                SymbolScale = 0.35f,
+                MinVisible = 1,
+                MaxVisible = 500
             });
             pin.Styles.Add(new LabelStyle
             {
-                Text = label,
-                Offset = new Offset(0, -20),
-                BackColor = new Brush(Color.FromArgb(200, 255, 255, 255))
+                Text = result.ShortDisplayName,
+                Font = new Mapsui.Styles.Font
+                {
+                    Size = 12,
+                    Bold = true,
+                    FontFamily = "Arial"
+                },
+                ForeColor = new Color(0, 0, 0),
+                BackColor = new Brush(new Color(255, 255, 255, 220)),
+                Halo = new Pen(new Color(255, 255, 255, 200), 1.5f),
+                Offset = new Offset(0.0, -18),
+                HorizontalAlignment = LabelStyle.HorizontalAlignmentEnum.Center,
+                LineHeight = 1.2,
+                MaxVisible = 80
             });
 
             MapControl.Map?.Layers.Add(new MemoryLayer

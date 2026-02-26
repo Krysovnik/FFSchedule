@@ -25,7 +25,6 @@
                 <MenuItem Header="Добавить маркер"/>
                 <MenuItem Header="Удалить маркер"/>
                 <MenuItem Header="Обновить карту" Click="RefreshMap_Click"/>
-                <MenuItem Header="Очистить карту"/>
             </MenuItem>
 
             <MenuItem Header="Вид">
@@ -86,23 +85,15 @@
                         </TextBox>
                         <Button Content="🔍 Поиск" x:Name="SearchButton" Click="SearchButton_Click" Width="80"/>
                     </StackPanel>
-                    <ListBox x:Name="SearchResultsLb"
-         MaxHeight="250"
-         Background="{DynamicResource OutlinesBrush}"
-         BorderThickness="0"
+                    <ListBox x:Name="SearchResultsLb" 
          Visibility="Collapsed"
-         MouseDoubleClick="SearchResultsLb_MouseDoubleClick">
+         MouseDoubleClick="SearchResultsLb_MouseDoubleClick"
+         MaxHeight="200" 
+         Margin="5">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
-                           TextWrapping="Wrap"/>
-                                    <TextBlock FontSize="11" Foreground="Gray">
-                    <Run Text="{Binding Type, Mode=OneWay}"/>
-                    <Run Text="  •  "/>
-                    <Run Text="{Binding Class, Mode=OneWay}"/>
-                                    </TextBlock>
-                                </StackPanel>
+                                <TextBlock Text="{Binding ShortDisplayName}" 
+                       ToolTip="{Binding DisplayName}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -111,10 +102,10 @@
                         Margin="20,0,0,10" 
                         Foreground="{DynamicResource ForegroundBrush}"/>
                     <Border x:Name="FireStationInfoPanel" 
-                    Background="{DynamicResource BackgroundBrush}"
-                    Padding="10"
-                    CornerRadius="5"
-                    Visibility="Collapsed">
+                        Background="{DynamicResource BackgroundBrush}"
+                        Padding="10"
+                        CornerRadius="5"
+                        Visibility="Collapsed">
                         <StackPanel>
                             <TextBlock x:Name="FireStationName" 
                            FontWeight="Bold" 
