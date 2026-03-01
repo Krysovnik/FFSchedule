@@ -46,9 +46,9 @@
         </Menu>
 
         <ToolBar DockPanel.Dock="Top" Height="35" Background="{DynamicResource BackgroundBrush}">
-            <Button Content="➕" ToolTip="Добавить точку" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Button Content="✏️" ToolTip="Редактировать" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Button Content="🗑️" ToolTip="Удалить" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="➕" Click="ButtonAddFireStation_Click" ToolTip="Добавить точку" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="✏️" Click="ButtonRedFireStation_Click" ToolTip="Редактировать" Foreground="{DynamicResource ForegroundBrush}"/>
+            <Button Content="🗑️" Click="ButtonDelFireStation_Click" ToolTip="Удалить" Foreground="{DynamicResource ForegroundBrush}"/>
             <Separator/>
             <Button Content="📁" ToolTip="Загрузить карту" Foreground="{DynamicResource ForegroundBrush}"/>
             <Button Content="💾" ToolTip="Сохранить" Foreground="{DynamicResource ForegroundBrush}"/>
@@ -86,14 +86,14 @@
                         <Button Content="🔍 Поиск" x:Name="SearchButton" Click="SearchButton_Click" Width="80"/>
                     </StackPanel>
                     <ListBox x:Name="SearchResultsLb" 
-         Visibility="Collapsed"
-         MouseDoubleClick="SearchResultsLb_MouseDoubleClick"
-         MaxHeight="200" 
-         Margin="5">
+                        Visibility="Collapsed"
+                        MouseDoubleClick="SearchResultsLb_MouseDoubleClick"
+                        MaxHeight="200" 
+                        Margin="5">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ShortDisplayName}" 
-                       ToolTip="{Binding DisplayName}"/>
+                                    ToolTip="{Binding DisplayName}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -108,52 +108,51 @@
                         Visibility="Collapsed">
                         <StackPanel>
                             <TextBlock x:Name="FireStationName" 
-                           FontWeight="Bold" 
-                           FontSize="13" 
-                           TextWrapping="Wrap"
-                           Margin="0,0,0,5"
-                           Foreground="{DynamicResource ForegroundBrush}"/>
-
+                                FontWeight="Bold" 
+                                FontSize="13" 
+                                TextWrapping="Wrap"
+                                Margin="0,0,0,5"
+                                Foreground="{DynamicResource ForegroundBrush}"/>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Адрес: " 
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock x:Name="FireStationAddress" 
-                               TextWrapping="Wrap"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Район: " 
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock x:Name="FireStationDistrict" 
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Тип: " 
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock x:Name="FireStationType" 
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Телефон: " 
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock x:Name="FireStationPhone" 
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                    Foreground="{DynamicResource ForegroundBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <TextBlock x:Name="NoSelectionText" 
-                   Text="Выберите пожарную часть на карте" 
-                   FontStyle="Italic"
-                   Foreground="{DynamicResource ForegroundBrush}"
-                   Margin="20,0,0,10"/>
+                        Text="Выберите пожарную часть на карте" 
+                        FontStyle="Italic"
+                        Foreground="{DynamicResource ForegroundBrush}"
+                        Margin="20,0,0,10"/>
                 </StackPanel>
             </ScrollViewer>
 

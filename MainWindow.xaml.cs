@@ -1,6 +1,7 @@
 ﻿using BruTile;
 using BruTile.Predefined;
 using BruTile.Web;
+using FFSchedule.Services;
 using Mapsui;
 using Mapsui.Animations;
 using Mapsui.Extensions;
@@ -44,9 +45,6 @@ namespace FFSchedule
 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
 
-        private readonly HttpClient httpClient = new HttpClient();
-        private MemoryLayer searchLayer;
-
         private Mapsui.Layers.MemoryLayer _polygonLayer;
 
         private bool _polygonFillEnabled = true;
@@ -54,33 +52,20 @@ namespace FFSchedule
 
         private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
 
-        public record NominatimResult(
-        [property: JsonPropertyName("display_name")] string DisplayName,
-        double Lat,
-        double Lon,
-        [property: JsonPropertyName("type")] string Type,
-        [property: JsonPropertyName("class")] string Class,
-        [property: JsonPropertyName("importance")] double Importance,
-        [property: JsonPropertyName("extratags")] Dictionary<string, string>? Extratags)
-        {
-            public string ShortDisplayName
-            {
-                get
-                {
-                    var parts = DisplayName?.Split(',') ?? Array.Empty<string>();
-                    if (parts.Length > 2)
-                        return string.Join(",", parts.Take(2)).Trim();
-                    return DisplayName ?? "";
-                }
-            }
-        }
-
-        private const string SEARCH_PIN_LAYER = "SearchPin";
+        private readonly SearchService _searchService;
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeMap();
+
+            var httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(10),
+                DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
+            };
+
+            _searchService = new SearchService(httpClient, MapControl);
         }
         public void InitializeMap()
         {
@@ -128,8 +113,21 @@ namespace FFSchedule
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        //Карта
+        private void ButtonAddFireStation_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+        private void ButtonRedFireStation_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void ButtonDelFireStation_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        //Карта
         private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!fireStationsVisible) return;
@@ -544,19 +542,13 @@ namespace FFSchedule
         #endregion
 
         //Поиск
-        private readonly HttpClient _nominatim = new()
-        {
-            Timeout = TimeSpan.FromSeconds(10),
-            DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
-        };
-
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             var query = SearchTextBox.Text.Trim();
-
             if (string.IsNullOrWhiteSpace(query))
             {
-                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
+                // Очистка старых маркеров и списка
+                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == "SearchPin");
                 if (oldPinLayer != null)
                 {
                     MapControl.Map.Layers.Remove(oldPinLayer);
@@ -567,37 +559,25 @@ namespace FFSchedule
                 return;
             }
 
-            query = $"{query}, Новосибирск";
-
             SearchButton.IsEnabled = false;
             SearchResultsLb.ItemsSource = null;
 
-
-            var url = $"https://nominatim.openstreetmap.org/search" +
-                      $"?q={Uri.EscapeDataString(query)}" +
-                      $"&format=jsonv2" + 
-                      $"&addressdetails=1" +
-                      $"&extratags=1" +
-                      $"&countrycodes=RU" +
-                      $"&bounded=1" +
-                      $"&limit=5";
-
             try
             {
-                var results = await _nominatim.GetFromJsonAsync<List<NominatimResult>>(url);
+                var results = await _searchService.SearchAsync(query);
                 if (results == null || results.Count == 0)
                 {
                     SearchResultsLb.Visibility = Visibility.Collapsed;
                     return;
                 }
 
-                SearchResultsLb.ItemsSource = results.OrderByDescending(r => r.Importance);
+                SearchResultsLb.ItemsSource = results;
                 SearchResultsLb.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
-                              MessageBoxButton.OK, MessageBoxImage.Warning);
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             finally
             {
@@ -608,64 +588,7 @@ namespace FFSchedule
         private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
-
-            var merc = SphericalMercator.FromLonLat(res.Lon, res.Lat);
-
-            MapControl.Map?.Navigator?.FlyTo(
-                new MPoint(merc.x, merc.y), MapControl.Map.Navigator.Viewport.Resolution * 0.2, 500);
-
-            PutSearchPin(merc.x, merc.y, res);
-        }
-
-
-        private void PutSearchPin(double x, double y, NominatimResult result)
-        {
-            var old = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
-            if (old != null) MapControl.Map.Layers.Remove(old);
-
-            var pin = new GeometryFeature
-            {
-                Geometry = new NetTopologySuite.Geometries.Point(x, y),
-                ["label"] = result.DisplayName,
-                ["shortLabel"] = result.ShortDisplayName
-            };
-            pin.Styles.Add(new SymbolStyle
-            {
-                SymbolType = SymbolType.Ellipse,
-                Fill = new Brush(Color.FromArgb(255, 255, 50, 50)),
-                Outline = new Pen(new Color(255, 255, 255, 255), 3.0f)
-                {
-                    PenStyle = PenStyle.Solid
-                },
-                SymbolScale = 0.35f,
-                MinVisible = 1,
-                MaxVisible = 500
-            });
-            pin.Styles.Add(new LabelStyle
-            {
-                Text = result.ShortDisplayName,
-                Font = new Mapsui.Styles.Font
-                {
-                    Size = 12,
-                    Bold = true,
-                    FontFamily = "Arial"
-                },
-                ForeColor = new Color(0, 0, 0),
-                BackColor = new Brush(new Color(255, 255, 255, 220)),
-                Halo = new Pen(new Color(255, 255, 255, 200), 1.5f),
-                Offset = new Offset(0.0, -18),
-                HorizontalAlignment = LabelStyle.HorizontalAlignmentEnum.Center,
-                LineHeight = 1.2,
-                MaxVisible = 80
-            });
-
-            MapControl.Map?.Layers.Add(new MemoryLayer
-            {
-                Name = SEARCH_PIN_LAYER,
-                Features = new[] { pin },
-                Style = null
-            });
-        }
-
+            _searchService.FlyToResult(res);
+        }      
     }
 }
