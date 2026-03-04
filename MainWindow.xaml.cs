@@ -22,6 +22,7 @@ using NetTopologySuite.IO;
 using OpenTK.Graphics.OpenGL;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -41,6 +42,8 @@ namespace FFSchedule
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
 
+        private ObservableCollection<FireStation> fireStations = new ObservableCollection<FireStation>();
+
         private MemoryLayer _hoverLayer;
 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
@@ -58,6 +61,8 @@ namespace FFSchedule
         {
             InitializeComponent();
             InitializeMap();
+
+            FireStationsListBox.ItemsSource = fireStations;
 
             var httpClient = new HttpClient
             {
@@ -348,7 +353,6 @@ namespace FFSchedule
                 {
                     var geom = f.Geometry;
 
-                    // Полигоны
                     if (geom is NetTopologySuite.Geometries.Polygon || geom is NetTopologySuite.Geometries.MultiPolygon)
                     {
                         foreach (var polygon in ConvertGeometry(geom))
@@ -387,32 +391,37 @@ namespace FFSchedule
                             polygonFeatures.Add(feature);
                         }
                     }
-                    // Точки
                     else if (geom is NetTopologySuite.Geometries.Point point)
                     {
                         var p = Mapsui.Projections.SphericalMercator.FromLonLat(point.X, point.Y);
                         var projectedPoint = new NetTopologySuite.Geometries.Point(p.x, p.y);
-
-                        string name = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
-                        string type = f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : null;
-
                         var feature = new Mapsui.Nts.GeometryFeature
                         {
                             Geometry = projectedPoint,
-                            Styles = VectorStyles.GetPointStylesWithLabel(name, type)
+                            Styles = VectorStyles.GetPointStylesWithLabel(
+                                f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null,
+                                f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : null)
                         };
 
                         foreach (var attributeName in f.Attributes.GetNames())
                         {
                             feature[attributeName] = f.Attributes[attributeName];
                         }
-
                         _originalStyles[feature] = new List<IStyle>(feature.Styles);
-
+                        var station = new FireStation
+                        {
+                            Name = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : "Не указано",
+                            Address = f.Attributes.Exists("address") ? f.Attributes["address"]?.ToString() : "Не указано",
+                            District = f.Attributes.Exists("district") ? f.Attributes["district"]?.ToString() : "Не указано",
+                            Type = f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : "Не указано",
+                            Phone = f.Attributes.Exists("phone") ? f.Attributes["phone"]?.ToString() : "Не указано",    
+                            Longitude = point.X,
+                            Latitude = point.Y
+                        };
+                        fireStations.Add(station);
                         pointFeatures.Add(feature);
                     }
                 }
-
                 if (polygonFeatures.Count > 0)
                 {
                     _polygonLayer = new Mapsui.Layers.MemoryLayer
@@ -422,11 +431,7 @@ namespace FFSchedule
                         Style = null,
                         Enabled = villageCouncilsVisible
                     };
-
-
-
                     map.Layers.Add(_polygonLayer);
-
                 }
 
                 if (pointFeatures.Count > 0)
@@ -589,6 +594,48 @@ namespace FFSchedule
         {
             if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
             _searchService.FlyToResult(res);
-        }      
+        }
+        private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Если пользователь очистил выбор
+            if (FireStationsListBox.SelectedItem == null)
+            {
+                HideInfoPanel();
+                return;
+            }
+
+            var selectedStation = FireStationsListBox.SelectedItem as FireStation;
+            if (selectedStation == null)
+            {
+                HideInfoPanel();
+                return;
+            }
+
+            // Заполняем UI‑элементы
+            FireStationName.Text = selectedStation.Name ?? "Без названия";
+            FireStationAddress.Text = selectedStation.Address ?? "Не указан";
+            FireStationDistrict.Text = selectedStation.District ?? "Не указано";
+            FireStationType.Text = selectedStation.Type ?? "Не указано";
+            FireStationPhone.Text = selectedStation.Phone ?? "Не указано";
+
+            FireStationInfoPanel.Visibility = Visibility.Visible;
+            NoSelectionText.Visibility = Visibility.Collapsed;
+
+            // ---- ПАНОРАМИРОВАНИЕ КАРТЫ ----
+            // Переводим долготу/широту в координаты карты (SphericalMercator)
+            var projected = Mapsui.Projections.SphericalMercator.FromLonLat(
+                selectedStation.Longitude,
+                selectedStation.Latitude
+            );
+
+            MapControl.Map.Navigator.CenterOn(projected.x, projected.y);
+            MapControl.Map.Navigator.ZoomToLevel(12);
+        }
+
+        private void HideInfoPanel()
+        {
+            FireStationInfoPanel.Visibility = Visibility.Collapsed;
+            NoSelectionText.Visibility = Visibility.Visible;
+        }
     }
 }

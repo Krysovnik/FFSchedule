@@ -100,11 +100,8 @@ namespace FFSchedule.Services
         public void FlyToResult(NominatimResult result)
         {
             var merc = Mapsui.Projections.SphericalMercator.FromLonLat(result.Lon, result.Lat);
-            _mapControl.Map?.Navigator?.FlyTo(
-                new MPoint(merc.x, merc.y),
-                _mapControl.Map.Navigator.Viewport.Resolution * 0.2,
-                500);
-
+            _mapControl.Map?.Navigator?.CenterOn(merc.x, merc.y);
+            _mapControl.Map?.Navigator?.ZoomToLevel(15);
             PutSearchPin(result);
         }
 

@@ -3,24 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\services\\searchservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:services\\searchservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\services\\nominatimresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:services\\nominatimresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\services\\firestation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:services\\firestation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\mapvector\\firestationpoints.geojson||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mapvector\\firestationpoints.geojson||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\services\\nominatimresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:services\\nominatimresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\vectorstyles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -29,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\model\\specialstatusobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:model\\specialstatusobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:ffschedule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0438\u0432\u0430\u043D\\file\\ffschedule\\model\\chief.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -50,7 +58,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,46 +66,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
+              "Title": "FireStation.cs",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\FireStation.cs",
+              "RelativeDocumentMoniker": "Services\\FireStation.cs",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\FireStation.cs",
+              "RelativeToolTip": "Services\\FireStation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-04T12:07:44.687Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "SearchService.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\SearchService.cs",
               "RelativeDocumentMoniker": "Services\\SearchService.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\SearchService.cs*",
-              "RelativeToolTip": "Services\\SearchService.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\SearchService.cs",
+              "RelativeToolTip": "Services\\SearchService.cs",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAgwGYAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-01T15:22:42.672Z",
+              "WhenOpened": "2026-03-04T11:12:13.514Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "NominatimResult.cs",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\NominatimResult.cs",
-              "RelativeDocumentMoniker": "Services\\NominatimResult.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\NominatimResult.cs*",
-              "RelativeToolTip": "Services\\NominatimResult.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-01T15:22:08.126Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "FireStationPoints.geojson",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MapVector\\FireStationPoints.geojson",
-              "RelativeDocumentMoniker": "MapVector\\FireStationPoints.geojson",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MapVector\\FireStationPoints.geojson",
-              "RelativeToolTip": "MapVector\\FireStationPoints.geojson",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-03-01T14:59:19.572Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "SpecialStatusObject.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Model\\SpecialStatusObject.cs",
               "RelativeDocumentMoniker": "Model\\SpecialStatusObject.cs",
@@ -109,7 +104,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "VectorStyles.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\VectorStyles.cs",
               "RelativeDocumentMoniker": "VectorStyles.cs",
@@ -125,40 +120,79 @@
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml*",
-              "RelativeToolTip": "MainWindow.xaml*",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-02-15T17:24:50.595Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "FFSchedule.csproj",
-              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\FFSchedule.csproj",
-              "RelativeDocumentMoniker": "FFSchedule.csproj",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\FFSchedule.csproj",
-              "RelativeToolTip": "FFSchedule.csproj",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-02-15T17:22:52.796Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml.cs*",
-              "RelativeToolTip": "MainWindow.xaml.cs*",
-              "ViewState": "AgIAACAAAAAAAAAAAAAcwC0AAAB8AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAAGoCAAAAAAAAAAAuwHYCAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-13T15:50:07.98Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 2,
+              "Title": "FFSchedule.csproj",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\FFSchedule.csproj",
+              "RelativeDocumentMoniker": "FFSchedule.csproj",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\FFSchedule.csproj",
+              "RelativeToolTip": "FFSchedule.csproj",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAEMAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-15T17:22:52.796Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Styles.xaml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Styles.xaml",
+              "RelativeDocumentMoniker": "Styles.xaml",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Styles.xaml",
+              "RelativeToolTip": "Styles.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-04T12:13:56.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FireStationPoints.geojson",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MapVector\\FireStationPoints.geojson",
+              "RelativeDocumentMoniker": "MapVector\\FireStationPoints.geojson",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\MapVector\\FireStationPoints.geojson",
+              "RelativeToolTip": "MapVector\\FireStationPoints.geojson",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-03-01T14:59:19.572Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "NominatimResult.cs",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\NominatimResult.cs",
+              "RelativeDocumentMoniker": "Services\\NominatimResult.cs",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Services\\NominatimResult.cs",
+              "RelativeToolTip": "Services\\NominatimResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-01T15:22:08.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "LoginWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\LoginWindow.xaml.cs",
               "RelativeDocumentMoniker": "LoginWindow.xaml.cs",
@@ -170,7 +204,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "Chief.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\File\\FFSchedule\\Model\\Chief.cs",
               "RelativeDocumentMoniker": "Model\\Chief.cs",

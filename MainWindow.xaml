@@ -153,6 +153,39 @@
                         FontStyle="Italic"
                         Foreground="{DynamicResource ForegroundBrush}"
                         Margin="20,0,0,10"/>
+
+                    <TextBlock Text="Список пожарных частей" 
+                        FontWeight="Bold" FontSize="14" 
+                        Margin="20,0,0,10" 
+                        Foreground="{DynamicResource ForegroundBrush}"/>
+
+                    <ListBox x:Name="FireStationsListBox"
+                        Height="300"
+                        Margin="20,0,10,10"
+                        Background="{DynamicResource BackgroundBrush}"
+                        BorderBrush="{DynamicResource ForegroundBrush}"
+                        BorderThickness="1"
+                        SelectionMode="Single" SelectionChanged="FireStationsListBox_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource ForegroundBrush}" 
+                                    BorderThickness="0,0,0,1" 
+                                    Padding="5"
+                                    Margin="0,2">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" 
+                                            FontWeight="Bold" 
+                                            Foreground="{DynamicResource ForegroundBrush}"
+                                            TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Address}" 
+                                            Foreground="{DynamicResource ForegroundBrush}"
+                                            FontSize="11"
+                                            TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </ScrollViewer>
 
