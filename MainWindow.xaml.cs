@@ -1,6 +1,8 @@
 ﻿using BruTile;
 using BruTile.Predefined;
 using BruTile.Web;
+using FFSchedule.Class;
+using FFSchedule.Models;
 using FFSchedule.Services;
 using Mapsui;
 using Mapsui.Animations;
@@ -16,6 +18,7 @@ using Mapsui.Tiling.Layers;
 using Mapsui.UI;
 using Mapsui.UI.Wpf;
 using Mapsui.Utilities;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
@@ -597,7 +600,6 @@ namespace FFSchedule
         }
         private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Если пользователь очистил выбор
             if (FireStationsListBox.SelectedItem == null)
             {
                 HideInfoPanel();
@@ -611,7 +613,6 @@ namespace FFSchedule
                 return;
             }
 
-            // Заполняем UI‑элементы
             FireStationName.Text = selectedStation.Name ?? "Без названия";
             FireStationAddress.Text = selectedStation.Address ?? "Не указан";
             FireStationDistrict.Text = selectedStation.District ?? "Не указано";
@@ -621,8 +622,6 @@ namespace FFSchedule
             FireStationInfoPanel.Visibility = Visibility.Visible;
             NoSelectionText.Visibility = Visibility.Collapsed;
 
-            // ---- ПАНОРАМИРОВАНИЕ КАРТЫ ----
-            // Переводим долготу/широту в координаты карты (SphericalMercator)
             var projected = Mapsui.Projections.SphericalMercator.FromLonLat(
                 selectedStation.Longitude,
                 selectedStation.Latitude
@@ -636,6 +635,36 @@ namespace FFSchedule
         {
             FireStationInfoPanel.Visibility = Visibility.Collapsed;
             NoSelectionText.Visibility = Visibility.Visible;
+        }
+        private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
+        {
+            string dbPath = @"FFS\FFS.db";
+            string wordPath = @"FFS\FFS.docx";
+
+            if (!File.Exists(dbPath))
+            {
+                MessageBox.Show($"Файл базы данных не найден:\n{dbPath}");
+                return;
+            }
+
+            try
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<FfsContext>();
+                optionsBuilder.UseSqlite($"Data Source={dbPath}");
+
+                using var context = new FfsContext(optionsBuilder.Options);
+
+                var employees = context.Employees.ToList();
+
+                var generator = new WordTableGenerator();
+                generator.AddEmployeeTableToWord(wordPath, employees);
+
+                MessageBox.Show("Таблица успешно экспортирована в Word!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}\n{ex.StackTrace}");
+            }
         }
     }
 }

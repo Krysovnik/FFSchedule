@@ -545,3 +545,8 @@ C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\MapVector\FireSta
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Images\firestation.png
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\Images\firestation.png
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\System.Net.Http.Json.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Document.NET.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Drawing.NET.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Words.NET.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.db
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.docx

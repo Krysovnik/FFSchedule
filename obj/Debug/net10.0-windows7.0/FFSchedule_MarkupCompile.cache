@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\
 FFSchedule
 none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\ДЭН\FFSchedule\App.xaml
+C:\Users\Иван\File\FFSchedule\App.xaml
 6-631260514
-52-441526529
-11-2078318789
-254-1109436450
+54-33487685
+30-583363017
+257-1253889432
 Controls\ThemeToggleButton.xaml;LoginWindow.xaml;MainWindow.xaml;Styles.xaml;Themes\DarkThemes.xaml;Themes\LightThemes.xaml;
 
 False

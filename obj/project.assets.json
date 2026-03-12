@@ -42,6 +42,22 @@
           "lib/net9.0/BruTile.MbTiles.dll": {}
         }
       },
+      "DocX/5.0.0": {
+        "type": "package",
+        "dependencies": {
+          "SkiaSharp": "2.88.8"
+        },
+        "compile": {
+          "lib/net5.0/Xceed.Document.NET.dll": {},
+          "lib/net5.0/Xceed.Drawing.NET.dll": {},
+          "lib/net5.0/Xceed.Words.NET.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Xceed.Document.NET.dll": {},
+          "lib/net5.0/Xceed.Drawing.NET.dll": {},
+          "lib/net5.0/Xceed.Words.NET.dll": {}
+        }
+      },
       "DotSpatial.Projections/4.0.656": {
         "type": "package",
         "compile": {
@@ -2155,6 +2171,28 @@
         "lib/net8.0/BruTile.MbTiles.dll",
         "lib/net9.0/BruTile.MbTiles.dll",
         "license.txt"
+      ]
+    },
+    "DocX/5.0.0": {
+      "sha512": "LgYjzqlc6NoscU30wesopUDtkOKK5NIK/67ukSO2AexLbxiSB39L8rn8gOj9Z7Lx20LHHq71V1dqHtCBrAmuFQ==",
+      "type": "package",
+      "path": "docx/5.0.0",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "Xceed_Logo_Retina-400x400.png",
+        "docs/readme.md",
+        "docx.5.0.0.nupkg.sha512",
+        "docx.nuspec",
+        "lib/net40/Xceed.Document.NET.dll",
+        "lib/net40/Xceed.Drawing.NET.dll",
+        "lib/net40/Xceed.Words.NET.dll",
+        "lib/net5.0/Xceed.Document.NET.dll",
+        "lib/net5.0/Xceed.Drawing.NET.dll",
+        "lib/net5.0/Xceed.Words.NET.dll",
+        "tools/install.ps1"
       ]
     },
     "DotSpatial.Projections/4.0.656": {
@@ -4959,6 +4997,7 @@
     "net10.0-windows7.0": [
       "BruTile >= 6.0.0",
       "BruTile.MbTiles >= 6.0.0",
+      "DocX >= 5.0.0",
       "Mapsui >= 5.0.0",
       "Mapsui.Extensions >= 5.0.0",
       "Mapsui.Nts >= 5.0.0",
@@ -4977,23 +5016,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ДЭН\\.nuget\\packages\\": {},
+    "C:\\Users\\Иван\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ДЭН\\FFSchedule\\FFSchedule.csproj",
+      "projectUniqueName": "C:\\Users\\Иван\\File\\FFSchedule\\FFSchedule.csproj",
       "projectName": "FFSchedule",
-      "projectPath": "C:\\Users\\ДЭН\\FFSchedule\\FFSchedule.csproj",
-      "packagesPath": "C:\\Users\\ДЭН\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ДЭН\\FFSchedule\\obj\\",
+      "projectPath": "C:\\Users\\Иван\\File\\FFSchedule\\FFSchedule.csproj",
+      "packagesPath": "C:\\Users\\Иван\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Иван\\File\\FFSchedule\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\ДЭН\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Иван\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5033,6 +5072,10 @@
           "BruTile.MbTiles": {
             "target": "Package",
             "version": "[6.0.0, )"
+          },
+          "DocX": {
+            "target": "Package",
+            "version": "[5.0.0, )"
           },
           "Mapsui": {
             "target": "Package",
@@ -5118,7 +5161,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

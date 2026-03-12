@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="FFS\FFS.db" />
+    <None Remove="FFS\FFS.docx" />
     <None Remove="Images\fire.png" />
     <None Remove="Images\firestation.png" />
     <None Remove="Images\password.png" />
@@ -21,6 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="FFS\FFS.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FFS\FFS.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\fire.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -44,6 +52,7 @@
   <ItemGroup>
     <PackageReference Include="BruTile" Version="6.0.0" />
     <PackageReference Include="BruTile.MbTiles" Version="6.0.0" />
+    <PackageReference Include="DocX" Version="5.0.0" />
     <PackageReference Include="Mapsui" Version="5.0.0" />
     <PackageReference Include="Mapsui.Extensions" Version="5.0.0" />
     <PackageReference Include="Mapsui.Nts" Version="5.0.0" />

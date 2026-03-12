@@ -41,6 +41,25 @@
           }
         }
       },
+      "DocX/5.0.0": {
+        "dependencies": {
+          "SkiaSharp": "3.119.1"
+        },
+        "runtime": {
+          "lib/net5.0/Xceed.Document.NET.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.0.0"
+          },
+          "lib/net5.0/Xceed.Drawing.NET.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          },
+          "lib/net5.0/Xceed.Words.NET.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.0.0"
+          }
+        }
+      },
       "DotSpatial.Projections/4.0.656": {
         "runtime": {
           "lib/net6.0/DotSpatial.Projections.dll": {
@@ -1469,6 +1488,13 @@
       "sha512": "sha512-B2jNMucjXdA88W0xsGE6wAd9AxpWnJD53irSlfPi6ATaKjz4ERic92JrzJrbTEkAmsPnP8pD8x0QFbhlCE/eRw==",
       "path": "brutile.mbtiles/6.0.0",
       "hashPath": "brutile.mbtiles.6.0.0.nupkg.sha512"
+    },
+    "DocX/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LgYjzqlc6NoscU30wesopUDtkOKK5NIK/67ukSO2AexLbxiSB39L8rn8gOj9Z7Lx20LHHq71V1dqHtCBrAmuFQ==",
+      "path": "docx/5.0.0",
+      "hashPath": "docx.5.0.0.nupkg.sha512"
     },
     "DotSpatial.Projections/4.0.656": {
       "type": "package",

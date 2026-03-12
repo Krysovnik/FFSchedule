@@ -54,6 +54,8 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("system.commandline.resources.dll")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("system.commandline.resources.dll")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("system.commandline.resources.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ffs/ffs.db")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ffs/ffs.docx")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/fire.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/firestation.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/password.png")]

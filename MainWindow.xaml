@@ -186,6 +186,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <Button Content="Создать таблицу в Word" Click="GenerateWordTable_Click" />
                 </StackPanel>
             </ScrollViewer>
 
