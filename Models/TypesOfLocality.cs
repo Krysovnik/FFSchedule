@@ -9,5 +9,7 @@ public partial class TypesOfLocality
 
     public string? TolName { get; set; }
 
+    public string? TolShortName { get; set; }
+
     public virtual ICollection<Settlement> Settlements { get; set; } = new List<Settlement>();
 }

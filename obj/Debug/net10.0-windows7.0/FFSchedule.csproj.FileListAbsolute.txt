@@ -550,3 +550,13 @@ C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Drawing.NET
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Words.NET.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.db
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.docx
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.db
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\FFS.docx
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Document.NET.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Drawing.NET.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Words.NET.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.OpenXml.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\OpenXmlPowerTools.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\System.Management.Automation.dll
+C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\template.docx

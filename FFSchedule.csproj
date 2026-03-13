@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <Content Include="FFS\FFS.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FFS\FFS.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\fire.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -52,6 +52,7 @@
   <ItemGroup>
     <PackageReference Include="BruTile" Version="6.0.0" />
     <PackageReference Include="BruTile.MbTiles" Version="6.0.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.4.1" />
     <PackageReference Include="DocX" Version="5.0.0" />
     <PackageReference Include="Mapsui" Version="5.0.0" />
     <PackageReference Include="Mapsui.Extensions" Version="5.0.0" />
@@ -73,7 +74,14 @@
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
+    <PackageReference Include="OpenXmlPowerTools" Version="4.5.3.2" />
     <PackageReference Include="System.Net.Http.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="FFS\template.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

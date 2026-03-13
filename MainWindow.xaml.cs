@@ -60,10 +60,14 @@ namespace FFSchedule
 
         private readonly SearchService _searchService;
 
+        private readonly FfsContext _dbcontext;
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeMap();
+
+            _dbcontext = new FfsContext();
 
             FireStationsListBox.ItemsSource = fireStations;
 
@@ -638,33 +642,16 @@ namespace FFSchedule
         }
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
         {
-            string dbPath = @"FFS\FFS.db";
-            string wordPath = @"FFS\FFS.docx";
+            var settlements = _dbcontext.Settlements.Include(s => s.Vc).Include(s => s.Tol).ToList(); //включая связи
 
-            if (!File.Exists(dbPath))
-            {
-                MessageBox.Show($"Файл базы данных не найден:\n{dbPath}");
-                return;
-            }
+            var exporter = new WordTableExporter();
 
-            try
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<FfsContext>();
-                optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            string templatePath = @"FFS/template.docx";
+            string outputPath = @"FFS/Schedule.docx";
 
-                using var context = new FfsContext(optionsBuilder.Options);
+            exporter.ExportSettlementsOnly(settlements, templatePath, outputPath);
 
-                var employees = context.Employees.ToList();
-
-                var generator = new WordTableGenerator();
-                generator.AddEmployeeTableToWord(wordPath, employees);
-
-                MessageBox.Show("Таблица успешно экспортирована в Word!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}\n{ex.StackTrace}");
-            }
+            MessageBox.Show("Word документ создан!");
         }
     }
 }

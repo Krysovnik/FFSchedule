@@ -41,6 +41,25 @@
           }
         }
       },
+      "DocumentFormat.OpenXml/3.4.1": {
+        "dependencies": {
+          "DocumentFormat.OpenXml.Framework": "3.4.1"
+        },
+        "runtime": {
+          "lib/net10.0/DocumentFormat.OpenXml.dll": {
+            "assemblyVersion": "3.4.1.0",
+            "fileVersion": "3.4.1.0"
+          }
+        }
+      },
+      "DocumentFormat.OpenXml.Framework/3.4.1": {
+        "runtime": {
+          "lib/net10.0/DocumentFormat.OpenXml.Framework.dll": {
+            "assemblyVersion": "3.4.1.0",
+            "fileVersion": "3.4.1.0"
+          }
+        }
+      },
       "DocX/5.0.0": {
         "dependencies": {
           "SkiaSharp": "3.119.1"
@@ -872,6 +891,18 @@
           }
         }
       },
+      "OpenXmlPowerTools/4.5.3.2": {
+        "dependencies": {
+          "DocumentFormat.OpenXml": "3.4.1",
+          "System.Management.Automation.dll": "10.0.10586"
+        },
+        "runtime": {
+          "lib/net45/OpenXmlPowerTools.dll": {
+            "assemblyVersion": "4.5.3.0",
+            "fileVersion": "4.5.3.0"
+          }
+        }
+      },
       "ShimSkiaSharp/3.2.1": {
         "runtime": {
           "lib/net8.0/ShimSkiaSharp.dll": {
@@ -1443,6 +1474,22 @@
           }
         }
       },
+      "System.Management.Automation.dll/10.0.10586": {
+        "runtime": {
+          "lib/net40/System.Management.Automation.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "10.0.10586.0"
+          }
+        }
+      },
+      "System.Net.Http.Json/10.0.3": {
+        "runtime": {
+          "lib/net10.0/System.Net.Http.Json.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.326.7603"
+          }
+        }
+      },
       "System.Reflection.MetadataLoadContext/7.0.0": {
         "runtime": {
           "lib/net7.0/System.Reflection.MetadataLoadContext.dll": {
@@ -1488,6 +1535,20 @@
       "sha512": "sha512-B2jNMucjXdA88W0xsGE6wAd9AxpWnJD53irSlfPi6ATaKjz4ERic92JrzJrbTEkAmsPnP8pD8x0QFbhlCE/eRw==",
       "path": "brutile.mbtiles/6.0.0",
       "hashPath": "brutile.mbtiles.6.0.0.nupkg.sha512"
+    },
+    "DocumentFormat.OpenXml/3.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iM7k4Spo6ZxxudxLVGcvFLIcF6XJ65aOAsJ24o75CaKGBTuj33cL1O7qnGkQW0+ONOUFff+mWafpZYaa7rNBbg==",
+      "path": "documentformat.openxml/3.4.1",
+      "hashPath": "documentformat.openxml.3.4.1.nupkg.sha512"
+    },
+    "DocumentFormat.OpenXml.Framework/3.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-H7l8l84uRb+LTjijpe6PuVDlIDM28s7f//zxss6f1yK1qnaxAEZwRecPkjfE3vjFM7QZ7X4XGF4nicnIynJrBw==",
+      "path": "documentformat.openxml.framework/3.4.1",
+      "hashPath": "documentformat.openxml.framework.3.4.1.nupkg.sha512"
     },
     "DocX/5.0.0": {
       "type": "package",
@@ -1839,6 +1900,13 @@
       "path": "opentk.glwpfcontrol/3.3.0",
       "hashPath": "opentk.glwpfcontrol.3.3.0.nupkg.sha512"
     },
+    "OpenXmlPowerTools/4.5.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-F0HxQxh5+ZL5lOhkddrIozQj2ml0Zzwp25P5teEDmT8iyj++ZpeXf7c6aYqvHH1A9uULyayKVUUYhLi7+55pFw==",
+      "path": "openxmlpowertools/4.5.3.2",
+      "hashPath": "openxmlpowertools.4.5.3.2.nupkg.sha512"
+    },
     "ShimSkiaSharp/3.2.1": {
       "type": "package",
       "serviceable": true,
@@ -2006,6 +2074,20 @@
       "sha512": "sha512-aRZlojCCGEHDKqh43jaDgaVpYETsgd7Nx4g1zwLKMtv4iTo0627715ajEFNpEEBTgLmvZuv8K0EVxc3sM4NWJA==",
       "path": "system.composition.typedparts/9.0.0",
       "hashPath": "system.composition.typedparts.9.0.0.nupkg.sha512"
+    },
+    "System.Management.Automation.dll/10.0.10586": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eknkOPXmlrZ6gXNfmkkLFrhbopXcU815BCaxTVHiY44UtTpA/zm8EKy4uCyb4HicITf5S8FA/9WiXeLdBXusBA==",
+      "path": "system.management.automation.dll/10.0.10586",
+      "hashPath": "system.management.automation.dll.10.0.10586.nupkg.sha512"
+    },
+    "System.Net.Http.Json/10.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mnedfiB5HfXesLJwM7X5JLPOn9IgO/wB5mCWUc/qwfonbWSHta8D2KLiihnqQ0WwtN0rrlTqxBQPh5MqPEEPVg==",
+      "path": "system.net.http.json/10.0.3",
+      "hashPath": "system.net.http.json.10.0.3.nupkg.sha512"
     },
     "System.Reflection.MetadataLoadContext/7.0.0": {
       "type": "package",
