@@ -17,6 +17,8 @@ public partial class Settlement
 
     public virtual ICollection<SettlementDepartamentDistance> SettlementDepartamentDistances { get; set; } = new List<SettlementDepartamentDistance>();
 
+    public virtual ICollection<SettlementMainDepartament> SettlementMainDepartaments { get; set; } = new List<SettlementMainDepartament>();
+
     public virtual TypesOfLocality? Tol { get; set; }
 
     public virtual VillageCouncil? Vc { get; set; }

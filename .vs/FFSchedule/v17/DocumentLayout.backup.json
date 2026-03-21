@@ -7,16 +7,31 @@
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:class\\wordtableexporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\typesoflocality.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\typesoflocality.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\settlementmaindepartament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\settlementmaindepartament.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\settlementdepartamentdistance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\settlementdepartamentdistance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\settlement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\settlement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\ffscontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\ffscontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\8.0.414\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.TargetFrameworkInference.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\models\\typesoflocality.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:models\\typesoflocality.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -25,9 +40,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\vectorstyles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|solutionrelative:vectorstyles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\8.0.414\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.TargetFrameworkInference.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F974901F-A1DA-4D0D-9F6B-740953D0D09F}|FFSchedule.csproj|c:\\users\\\u0434\u044D\u043D\\ffschedule\\styles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -80,11 +92,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SettlementDepartamentDistance.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\SettlementDepartamentDistance.cs",
+              "RelativeDocumentMoniker": "Models\\SettlementDepartamentDistance.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\SettlementDepartamentDistance.cs",
+              "RelativeToolTip": "Models\\SettlementDepartamentDistance.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T12:47:48.966Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Settlement.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\Settlement.cs",
+              "RelativeDocumentMoniker": "Models\\Settlement.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\Settlement.cs",
+              "RelativeToolTip": "Models\\Settlement.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T12:47:43.574Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "SettlementMainDepartament.cs",
+              "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\SettlementMainDepartament.cs",
+              "RelativeDocumentMoniker": "Models\\SettlementMainDepartament.cs",
+              "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\SettlementMainDepartament.cs",
+              "RelativeToolTip": "Models\\SettlementMainDepartament.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T12:45:00.964Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "TypesOfLocality.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\TypesOfLocality.cs",
               "RelativeDocumentMoniker": "Models\\TypesOfLocality.cs",
@@ -92,8 +143,7 @@
               "RelativeToolTip": "Models\\TypesOfLocality.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T09:33:30.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T09:33:30.594Z"
             },
             {
               "$type": "Document",
@@ -103,7 +153,7 @@
               "RelativeDocumentMoniker": "Class\\WordTableExporter.cs",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Class\\WordTableExporter.cs",
               "RelativeToolTip": "Class\\WordTableExporter.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAYwC4AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAQwCQAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T08:51:10.306Z",
               "EditorCaption": ""
@@ -118,25 +168,24 @@
               "RelativeToolTip": "..\\..\\..\\Program Files\\dotnet\\sdk\\8.0.414\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.TargetFrameworkInference.targets",
               "ViewState": "AgIAAJMAAAAAAAAAAAAIwKUAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-01-10T10:20:05.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-10T10:20:05.277Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAHECAAAAAAAAAAAAAIQCAAB1AAAAAAAAAA==",
+              "ViewState": "AgIAAHICAAAAAAAAAAAAAIkCAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-22T16:26:11.423Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "VectorStyles.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\VectorStyles.cs",
               "RelativeDocumentMoniker": "VectorStyles.cs",
@@ -144,98 +193,91 @@
               "RelativeToolTip": "VectorStyles.cs",
               "ViewState": "AgIAABcAAAAAAAAAAAAUwGsAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-10T11:04:56.77Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-10T11:04:56.77Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "FfsContext.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\FfsContext.cs",
               "RelativeDocumentMoniker": "Models\\FfsContext.cs",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Models\\FfsContext.cs",
               "RelativeToolTip": "Models\\FfsContext.cs",
-              "ViewState": "AgIAADoAAAAAAAAAAAAwwE0AAAApAAAAAAAAAA==",
+              "ViewState": "AgIAACAAAAAAAAAAAAAkwDMAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-09T14:10:14.078Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "Styles.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Styles.xaml",
               "RelativeDocumentMoniker": "Styles.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Styles.xaml",
               "RelativeToolTip": "Styles.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-13T14:02:55.583Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-13T14:02:55.583Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "LoginWindow.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml",
               "RelativeDocumentMoniker": "LoginWindow.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml",
               "RelativeToolTip": "LoginWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T12:59:04.452Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T12:59:04.452Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "LightThemes.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\LightThemes.xaml",
               "RelativeDocumentMoniker": "Themes\\LightThemes.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\LightThemes.xaml",
               "RelativeToolTip": "Themes\\LightThemes.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T13:59:20.203Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:59:20.203Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T14:48:47.25Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T14:48:47.25Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "DarkThemes.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\DarkThemes.xaml",
               "RelativeDocumentMoniker": "Themes\\DarkThemes.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\DarkThemes.xaml",
               "RelativeToolTip": "Themes\\DarkThemes.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T13:00:08.75Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:00:08.75Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "ThemeManager.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\ThemeManager.cs",
               "RelativeDocumentMoniker": "Themes\\ThemeManager.cs",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Themes\\ThemeManager.cs",
               "RelativeToolTip": "Themes\\ThemeManager.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAIBZwB8AAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAACBjwB8AAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:01:26.733Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:01:26.733Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "global.json",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\global.json",
               "RelativeDocumentMoniker": "global.json",
@@ -243,12 +285,11 @@
               "RelativeToolTip": "global.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-10T10:24:30.401Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-10T10:24:30.401Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "FFSchedule.csproj",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\FFSchedule.csproj",
               "RelativeDocumentMoniker": "FFSchedule.csproj",
@@ -256,12 +297,11 @@
               "RelativeToolTip": "FFSchedule.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAArwAQAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-14T13:51:47.314Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:51:47.314Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -269,12 +309,11 @@
               "RelativeToolTip": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAACEVAAAAAAAAAAAUwDQVAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-11-22T16:38:53.674Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-22T16:38:53.674Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "LoginWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\LoginWindow.xaml.cs",
               "RelativeDocumentMoniker": "LoginWindow.xaml.cs",
@@ -282,12 +321,11 @@
               "RelativeToolTip": "LoginWindow.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:51:39.804Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:51:39.804Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "ThemeToggleButton.xaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml.cs",
               "RelativeDocumentMoniker": "Controls\\ThemeToggleButton.xaml.cs",
@@ -295,20 +333,18 @@
               "RelativeToolTip": "Controls\\ThemeToggleButton.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T13:47:30.713Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:47:30.713Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "ThemeToggleButton.xaml",
               "DocumentMoniker": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
               "RelativeDocumentMoniker": "Controls\\ThemeToggleButton.xaml",
               "ToolTip": "C:\\Users\\\u0414\u042D\u041D\\FFSchedule\\Controls\\ThemeToggleButton.xaml",
               "RelativeToolTip": "Controls\\ThemeToggleButton.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-11-14T13:46:23.944Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T13:46:23.944Z"
             }
           ]
         }

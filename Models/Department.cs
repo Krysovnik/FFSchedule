@@ -26,4 +26,6 @@ public partial class Department
     public virtual FireBrigade? Fb { get; set; }
 
     public virtual ICollection<SettlementDepartamentDistance> SettlementDepartamentDistances { get; set; } = new List<SettlementDepartamentDistance>();
+
+    public virtual ICollection<SettlementMainDepartament> SettlementMainDepartaments { get; set; } = new List<SettlementMainDepartament>();
 }

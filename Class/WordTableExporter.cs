@@ -32,6 +32,9 @@ namespace FFSchedule.Class
 
                 var cell = table.Descendants<TableCell>().FirstOrDefault(c => c.InnerText.Contains("{{SettlementName}}"));
 
+                var depCell = table.Descendants<TableCell>().FirstOrDefault(c => c.InnerText.Contains("{{Department}}"));
+
+                //населенный пункт
                 if (cell != null)
                 {
                     var paragraph = cell.Elements<Paragraph>().FirstOrDefault();
@@ -39,6 +42,19 @@ namespace FFSchedule.Class
                     paragraph.RemoveAllChildren<Run>();
 
                     paragraph.Append(new Run(new Text(fullName)));
+                }
+
+                //подразделение пожарной охраны
+                if (depCell != null)
+                {
+                    var paragraph = depCell.Elements<Paragraph>().FirstOrDefault();
+                    paragraph.RemoveAllChildren<Run>();
+
+                    var departments = s.SettlementMainDepartaments?.Where(x => x.Dpt != null).Select(x => x.Dpt.DptName).ToList();
+
+                    string depText = (departments != null && departments.Count > 0) ? string.Join(", ", departments) : "—";
+
+                    paragraph.Append(new Run(new Text(depText)));
                 }
 
                 body.Append(table);

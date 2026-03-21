@@ -39,6 +39,8 @@ public partial class FfsContext : DbContext
 
     public virtual DbSet<SettlementDepartamentDistance> SettlementDepartamentDistances { get; set; }
 
+    public virtual DbSet<SettlementMainDepartament> SettlementMainDepartaments { get; set; }
+
     public virtual DbSet<SpecialStatusObject> SpecialStatusObjects { get; set; }
 
     public virtual DbSet<StatusesOfSpeObj> StatusesOfSpeObjs { get; set; }
@@ -243,6 +245,23 @@ public partial class FfsContext : DbContext
             entity.HasOne(d => d.Dpt).WithMany(p => p.SettlementDepartamentDistances).HasForeignKey(d => d.DptId);
 
             entity.HasOne(d => d.Se).WithMany(p => p.SettlementDepartamentDistances).HasForeignKey(d => d.SeId);
+        });
+
+        modelBuilder.Entity<SettlementMainDepartament>(entity =>
+        {
+            entity.HasKey(e => e.SmdId);
+
+            entity.ToTable("SettlementMainDepartament");
+
+            entity.Property(e => e.SmdId)
+                .ValueGeneratedNever()
+                .HasColumnName("SMD_ID");
+            entity.Property(e => e.DptId).HasColumnName("DPT_ID");
+            entity.Property(e => e.SeId).HasColumnName("SE_ID");
+
+            entity.HasOne(d => d.Dpt).WithMany(p => p.SettlementMainDepartaments).HasForeignKey(d => d.DptId);
+
+            entity.HasOne(d => d.Se).WithMany(p => p.SettlementMainDepartaments).HasForeignKey(d => d.SeId);
         });
 
         modelBuilder.Entity<SpecialStatusObject>(entity =>

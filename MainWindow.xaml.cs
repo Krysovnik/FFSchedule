@@ -642,7 +642,12 @@ namespace FFSchedule
         }
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
         {
-            var settlements = _dbcontext.Settlements.Include(s => s.Vc).Include(s => s.Tol).ToList(); //включая связи
+            var settlements = _dbcontext.Settlements
+            .Include(s => s.Vc)
+            .Include(s => s.Tol)
+            .Include(s => s.SettlementMainDepartaments)
+                .ThenInclude(smd => smd.Dpt)
+            .ToList(); //включая связи
 
             var exporter = new WordTableExporter();
 
