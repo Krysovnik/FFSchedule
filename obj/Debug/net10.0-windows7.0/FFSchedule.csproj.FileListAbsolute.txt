@@ -560,3 +560,9 @@ C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.OpenXml.F
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\OpenXmlPowerTools.dll
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\System.Management.Automation.dll
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\template.docx
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\FFS\template.docx
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.OpenXml.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\OpenXmlPowerTools.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\System.Management.Automation.dll
+C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\GeoJSON.Net.dll

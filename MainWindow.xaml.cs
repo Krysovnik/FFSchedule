@@ -1,47 +1,39 @@
-﻿using BruTile;
-using BruTile.Predefined;
-using BruTile.Web;
+﻿using DocumentFormat.OpenXml.Drawing;
 using FFSchedule.Class;
 using FFSchedule.Models;
 using FFSchedule.Services;
 using Mapsui;
-using Mapsui.Animations;
 using Mapsui.Extensions;
 using Mapsui.Layers;
 using Mapsui.Nts;
-using Mapsui.Nts.Extensions;
 using Mapsui.Projections;
-using Mapsui.Providers;
 using Mapsui.Styles;
 using Mapsui.Tiling;
 using Mapsui.Tiling.Layers;
 using Mapsui.UI;
 using Mapsui.UI.Wpf;
-using Mapsui.Utilities;
+using Mapsui.Widgets.ButtonWidgets;
+using Mapsui.Widgets.InfoWidgets;
+using Mapsui.Widgets.ScaleBar;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
-using OpenTK.Graphics.OpenGL;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Runtime.InteropServices.Marshalling;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace FFSchedule
 {
     public partial class MainWindow : Window
     {
+        private Map map;
+
+        private readonly HttpClient _httpClient = new HttpClient();
+
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
 
@@ -81,8 +73,7 @@ namespace FFSchedule
         }
         public void InitializeMap()
         {
-            var map = new Map();
-
+            map = new Map();
             //Тайловая подложка
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
             //Районы
@@ -100,6 +91,9 @@ namespace FFSchedule
             FireStationInfoPanel.Visibility = Visibility.Collapsed;
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
             MapControl.MouseMove += MapControl_MouseMove;
+            MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
+            MapControl.Map.Widgets.Add(new ZoomInOutWidget());
+            MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());
         }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
@@ -277,22 +271,98 @@ namespace FFSchedule
                 MapControl.Cursor = Cursors.Arrow;
             }
         }
-        //Кнопки
-        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+
+
+        //Поиск
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MapControl.Map?.Navigator != null)
+            var query = SearchTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(query))
             {
-                MapControl.Map.Navigator.ZoomIn();
+                // Очистка старых маркеров и списка
+                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == "SearchPin");
+                if (oldPinLayer != null)
+                {
+                    MapControl.Map.Layers.Remove(oldPinLayer);
+                    MapControl.Refresh();
+                }
+                SearchResultsLb.ItemsSource = null;
+                SearchResultsLb.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            SearchButton.IsEnabled = false;
+            SearchResultsLb.ItemsSource = null;
+
+            try
+            {
+                var results = await _searchService.SearchAsync(query);
+                if (results == null || results.Count == 0)
+                {
+                    SearchResultsLb.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                SearchResultsLb.ItemsSource = results;
+                SearchResultsLb.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                SearchButton.IsEnabled = true;
             }
         }
 
-        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (MapControl.Map?.Navigator != null)
-            {
-                MapControl.Map.Navigator.ZoomOut();
-            }
+            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
+            _searchService.FlyToResult(res);
         }
+        private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FireStationsListBox.SelectedItem == null)
+            {
+                HideInfoPanel();
+                return;
+            }
+
+            var selectedStation = FireStationsListBox.SelectedItem as FireStation;
+            if (selectedStation == null)
+            {
+                HideInfoPanel();
+                return;
+            }
+
+            FireStationName.Text = selectedStation.Name ?? "Без названия";
+            FireStationAddress.Text = selectedStation.Address ?? "Не указан";
+            FireStationDistrict.Text = selectedStation.District ?? "Не указано";
+            FireStationType.Text = selectedStation.Type ?? "Не указано";
+            FireStationPhone.Text = selectedStation.Phone ?? "Не указано";
+
+            FireStationInfoPanel.Visibility = Visibility.Visible;
+            NoSelectionText.Visibility = Visibility.Collapsed;
+
+            var projected = Mapsui.Projections.SphericalMercator.FromLonLat(
+                selectedStation.Longitude,
+                selectedStation.Latitude
+            );
+
+            MapControl.Map.Navigator.CenterOn(projected.x, projected.y);
+            MapControl.Map.Navigator.ZoomToLevel(12);
+        }
+
+        private void HideInfoPanel()
+        {
+            FireStationInfoPanel.Visibility = Visibility.Collapsed;
+            NoSelectionText.Visibility = Visibility.Visible;
+        }
+
+
+        //Кнопки  
         private void FireStationsToggleButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleFireStationsVisibility();
@@ -421,7 +491,7 @@ namespace FFSchedule
                             Address = f.Attributes.Exists("address") ? f.Attributes["address"]?.ToString() : "Не указано",
                             District = f.Attributes.Exists("district") ? f.Attributes["district"]?.ToString() : "Не указано",
                             Type = f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : "Не указано",
-                            Phone = f.Attributes.Exists("phone") ? f.Attributes["phone"]?.ToString() : "Не указано",    
+                            Phone = f.Attributes.Exists("phone") ? f.Attributes["phone"]?.ToString() : "Не указано",
                             Longitude = point.X,
                             Latitude = point.Y
                         };
@@ -551,95 +621,8 @@ namespace FFSchedule
                 return geometry.Factory.CreateLineString(projectedCoordinates);
         }
 
-        #endregion
-
-        //Поиск
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            var query = SearchTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                // Очистка старых маркеров и списка
-                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == "SearchPin");
-                if (oldPinLayer != null)
-                {
-                    MapControl.Map.Layers.Remove(oldPinLayer);
-                    MapControl.Refresh();
-                }
-                SearchResultsLb.ItemsSource = null;
-                SearchResultsLb.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            SearchButton.IsEnabled = false;
-            SearchResultsLb.ItemsSource = null;
-
-            try
-            {
-                var results = await _searchService.SearchAsync(query);
-                if (results == null || results.Count == 0)
-                {
-                    SearchResultsLb.Visibility = Visibility.Collapsed;
-                    return;
-                }
-
-                SearchResultsLb.ItemsSource = results;
-                SearchResultsLb.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            finally
-            {
-                SearchButton.IsEnabled = true;
-            }
-        }
-
-        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
-            _searchService.FlyToResult(res);
-        }
-        private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (FireStationsListBox.SelectedItem == null)
-            {
-                HideInfoPanel();
-                return;
-            }
-
-            var selectedStation = FireStationsListBox.SelectedItem as FireStation;
-            if (selectedStation == null)
-            {
-                HideInfoPanel();
-                return;
-            }
-
-            FireStationName.Text = selectedStation.Name ?? "Без названия";
-            FireStationAddress.Text = selectedStation.Address ?? "Не указан";
-            FireStationDistrict.Text = selectedStation.District ?? "Не указано";
-            FireStationType.Text = selectedStation.Type ?? "Не указано";
-            FireStationPhone.Text = selectedStation.Phone ?? "Не указано";
-
-            FireStationInfoPanel.Visibility = Visibility.Visible;
-            NoSelectionText.Visibility = Visibility.Collapsed;
-
-            var projected = Mapsui.Projections.SphericalMercator.FromLonLat(
-                selectedStation.Longitude,
-                selectedStation.Latitude
-            );
-
-            MapControl.Map.Navigator.CenterOn(projected.x, projected.y);
-            MapControl.Map.Navigator.ZoomToLevel(12);
-        }
-
-        private void HideInfoPanel()
-        {
-            FireStationInfoPanel.Visibility = Visibility.Collapsed;
-            NoSelectionText.Visibility = Visibility.Visible;
-        }
+        #endregion        
+        //Word
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
         {
             var settlements = _dbcontext.Settlements
@@ -658,5 +641,136 @@ namespace FFSchedule
 
             MessageBox.Show("Word документ создан!");
         }
+        private async void BuildRoute_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!double.TryParse(FromLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLat) ||
+    !double.TryParse(FromLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLon) ||
+    !double.TryParse(ToLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLat) ||
+    !double.TryParse(ToLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLon))
+                {
+                    MessageBox.Show("Неверные координаты! Используйте точку как разделитель дробной части.");
+                    return;
+                }
+
+
+                if (!IsValidCoordinate(fromLon, true) || !IsValidCoordinate(fromLat, false) ||
+                            !IsValidCoordinate(toLon, true) || !IsValidCoordinate(toLat, false))
+                {
+                    MessageBox.Show("Неверные координаты!\nДолгота: -180..180\nШирота: -90..90");
+                    return;
+                }
+
+                map.Layers.Clear();
+                InitializeMap();
+
+                string coordinates = $"{fromLon.ToString(CultureInfo.InvariantCulture)},{fromLat.ToString(CultureInfo.InvariantCulture)};" +
+                           $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+
+                string osrmUrl = $"http://router.project-osrm.org/route/v1/driving/{Uri.EscapeDataString(coordinates)}?overview=full&geometries=geojson";
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(30);
+                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("FFSchedule/1.0");
+
+                    var response = await httpClient.GetAsync(osrmUrl);
+                    response.EnsureSuccessStatusCode();
+
+                    var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+                    var code = json.RootElement.GetProperty("code").GetString();
+                    if (code != "Ok")
+                    {
+                        MessageBox.Show($"OSRM ошибка: {code}");
+                        return;
+                    }
+
+                    var routes = json.RootElement.GetProperty("routes");
+                    if (routes.GetArrayLength() == 0)
+                    {
+                        MessageBox.Show("Маршрут не найден!");
+                        return;
+                    }
+
+                    var routeGeometry = json.RootElement
+                        .GetProperty("routes")
+                        .EnumerateArray()
+                        .First()
+                        .GetProperty("geometry")
+                        .GetProperty("coordinates");
+
+                    var coordinatesList = new List<Coordinate>();
+                    foreach (var coord in routeGeometry.EnumerateArray())
+                    {
+                        double lon = coord[0].GetDouble();
+                        double lat = coord[1].GetDouble();
+                        coordinatesList.Add(new Coordinate(lon, lat));
+                    }
+
+                    // Преобразуем координаты в WebMercator
+                    var projectedCoords = coordinatesList.Select(c =>
+                    {
+                        var p = SphericalMercator.FromLonLat(c.X, c.Y);
+                        return new Coordinate(p.x, p.y);
+                    }).ToArray();
+
+                    var routeLine = new LineString(projectedCoords);
+
+                    var routeFeature = new GeometryFeature
+                    {
+                        Geometry = routeLine,
+                        Styles = new List<IStyle>
+                {
+                    new VectorStyle
+                    {
+                        Fill = null,
+                        Outline = new Pen(Color.Red, 4)
+                    }
+                }
+                    };
+
+                    var routeLayer = new MemoryLayer
+                    {
+                        Name = "Route",
+                        Features = new[] { routeFeature }
+                    };
+
+                    map.Layers.Add(routeLayer);
+                    MapControl.Refresh();
+
+                    double distance = json.RootElement
+                        .GetProperty("routes")[0]
+                        .GetProperty("distance").GetDouble();
+
+                    double duration = json.RootElement
+                        .GetProperty("routes")[0]
+                        .GetProperty("duration").GetDouble();
+
+                    MessageBox.Show($"Маршрут построен!\nДлина: {distance:F1} м\nВремя: {duration / 60:F1} мин");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show($"Ошибка сети: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                MessageBox.Show($"Ошибка разбора JSON: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при построении маршрута: {ex.Message}");
+            }
+        }
+        private bool IsValidCoordinate(double value, bool isLongitude)
+        {
+            if (isLongitude)
+                return value >= -180 && value <= 180;
+            else
+                return value >= -90 && value <= 90;
+        }
+
     }
 }

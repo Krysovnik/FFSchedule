@@ -95,6 +95,17 @@
           }
         }
       },
+      "GeoJSON.Net/1.4.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/GeoJSON.Net.dll": {
+            "assemblyVersion": "1.4.0.0",
+            "fileVersion": "1.4.0.0"
+          }
+        }
+      },
       "HarfBuzzSharp/8.3.1.2": {
         "dependencies": {
           "HarfBuzzSharp.NativeAssets.Win32": "8.3.1.2",
@@ -1482,14 +1493,6 @@
           }
         }
       },
-      "System.Net.Http.Json/10.0.3": {
-        "runtime": {
-          "lib/net10.0/System.Net.Http.Json.dll": {
-            "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.326.7603"
-          }
-        }
-      },
       "System.Reflection.MetadataLoadContext/7.0.0": {
         "runtime": {
           "lib/net7.0/System.Reflection.MetadataLoadContext.dll": {
@@ -1570,6 +1573,13 @@
       "sha512": "sha512-A8UtcghHQlWxPJhJF5bsfEYO7068JHGTuJ7tzyyMjd5fE/N/xY1cVOUhzuLLFwMOCJVnM4mqSQc93W9fGfZ1kA==",
       "path": "excss/4.3.1",
       "hashPath": "excss.4.3.1.nupkg.sha512"
+    },
+    "GeoJSON.Net/1.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jGl6JvyQV4hS3JsZ7FXTmB1tXE1kadXl2iD8H9OIqe1a5q7OfskDh0Cy2+YrEZ13eI4DJ8xTbDJXz2tldKyM8g==",
+      "path": "geojson.net/1.4.1",
+      "hashPath": "geojson.net.1.4.1.nupkg.sha512"
     },
     "HarfBuzzSharp/8.3.1.2": {
       "type": "package",
@@ -2081,13 +2091,6 @@
       "sha512": "sha512-eknkOPXmlrZ6gXNfmkkLFrhbopXcU815BCaxTVHiY44UtTpA/zm8EKy4uCyb4HicITf5S8FA/9WiXeLdBXusBA==",
       "path": "system.management.automation.dll/10.0.10586",
       "hashPath": "system.management.automation.dll.10.0.10586.nupkg.sha512"
-    },
-    "System.Net.Http.Json/10.0.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-mnedfiB5HfXesLJwM7X5JLPOn9IgO/wB5mCWUc/qwfonbWSHta8D2KLiihnqQ0WwtN0rrlTqxBQPh5MqPEEPVg==",
-      "path": "system.net.http.json/10.0.3",
-      "hashPath": "system.net.http.json.10.0.3.nupkg.sha512"
     },
     "System.Reflection.MetadataLoadContext/7.0.0": {
       "type": "package",

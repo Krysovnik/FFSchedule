@@ -66,7 +66,7 @@ namespace FFSchedule.Services
             // Стиль маркера
             pin.Styles.Add(new SymbolStyle
             {
-                SymbolType = SymbolType.Ellipse,
+                SymbolType = SymbolType.Rectangle,
                 Fill = new Brush(Color.FromArgb(255, 255, 50, 50)),
                 Outline = new Pen(new Color(255, 255, 255, 255), 3.0f) { PenStyle = PenStyle.Solid },
                 SymbolScale = 0.35f,
