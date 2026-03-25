@@ -54,18 +54,20 @@ namespace FFSchedule
 
         private readonly FfsContext _dbcontext;
 
+        private RouteService routeService;
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeMap();
-
+         
             _dbcontext = new FfsContext();
 
             FireStationsListBox.ItemsSource = fireStations;
 
             httpClient = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(30),
+                Timeout = TimeSpan.FromSeconds(70),
                 DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
             };
 
@@ -94,6 +96,8 @@ namespace FFSchedule
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
             MapControl.Map.Widgets.Add(new ZoomInOutWidget());
             MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());
+
+            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
         }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
@@ -639,12 +643,13 @@ namespace FFSchedule
                 map.Layers.Clear();
                 InitializeMap();
 
-                var routeBuilder = new RouteService(httpClient, map, MapControl);
-                var result = await routeBuilder.BuildRouteAsync(fromLat, fromLon, toLat, toLon);
+                var result = await routeService.BuildRouteFromFireStationAsync(toLat, toLon);
 
                 if (result.Success)
                 {
                     MessageBox.Show($"Маршрут построен!\nДлина: {result.Distance:F1} м\nВремя: {result.Duration / 60:F1} мин");
+                    await Task.Delay(100);
+                    MapControl.Refresh();
                 }
                 else
                 {

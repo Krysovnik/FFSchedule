@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Windows;
 using Color = Mapsui.Styles.Color;
 
 
@@ -23,12 +24,31 @@ namespace FFSchedule.Services
         private readonly HttpClient httpClient;
         private readonly Map map;
         private readonly MapControl mapControl;
+        private readonly List<FireStation> fireStations;
 
-        public RouteService(HttpClient httpClient, Map map, MapControl mapControl)
+        public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations)
         {
             this.httpClient = httpClient;
             this.map = map;
             this.mapControl = mapControl;
+            this.fireStations = fireStations;
+        }
+
+        public async Task<RouteResult> BuildRouteFromFireStationAsync(double toLat, double toLon)
+        {
+            try
+            {
+                var nearestStation = await FindNearestFireStation(toLat, toLon);
+                if (nearestStation == null)
+                {
+                    return new RouteResult { Success = false, ErrorMessage = "Не удалось найти пожарную часть" };
+                }
+                return await BuildRouteAsync(nearestStation.Latitude, nearestStation.Longitude, toLat, toLon);
+            }
+            catch (Exception ex)
+            {
+                return new RouteResult { Success = false, ErrorMessage = $"Ошибка: {ex.Message}" };
+            }
         }
 
         public async Task<RouteResult> BuildRouteAsync(double fromLat, double fromLon, double toLat, double toLon)
@@ -102,6 +122,45 @@ namespace FFSchedule.Services
             catch (Exception ex)
             {
                 return new RouteResult { Success = false, ErrorMessage = $"Ошибка при построении маршрута: {ex.Message}" };
+            }
+        }
+
+        private async Task<FireStation> FindNearestFireStation(double toLat, double toLon)
+        {
+            var coordinates = string.Join(";",
+                fireStations.Select(s => $"{s.Longitude.ToString(CultureInfo.InvariantCulture)},{s.Latitude.ToString(CultureInfo.InvariantCulture)}")) +
+            $";{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+
+            string tableUrl = $"http://router.project-osrm.org/table/v1/driving/{Uri.EscapeDataString(coordinates)}";
+
+            try
+            {
+                var response = await httpClient.GetAsync(tableUrl);
+                response.EnsureSuccessStatusCode();
+
+                var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                var durations = json.RootElement.GetProperty("durations");
+
+                var lastColumn = durations.EnumerateArray().Last(); 
+                double minDuration = double.MaxValue;
+                int nearestIndex = -1;
+
+                for (int i = 0; i < fireStations.Count; i++)
+                {
+                    var duration = lastColumn[i].GetDouble();
+                    if (duration < minDuration)
+                    {
+                        minDuration = duration;
+                        nearestIndex = i;
+                    }
+                }
+                MessageBox.Show($"Найдена станция: {(nearestIndex >= 0 ? fireStations[nearestIndex].Name : "null")}");
+                return nearestIndex >= 0 ? fireStations[nearestIndex] : null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при поиске ближайшей станции: {ex.Message}");
+                return null;
             }
         }
 
