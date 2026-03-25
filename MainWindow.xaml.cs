@@ -32,7 +32,7 @@ namespace FFSchedule
     {
         private Map map;
 
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient httpClient = new HttpClient();
 
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
@@ -63,9 +63,9 @@ namespace FFSchedule
 
             FireStationsListBox.ItemsSource = fireStations;
 
-            var httpClient = new HttpClient
+            httpClient = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(10),
+                Timeout = TimeSpan.FromSeconds(30),
                 DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
             };
 
@@ -603,24 +603,6 @@ namespace FFSchedule
 
             return result;
         }
-
-        private Geometry ProjectGeometry(Geometry geometry)
-        {
-            var coordinates = geometry.Coordinates;
-            var projectedCoordinates = new Coordinate[coordinates.Length];
-
-            for (int i = 0; i < coordinates.Length; i++)
-            {
-                var projected = SphericalMercator.FromLonLat(coordinates[i].X, coordinates[i].Y);
-                projectedCoordinates[i] = new Coordinate(projected.x, projected.y);
-            }
-
-            if (geometry is Polygon)
-                return geometry.Factory.CreatePolygon(projectedCoordinates);
-            else
-                return geometry.Factory.CreateLineString(projectedCoordinates);
-        }
-
         #endregion        
         //Word
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
@@ -646,131 +628,34 @@ namespace FFSchedule
             try
             {
                 if (!double.TryParse(FromLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLat) ||
-    !double.TryParse(FromLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLon) ||
-    !double.TryParse(ToLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLat) ||
-    !double.TryParse(ToLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLon))
+                    !double.TryParse(FromLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLon) ||
+                    !double.TryParse(ToLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLat) ||
+                    !double.TryParse(ToLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLon))
                 {
                     MessageBox.Show("Неверные координаты! Используйте точку как разделитель дробной части.");
-                    return;
-                }
-
-
-                if (!IsValidCoordinate(fromLon, true) || !IsValidCoordinate(fromLat, false) ||
-                            !IsValidCoordinate(toLon, true) || !IsValidCoordinate(toLat, false))
-                {
-                    MessageBox.Show("Неверные координаты!\nДолгота: -180..180\nШирота: -90..90");
                     return;
                 }
 
                 map.Layers.Clear();
                 InitializeMap();
 
-                string coordinates = $"{fromLon.ToString(CultureInfo.InvariantCulture)},{fromLat.ToString(CultureInfo.InvariantCulture)};" +
-                           $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+                var routeBuilder = new RouteService(httpClient, map, MapControl);
+                var result = await routeBuilder.BuildRouteAsync(fromLat, fromLon, toLat, toLon);
 
-                string osrmUrl = $"http://router.project-osrm.org/route/v1/driving/{Uri.EscapeDataString(coordinates)}?overview=full&geometries=geojson";
-
-                using (var httpClient = new HttpClient())
+                if (result.Success)
                 {
-                    httpClient.Timeout = TimeSpan.FromSeconds(30);
-                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("FFSchedule/1.0");
-
-                    var response = await httpClient.GetAsync(osrmUrl);
-                    response.EnsureSuccessStatusCode();
-
-                    var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-
-                    var code = json.RootElement.GetProperty("code").GetString();
-                    if (code != "Ok")
-                    {
-                        MessageBox.Show($"OSRM ошибка: {code}");
-                        return;
-                    }
-
-                    var routes = json.RootElement.GetProperty("routes");
-                    if (routes.GetArrayLength() == 0)
-                    {
-                        MessageBox.Show("Маршрут не найден!");
-                        return;
-                    }
-
-                    var routeGeometry = json.RootElement
-                        .GetProperty("routes")
-                        .EnumerateArray()
-                        .First()
-                        .GetProperty("geometry")
-                        .GetProperty("coordinates");
-
-                    var coordinatesList = new List<Coordinate>();
-                    foreach (var coord in routeGeometry.EnumerateArray())
-                    {
-                        double lon = coord[0].GetDouble();
-                        double lat = coord[1].GetDouble();
-                        coordinatesList.Add(new Coordinate(lon, lat));
-                    }
-
-                    // Преобразуем координаты в WebMercator
-                    var projectedCoords = coordinatesList.Select(c =>
-                    {
-                        var p = SphericalMercator.FromLonLat(c.X, c.Y);
-                        return new Coordinate(p.x, p.y);
-                    }).ToArray();
-
-                    var routeLine = new LineString(projectedCoords);
-
-                    var routeFeature = new GeometryFeature
-                    {
-                        Geometry = routeLine,
-                        Styles = new List<IStyle>
+                    MessageBox.Show($"Маршрут построен!\nДлина: {result.Distance:F1} м\nВремя: {result.Duration / 60:F1} мин");
+                }
+                else
                 {
-                    new VectorStyle
-                    {
-                        Fill = null,
-                        Outline = new Pen(Color.Red, 4)
-                    }
+                    MessageBox.Show(result.ErrorMessage);
                 }
-                    };
 
-                    var routeLayer = new MemoryLayer
-                    {
-                        Name = "Route",
-                        Features = new[] { routeFeature }
-                    };
-
-                    map.Layers.Add(routeLayer);
-                    MapControl.Refresh();
-
-                    double distance = json.RootElement
-                        .GetProperty("routes")[0]
-                        .GetProperty("distance").GetDouble();
-
-                    double duration = json.RootElement
-                        .GetProperty("routes")[0]
-                        .GetProperty("duration").GetDouble();
-
-                    MessageBox.Show($"Маршрут построен!\nДлина: {distance:F1} м\nВремя: {duration / 60:F1} мин");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                MessageBox.Show($"Ошибка сети: {ex.Message}");
-            }
-            catch (JsonException ex)
-            {
-                MessageBox.Show($"Ошибка разбора JSON: {ex.Message}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при построении маршрута: {ex.Message}");
+                MessageBox.Show($"Ошибка: {ex.Message}");
             }
         }
-        private bool IsValidCoordinate(double value, bool isLongitude)
-        {
-            if (isLongitude)
-                return value >= -180 && value <= 180;
-            else
-                return value >= -90 && value <= 90;
-        }
-
     }
 }
