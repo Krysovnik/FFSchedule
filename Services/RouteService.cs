@@ -125,7 +125,7 @@ namespace FFSchedule.Services
             }
         }
 
-        private async Task<FireStation> FindNearestFireStation(double toLat, double toLon)
+        private async Task<FireStation?> FindNearestFireStation(double toLat, double toLon)
         {
             var coordinates = string.Join(";",
                 fireStations.Select(s => $"{s.Longitude.ToString(CultureInfo.InvariantCulture)},{s.Latitude.ToString(CultureInfo.InvariantCulture)}")) +
@@ -154,7 +154,7 @@ namespace FFSchedule.Services
                         nearestIndex = i;
                     }
                 }
-                MessageBox.Show($"Найдена станция: {(nearestIndex >= 0 ? fireStations[nearestIndex].Name : "null")}");
+                //MessageBox.Show($"Найдена станция: {(nearestIndex >= 0 ? fireStations[nearestIndex].Name : "null")}");
                 return nearestIndex >= 0 ? fireStations[nearestIndex] : null;
             }
             catch (Exception ex)

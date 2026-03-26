@@ -187,21 +187,13 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <Button Content="Создать таблицу в Word" Click="GenerateWordTable_Click" />
-                    <StackPanel Grid.Row="0" Margin="10" HorizontalAlignment="Left">
-                        <TextBlock Text="Откуда (lat, lon): " VerticalAlignment="Center"/>
-
-                        <TextBox x:Name="FromLon" Width="60" Margin="5" Text="82.937921"/>
-                        <TextBox x:Name="FromLat" Width="60" Margin="5" Text="55.007523"/>
+                    <StackPanel x:Name="RouteButton" Grid.Row="0" Margin="10" HorizontalAlignment="Left">
+                        <Button Content="Построить маршрут" Click="BuildRoute_Click"/>
                         
-                        
-                        <TextBlock Text="Куда (lat, lon): " VerticalAlignment="Center" Margin="10,0,0,0"/>
-
-                        <TextBox x:Name="ToLon" Width="60" Margin="5" Text="83.051723"/>
-                        <TextBox x:Name="ToLat" Width="60" Margin="5" Text="54.846423"/>
-                        
-                        
-                        <Button Content="Построить маршрут" Click="BuildRoute_Click" Margin="10,0,0,0"/>
+                        <TextBlock x:Name="BlockDistance"/>
+                        <TextBlock x:Name="BlockDuration"/>
                     </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 
@@ -212,6 +204,13 @@
 
             <Grid Grid.Column="2">
                 <mapsui:MapControl x:Name="MapControl"/>
+                <Control x:Name="LoadingIndicator"
+                    Style="{StaticResource BusyAnimationStyle}"
+                    Visibility="Collapsed"
+                    Width="100"
+                    Height="100"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
                 <Canvas x:Name="IconCanvas" IsHitTestVisible="False"/>
             </Grid>
         </Grid>

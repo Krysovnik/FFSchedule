@@ -566,3 +566,5 @@ C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\DocumentFormat.Op
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\OpenXmlPowerTools.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\System.Management.Automation.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\GeoJSON.Net.dll
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\UserControl1.g.cs
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\UserControl1.baml

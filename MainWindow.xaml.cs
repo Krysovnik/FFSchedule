@@ -52,15 +52,20 @@ namespace FFSchedule
 
         private readonly SearchService _searchService;
 
-        private readonly FfsContext _dbcontext;
+        private double searchLat;
+        private double searchLon;
 
         private RouteService routeService;
+
+        private readonly FfsContext _dbcontext;
+  
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeMap();
-         
+            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
+
             _dbcontext = new FfsContext();
 
             FireStationsListBox.ItemsSource = fireStations;
@@ -95,9 +100,7 @@ namespace FFSchedule
             MapControl.MouseMove += MapControl_MouseMove;
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
             MapControl.Map.Widgets.Add(new ZoomInOutWidget());
-            MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());
-
-            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
+            MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());      
         }
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
@@ -324,6 +327,10 @@ namespace FFSchedule
         private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
+
+            searchLat = res.Lat;
+            searchLon = res.Lon;
+
             _searchService.FlyToResult(res);
         }
         private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -631,23 +638,25 @@ namespace FFSchedule
         {
             try
             {
-                if (!double.TryParse(FromLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLat) ||
-                    !double.TryParse(FromLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double fromLon) ||
-                    !double.TryParse(ToLat.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLat) ||
-                    !double.TryParse(ToLon.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double toLon))
+                if (searchLat == 0 && searchLon == 0)
                 {
-                    MessageBox.Show("Неверные координаты! Используйте точку как разделитель дробной части.");
+                    MessageBox.Show("Введите адрес");
                     return;
                 }
 
-                map.Layers.Clear();
-                InitializeMap();
+                RouteButton.IsEnabled = false;
 
-                var result = await routeService.BuildRouteFromFireStationAsync(toLat, toLon);
+                LoadingIndicator.Visibility = Visibility.Visible;
+
+                routeService.ClearRoute();
+
+                var result = await routeService.BuildRouteFromFireStationAsync(searchLat, searchLon);
 
                 if (result.Success)
                 {
-                    MessageBox.Show($"Маршрут построен!\nДлина: {result.Distance:F1} м\nВремя: {result.Duration / 60:F1} мин");
+                    BlockDistance.Text = $"Длина: {result.Distance / 1000:F1} км";
+                    BlockDuration.Text = $"Время: {result.Duration / 60:F1} мин";
+
                     await Task.Delay(100);
                     MapControl.Refresh();
                 }
@@ -660,6 +669,11 @@ namespace FFSchedule
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}");
+            }
+            finally
+            {
+                LoadingIndicator.Visibility = Visibility.Collapsed;
+                RouteButton.IsEnabled = true;
             }
         }
     }
