@@ -623,7 +623,11 @@ namespace FFSchedule
             .Include(s => s.Tol)
             .Include(s => s.SettlementMainDepartaments)
                 .ThenInclude(smd => smd.Dpt)
-            .ToList(); //включая связи
+            .Include(s => s.SettlementDepartamentDistances)
+                .ThenInclude(sdd => sdd.Dpt)
+            .Include(s => s.EquipmentTypeQuantities)       // <-- добавляем
+                .ThenInclude(etq => etq.Dpt)               // <-- чтобы подтянулись Dpt
+            .ToList();
 
             var exporter = new WordTableExporter();
 

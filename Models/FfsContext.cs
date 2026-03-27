@@ -85,6 +85,7 @@ public partial class FfsContext : DbContext
             entity.Property(e => e.DptAddress).HasColumnName("DPT_Address");
             entity.Property(e => e.DptName).HasColumnName("DPT_Name");
             entity.Property(e => e.DptPhoneNum).HasColumnName("DPT_PhoneNum");
+            entity.Property(e => e.DptShort).HasColumnName("DPT_Short");
             entity.Property(e => e.DtId).HasColumnName("DT_ID");
             entity.Property(e => e.FbId).HasColumnName("FB_ID");
 

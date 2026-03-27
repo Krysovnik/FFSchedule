@@ -25,7 +25,8 @@
           "NetTopologySuite": "2.6.0",
           "NetTopologySuite.Features": "2.2.0",
           "NetTopologySuite.IO.GeoJSON": "4.0.0",
-          "OpenXmlPowerTools": "4.5.3.2"
+          "OpenXmlPowerTools": "4.5.3.2",
+          "System.Net.Http.Json": "10.0.3"
         },
         "runtime": {
           "FFSchedule.dll": {}
@@ -1397,6 +1398,14 @@
           }
         }
       },
+      "System.Net.Http.Json/10.0.3": {
+        "runtime": {
+          "lib/net10.0/System.Net.Http.Json.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.326.7603"
+          }
+        }
+      },
       "System.Reflection.MetadataLoadContext/7.0.0": {
         "runtime": {
           "lib/net7.0/System.Reflection.MetadataLoadContext.dll": {
@@ -1993,6 +2002,13 @@
       "sha512": "sha512-eknkOPXmlrZ6gXNfmkkLFrhbopXcU815BCaxTVHiY44UtTpA/zm8EKy4uCyb4HicITf5S8FA/9WiXeLdBXusBA==",
       "path": "system.management.automation.dll/10.0.10586",
       "hashPath": "system.management.automation.dll.10.0.10586.nupkg.sha512"
+    },
+    "System.Net.Http.Json/10.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mnedfiB5HfXesLJwM7X5JLPOn9IgO/wB5mCWUc/qwfonbWSHta8D2KLiihnqQ0WwtN0rrlTqxBQPh5MqPEEPVg==",
+      "path": "system.net.http.json/10.0.3",
+      "hashPath": "system.net.http.json.10.0.3.nupkg.sha512"
     },
     "System.Reflection.MetadataLoadContext/7.0.0": {
       "type": "package",

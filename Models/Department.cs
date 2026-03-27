@@ -17,6 +17,8 @@ public partial class Department
 
     public int? FbId { get; set; }
 
+    public string? DptShort { get; set; }
+
     public virtual ICollection<DepartamentEquipmentSummary> DepartamentEquipmentSummaries { get; set; } = new List<DepartamentEquipmentSummary>();
 
     public virtual DepartmentType? Dt { get; set; }
