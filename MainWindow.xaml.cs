@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using FFSchedule.Class;
 using FFSchedule.Models;
+using FFSchedule.Page;
 using FFSchedule.Services;
 using Mapsui;
 using Mapsui.Extensions;
@@ -37,7 +38,7 @@ namespace FFSchedule
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
 
-        private ObservableCollection<FireStation> fireStations = new ObservableCollection<FireStation>();
+        public ObservableCollection<FireStation> fireStations = new ObservableCollection<FireStation>();
 
         private MemoryLayer _hoverLayer;
 
@@ -50,25 +51,24 @@ namespace FFSchedule
 
         private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
 
-        private readonly SearchService _searchService;
+        public readonly SearchService _searchService;
 
-        private double searchLat;
-        private double searchLon;
+        public double searchLat;
+        public double searchLon;
 
-        private RouteService routeService;
+        public RouteService routeService;
 
-        private readonly FfsContext _dbcontext;
+        public readonly FfsContext _dbcontext;
   
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeMap();
+
             routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
 
             _dbcontext = new FfsContext();
-
-            FireStationsListBox.ItemsSource = fireStations;
 
             httpClient = new HttpClient
             {
@@ -77,6 +77,8 @@ namespace FFSchedule
             };
 
             _searchService = new SearchService(httpClient, MapControl);
+
+            SideFrame.Navigate(new SearchPage(this));
         }
         public void InitializeMap()
         {
@@ -95,7 +97,6 @@ namespace FFSchedule
             //Контролер lib
             MapControl.Map = map;
 
-            FireStationInfoPanel.Visibility = Visibility.Collapsed;
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
             MapControl.MouseMove += MapControl_MouseMove;
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
@@ -126,67 +127,44 @@ namespace FFSchedule
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void ButtonAddFireStation_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void ButtonRedFireStation_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void ButtonDelFireStation_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
         //Карта
         private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!fireStationsVisible) return;
+
             var screenPosition = e.GetPosition(MapControl);
             var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
-                screenPosition.X,
-                screenPosition.Y
-            );
+                screenPosition.X, screenPosition.Y);
 
             var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
             if (layer is MemoryLayer memoryLayer)
             {
                 var features = memoryLayer.GetFeatures(
                     new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
-                    MapControl.Map.Navigator.Viewport.Resolution
-                );
+                    MapControl.Map.Navigator.Viewport.Resolution);
 
                 var closest = features.FirstOrDefault();
-
                 if (closest != null)
                 {
-                    var name = closest["name"]?.ToString() ?? "Без названия";
-                    var address = closest["address"]?.ToString() ?? "Не указан";
-                    var district = closest["district"]?.ToString() ?? "Не указан";
-                    var type = closest["type"]?.ToString() ?? "Не указан";
-                    var phone = closest["phone"]?.ToString() ?? "Не указан";
+                    // Извлекаем имя ПЧ
+                    var stationName = closest["name"]?.ToString();
 
-                    FireStationName.Text = name;
-                    FireStationAddress.Text = address;
-                    FireStationDistrict.Text = district;
-                    FireStationType.Text = type;
-                    FireStationPhone.Text = phone;
+                    if (!string.IsNullOrWhiteSpace(stationName))
+                    {
+                        // ✅ Переключаемся на страницу с ПЧ
+                        SideFrame.Navigate(new FireStationsPage(this));
 
-                    FireStationInfoPanel.Visibility = Visibility.Visible;
-                    NoSelectionText.Visibility = Visibility.Collapsed;
+                        // ✅ Ждём, пока страница загрузится, и вызываем выбор
+                        // Используем Dispatcher для отложенного вызова
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            if (SideFrame.Content is FireStationsPage fireStationsPage)
+                            {
+                                fireStationsPage.SelectFireStation(stationName);
+                            }
+                        }), System.Windows.Threading.DispatcherPriority.Background);
+                    }
                 }
-                else
-                {
-                    FireStationInfoPanel.Visibility = Visibility.Collapsed;
-                    NoSelectionText.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                FireStationInfoPanel.Visibility = Visibility.Collapsed;
-                NoSelectionText.Visibility = Visibility.Visible;
             }
         }
         private void MapControl_MouseMove(object sender, MouseEventArgs e)
@@ -278,102 +256,21 @@ namespace FFSchedule
                 MapControl.Cursor = Cursors.Arrow;
             }
         }
-
-
-        //Поиск
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            var query = SearchTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                // Очистка старых маркеров и списка
-                var oldPinLayer = MapControl.Map?.Layers.FirstOrDefault(l => l.Name == "SearchPin");
-                if (oldPinLayer != null)
-                {
-                    MapControl.Map.Layers.Remove(oldPinLayer);
-                    MapControl.Refresh();
-                }
-                SearchResultsLb.ItemsSource = null;
-                SearchResultsLb.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            SearchButton.IsEnabled = false;
-            SearchResultsLb.ItemsSource = null;
-
-            try
-            {
-                var results = await _searchService.SearchAsync(query);
-                if (results == null || results.Count == 0)
-                {
-                    SearchResultsLb.Visibility = Visibility.Collapsed;
-                    return;
-                }
-
-                SearchResultsLb.ItemsSource = results;
-                SearchResultsLb.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            finally
-            {
-                SearchButton.IsEnabled = true;
-            }
-        }
-
-        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
-
-            searchLat = res.Lat;
-            searchLon = res.Lon;
-
-            _searchService.FlyToResult(res);
-        }
-        private void FireStationsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (FireStationsListBox.SelectedItem == null)
-            {
-                HideInfoPanel();
-                return;
-            }
-
-            var selectedStation = FireStationsListBox.SelectedItem as FireStation;
-            if (selectedStation == null)
-            {
-                HideInfoPanel();
-                return;
-            }
-
-            FireStationName.Text = selectedStation.Name ?? "Без названия";
-            FireStationAddress.Text = selectedStation.Address ?? "Не указан";
-            FireStationDistrict.Text = selectedStation.District ?? "Не указано";
-            FireStationType.Text = selectedStation.Type ?? "Не указано";
-            FireStationPhone.Text = selectedStation.Phone ?? "Не указано";
-
-            FireStationInfoPanel.Visibility = Visibility.Visible;
-            NoSelectionText.Visibility = Visibility.Collapsed;
-
-            var projected = Mapsui.Projections.SphericalMercator.FromLonLat(
-                selectedStation.Longitude,
-                selectedStation.Latitude
-            );
-
-            MapControl.Map.Navigator.CenterOn(projected.x, projected.y);
-            MapControl.Map.Navigator.ZoomToLevel(12);
-        }
-
-        private void HideInfoPanel()
-        {
-            FireStationInfoPanel.Visibility = Visibility.Collapsed;
-            NoSelectionText.Visibility = Visibility.Visible;
-        }
-
-
         //Кнопки  
+        private void NavigateToSearch(object sender, RoutedEventArgs e)
+        {
+            SideFrame.Navigate(new SearchPage(this));
+        }
+
+        private void NavigateToFireStations(object sender, RoutedEventArgs e)
+        {
+            SideFrame.Navigate(new FireStationsPage(this));
+        }
+
+        private void NavigateToRoute(object sender, RoutedEventArgs e)
+        {
+            SideFrame.Navigate(new RoutePage(this));
+        }
         private void FireStationsToggleButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleFireStationsVisibility();
@@ -385,10 +282,6 @@ namespace FFSchedule
         private void ToggleVillageCouncilsVisibility()
         {
             villageCouncilsVisible = !villageCouncilsVisible;
-            VillageCouncilsToggleButton.Content = villageCouncilsVisible ? "📖" : "📕";
-            VillageCouncilsToggleButton.ToolTip = villageCouncilsVisible
-                ? "Скрыть сельсоветы"
-                : "Показать сельсоветы";
             if (MapControl.Map?.Layers != null)
             {
                 var pointsLayer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Polygons");
@@ -402,10 +295,6 @@ namespace FFSchedule
         private void ToggleFireStationsVisibility()
         {
             fireStationsVisible = !fireStationsVisible;
-            FireStationsToggleButton.Content = fireStationsVisible ? "⬤" : "○";
-            FireStationsToggleButton.ToolTip = fireStationsVisible
-                ? "Скрыть пожарные части"
-                : "Показать пожарные части";
 
             if (MapControl.Map?.Layers != null)
             {
@@ -615,70 +504,5 @@ namespace FFSchedule
             return result;
         }
         #endregion        
-        //Word
-        private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
-        {
-            var settlements = _dbcontext.Settlements
-            .Include(s => s.Vc)
-            .Include(s => s.Tol)
-            .Include(s => s.SettlementMainDepartaments)
-                .ThenInclude(smd => smd.Dpt)
-            .Include(s => s.SettlementDepartamentDistances)
-                .ThenInclude(sdd => sdd.Dpt)
-            .Include(s => s.EquipmentTypeQuantities)       // <-- добавляем
-                .ThenInclude(etq => etq.Dpt)               // <-- чтобы подтянулись Dpt
-            .ToList();
-
-            var exporter = new WordTableExporter();
-
-            string templatePath = @"FFS/template.docx";
-            string outputPath = @"FFS/Schedule.docx";
-
-            exporter.ExportSettlementsOnly(settlements, templatePath, outputPath);
-
-            MessageBox.Show("Word документ создан!");
-        }
-        private async void BuildRoute_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (searchLat == 0 && searchLon == 0)
-                {
-                    MessageBox.Show("Введите адрес");
-                    return;
-                }
-
-                RouteButton.IsEnabled = false;
-
-                LoadingIndicator.Visibility = Visibility.Visible;
-
-                routeService.ClearRoute();
-
-                var result = await routeService.BuildRouteFromFireStationAsync(searchLat, searchLon);
-
-                if (result.Success)
-                {
-                    BlockDistance.Text = $"Длина: {result.Distance / 1000:F1} км";
-                    BlockDuration.Text = $"Время: {result.Duration / 60:F1} мин";
-
-                    await Task.Delay(100);
-                    MapControl.Refresh();
-                }
-                else
-                {
-                    MessageBox.Show(result.ErrorMessage);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}");
-            }
-            finally
-            {
-                LoadingIndicator.Visibility = Visibility.Collapsed;
-                RouteButton.IsEnabled = true;
-            }
-        }
     }
 }

@@ -571,3 +571,9 @@ C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\UserCont
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\GeoJSON.Net.dll
 C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\UserControl1.g.cs
 C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\UserControl1.baml
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\FireStationsPage.g.cs
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.g.cs
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.g.cs
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\FireStationsPage.baml
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.baml
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.baml

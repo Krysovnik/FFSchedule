@@ -29,6 +29,8 @@
 
             <MenuItem Header="Вид">
                 <MenuItem Header="Заливка полигонов" IsCheckable="True" IsChecked="True" Click="TogglePolygonFill_Click"/>
+                <MenuItem Header="Скрыть сельсоветы" IsCheckable="True" Click="VillageCouncilsToggleButton_Click"/>
+                <MenuItem Header="Скрыть пожарные части" IsCheckable="True" Click="FireStationsToggleButton_Click"/>
 
                 <Separator/>
 
@@ -44,165 +46,42 @@
                 <MenuItem Header="О программе"/>
             </MenuItem>
         </Menu>
-
-        <ToolBar DockPanel.Dock="Top" Height="35" Background="{DynamicResource BackgroundBrush}">
-            <Button Content="➕" Click="ButtonAddFireStation_Click" ToolTip="Добавить точку" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Button Content="✏️" Click="ButtonRedFireStation_Click" ToolTip="Редактировать" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Button Content="🗑️" Click="ButtonDelFireStation_Click" ToolTip="Удалить" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Separator/>
-            <Button Content="📁" ToolTip="Загрузить карту" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Button Content="💾" ToolTip="Сохранить" Foreground="{DynamicResource ForegroundBrush}"/>
-            <Separator/>
-            <Button x:Name="FireStationsToggleButton" 
-                    Content="⬤" 
-                    Width="22"
-                    ToolTip="Скрыть пожарные части" 
-                    Foreground="{DynamicResource ForegroundBrush}"
-                    Click="FireStationsToggleButton_Click"/>
-            <Button x:Name="VillageCouncilsToggleButton" 
-                    Content="📖" 
-                    ToolTip="Скрыть сельсоветы" 
-                    Foreground="{DynamicResource ForegroundBrush}"
-                    Click="VillageCouncilsToggleButton_Click" Width="22"/>
-            <controls:ThemeToggleButton/>
-        </ToolBar>
-
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="0.6*" MinWidth="200"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="SidePanel" Background="{DynamicResource OutlinesBrush}">
-                    <StackPanel Orientation="Horizontal" Margin="20,10,20,10">
-                        <TextBox 
-                            x:Name="SearchTextBox"
-                            Background="{DynamicResource OutlinesBrush}" 
-                            Height="20"
-                            Width="300"
-                            BorderThickness="1">
-                        </TextBox>
-                        <Button Content="🔍 Поиск" x:Name="SearchButton" Click="SearchButton_Click" Width="80"/>
-                    </StackPanel>
-                    <ListBox x:Name="SearchResultsLb" 
-                        Visibility="Collapsed"
-                        MouseDoubleClick="SearchResultsLb_MouseDoubleClick"
-                        MaxHeight="200" 
-                        Margin="5">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding ShortDisplayName}" 
-                                    ToolTip="{Binding DisplayName}"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <TextBlock Text="Информация о пожарной части" 
-                        FontWeight="Bold" FontSize="14" 
-                        Margin="20,0,0,10" 
-                        Foreground="{DynamicResource ForegroundBrush}"/>
-                    <Border x:Name="FireStationInfoPanel" 
-                        Background="{DynamicResource BackgroundBrush}"
-                        Padding="10"
-                        CornerRadius="5"
-                        Visibility="Collapsed">
-                        <StackPanel>
-                            <TextBlock x:Name="FireStationName" 
-                                FontWeight="Bold" 
-                                FontSize="13" 
-                                TextWrapping="Wrap"
-                                Margin="0,0,0,5"
-                                Foreground="{DynamicResource ForegroundBrush}"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Адрес: " 
-                                    FontWeight="SemiBold"
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                                <TextBlock x:Name="FireStationAddress" 
-                                    TextWrapping="Wrap"
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                            </StackPanel>
+            <StackPanel DockPanel.Dock="Left" Width="50" Background="{DynamicResource BackgroundBrush}" Orientation="Vertical">
+                <Button Content="🗺️" Height="50" Click="NavigateToSearch"/>
+                <TextBlock Text="Поиск" HorizontalAlignment="Center"/>
+                <Button Content="🚒" Height="50" Click="NavigateToFireStations"/>
+                <TextBlock Text="ПЧ" HorizontalAlignment="Center"/>
+                <Button Content="🐌" Height="50" Click="NavigateToRoute"/>
+                <TextBlock Text="Маршрут" HorizontalAlignment="Center"/>
+            </StackPanel>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Район: " 
-                                    FontWeight="SemiBold"
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                                <TextBlock x:Name="FireStationDistrict" 
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                            </StackPanel>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Тип: " 
-                                    FontWeight="SemiBold"
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                                <TextBlock x:Name="FireStationType" 
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                            </StackPanel>
+                <Frame x:Name="SideFrame" 
+                    Grid.Row="0" 
+                    NavigationUIVisibility="Hidden" 
+                    Background="{DynamicResource OutlinesBrush}" 
+                    VerticalContentAlignment="Stretch" 
+                    HorizontalContentAlignment="Stretch"/>
+            </Grid>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Телефон: " 
-                                    FontWeight="SemiBold"
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                                <TextBlock x:Name="FireStationPhone" 
-                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <TextBlock x:Name="NoSelectionText" 
-                        Text="Выберите пожарную часть на карте" 
-                        FontStyle="Italic"
-                        Foreground="{DynamicResource ForegroundBrush}"
-                        Margin="20,0,0,10"/>
-
-                    <TextBlock Text="Список пожарных частей" 
-                        FontWeight="Bold" FontSize="14" 
-                        Margin="20,0,0,10" 
-                        Foreground="{DynamicResource ForegroundBrush}"/>
-
-                    <ListBox x:Name="FireStationsListBox"
-                        Height="300"
-                        Margin="20,0,10,10"
-                        Background="{DynamicResource BackgroundBrush}"
-                        BorderBrush="{DynamicResource ForegroundBrush}"
-                        BorderThickness="1"
-                        SelectionMode="Single" SelectionChanged="FireStationsListBox_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource ForegroundBrush}" 
-                                    BorderThickness="0,0,0,1" 
-                                    Padding="5"
-                                    Margin="0,2">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Name}" 
-                                            FontWeight="Bold" 
-                                            Foreground="{DynamicResource ForegroundBrush}"
-                                            TextWrapping="Wrap"/>
-                                        <TextBlock Text="{Binding Address}" 
-                                            Foreground="{DynamicResource ForegroundBrush}"
-                                            FontSize="11"
-                                            TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <Button Content="Создать таблицу в Word" Click="GenerateWordTable_Click" />
-                    <StackPanel x:Name="RouteButton" Grid.Row="0" Margin="10" HorizontalAlignment="Left">
-                        <Button Content="Построить маршрут" Click="BuildRoute_Click"/>
-                        
-                        <TextBlock x:Name="BlockDistance"/>
-                        <TextBlock x:Name="BlockDuration"/>
-                    </StackPanel>
-
-                </StackPanel>
-            </ScrollViewer>
-
-            <GridSplitter Grid.Column="1" 
+            <GridSplitter Grid.Column="2" 
                   Width="2" 
                   HorizontalAlignment="Stretch" 
                   Background="Gray"/>
 
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="3">
                 <mapsui:MapControl x:Name="MapControl"/>
                 <Control x:Name="LoadingIndicator"
                     Style="{StaticResource BusyAnimationStyle}"
