@@ -22,57 +22,17 @@ namespace FFSchedule.Page
     public partial class SearchPage : System.Windows.Controls.Page
     {
         private readonly MainWindow _mainWindow;
-        public string SearchQuery { get; set; } = "";
         public SearchPage(MainWindow mainWindow)
         {
             InitializeComponent();
             _mainWindow = mainWindow;
-            DataContext = this;
         }
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        private void OnResultSelected(object sender, NominatimResult res)
         {
-            var query = SearchTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                _mainWindow.MapControl.Map.Layers
-                    .FirstOrDefault(l => l.Name == "SearchPin")?.Dispose();
-                SearchResultsLb.ItemsSource = null;
-                SearchResultsLb.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            SearchButton.IsEnabled = false;
-            SearchResultsLb.ItemsSource = null;
-
-            try
-            {
-                var results = await _mainWindow._searchService.SearchAsync(query);
-                if (results == null || results.Count == 0)
-                {
-                    SearchResultsLb.Visibility = Visibility.Collapsed;
-                    return;
-                }
-                SearchResultsLb.ItemsSource = results;
-                SearchResultsLb.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            finally
-            {
-                SearchButton.IsEnabled = true;
-            }
-        }
-
-        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
             _mainWindow.searchLat = res.Lat;
             _mainWindow.searchLon = res.Lon;
             _mainWindow._searchService.FlyToResult(res);
         }
-
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
         {
             var settlements = _mainWindow._dbcontext.Settlements

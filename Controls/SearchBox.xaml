@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="FFSchedule.Controls.SearchBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FFSchedule.Controls"
+             mc:Ignorable="d" 
+            d:DesignHeight="250" d:DesignWidth="400">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+            <TextBox x:Name="SearchTextBox"
+                     Background="White" Height="25" Width="300"
+                     Text="{Binding SearchQuery,
+                            RelativeSource={RelativeSource AncestorType=UserControl},
+                            Mode=TwoWay,
+                            UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="🔍 Поиск" x:Name="SearchButton"
+                    Click="SearchButton_Click"
+                    Width="80" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <ListBox x:Name="SearchResultsLb"
+                 Visibility="Collapsed"
+                 MaxHeight="200" Margin="5"
+                 Background="White"
+                 MouseDoubleClick="SearchResultsLb_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}"
+                               ToolTip="{Binding Address}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

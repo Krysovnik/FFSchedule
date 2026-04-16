@@ -105,6 +105,12 @@ namespace FFSchedule.Services
             PutSearchPin(result);
         }
 
+        public void RemoveSearchPin()
+        {
+            var old = _mapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
+            if (old != null)
+                _mapControl.Map.Layers.Remove(old);
+        }
         #endregion
     }
 }

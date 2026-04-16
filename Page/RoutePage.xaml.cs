@@ -1,4 +1,5 @@
-﻿using FFSchedule.Services;
+﻿using FFSchedule.Models;
+using FFSchedule.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.EntityFrameworkCore;
 
 namespace FFSchedule.Page
 {
@@ -25,49 +27,23 @@ namespace FFSchedule.Page
         {
             InitializeComponent();
             _mainWindow = mainWindow;
+            Loaded += (s, e) => LoadRanks();
         }
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        private void OnResultSelected(object sender, NominatimResult res)
         {
-            var query = SearchTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                _mainWindow.MapControl.Map.Layers
-                    .FirstOrDefault(l => l.Name == "SearchPin")?.Dispose();
-                SearchResultsLb.ItemsSource = null;
-                SearchResultsLb.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            SearchButton.IsEnabled = false;
-            SearchResultsLb.ItemsSource = null;
-
-            try
-            {
-                var results = await _mainWindow._searchService.SearchAsync(query);
-                if (results == null || results.Count == 0)
-                {
-                    SearchResultsLb.Visibility = Visibility.Collapsed;
-                    return;
-                }
-                SearchResultsLb.ItemsSource = results;
-                SearchResultsLb.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            finally
-            {
-                SearchButton.IsEnabled = true;
-            }
-        }
-
-        private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (SearchResultsLb.SelectedItem is not NominatimResult res) return;
             _mainWindow.searchLat = res.Lat;
             _mainWindow.searchLon = res.Lon;
             _mainWindow._searchService.FlyToResult(res);
+        }
+        private async void LoadRanks()
+        {
+            using (var db = new FfsContext())
+            {
+                var ranks = await db.Ranks
+                       .OrderBy(r => r.RNumber)
+                       .ToListAsync();
+                RankComboBox.ItemsSource = ranks;
+            }
         }
         private async void BuildRoute_Click(object sender, RoutedEventArgs e)
         {

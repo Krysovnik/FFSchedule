@@ -577,3 +577,5 @@ C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.g
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\FireStationsPage.baml
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.baml
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.baml
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.g.cs
+C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.baml
