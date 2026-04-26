@@ -62,18 +62,25 @@
                 <TextBlock Text="Маршрут" HorizontalAlignment="Center"/>
             </StackPanel>
 
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Background="{DynamicResource OutlinesBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-
-                <Frame x:Name="SideFrame" 
-                    Grid.Row="0" 
-                    NavigationUIVisibility="Hidden" 
-                    Background="{DynamicResource OutlinesBrush}" 
-                    VerticalContentAlignment="Stretch" 
-                    HorizontalContentAlignment="Stretch"/>
+                <StackPanel>
+                    <controls:SearchBox x:Name="GlobalSearchBox" 
+                        Panel.ZIndex="1"
+                        ResultSelected="OnGlobalResultSelected" 
+                        Margin="10" 
+                        HorizontalAlignment="Left"/>
+                    <Frame x:Name="SideFrame" 
+                        Grid.Row="0"
+                        Panel.ZIndex="0"
+                        NavigationUIVisibility="Hidden" 
+                        Background="{DynamicResource OutlinesBrush}" 
+                        VerticalContentAlignment="Stretch" 
+                        HorizontalContentAlignment="Stretch"/>
+                </StackPanel>
             </Grid>
 
             <GridSplitter Grid.Column="2" 

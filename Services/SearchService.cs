@@ -104,6 +104,20 @@ namespace FFSchedule.Services
             _mapControl.Map?.Navigator?.ZoomToLevel(15);
             PutSearchPin(result);
         }
+        public async Task<NominatimResult?> ReverseSearchAsync(double lat, double lon)
+        {
+            var latStr = lat.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var lonStr = lon.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            var url = $"https://nominatim.openstreetmap.org/reverse?lat={latStr}&lon={lonStr}&format=jsonv2&addressdetails=1";
+
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<NominatimResult>(url);
+                return result;
+            }
+            catch { return null; }
+        }
 
         public void RemoveSearchPin()
         {

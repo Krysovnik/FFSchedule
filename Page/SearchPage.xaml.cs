@@ -27,12 +27,6 @@ namespace FFSchedule.Page
             InitializeComponent();
             _mainWindow = mainWindow;
         }
-        private void OnResultSelected(object sender, NominatimResult res)
-        {
-            _mainWindow.searchLat = res.Lat;
-            _mainWindow.searchLon = res.Lon;
-            _mainWindow._searchService.FlyToResult(res);
-        }
         private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
         {
             var settlements = _mainWindow._dbcontext.Settlements

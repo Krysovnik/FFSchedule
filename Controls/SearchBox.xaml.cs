@@ -20,7 +20,7 @@ namespace FFSchedule.Controls
     public partial class SearchBox : UserControl
     {
         public SearchService SearchService { get; set; }
-
+       
         public static readonly DependencyProperty SearchQueryProperty =
             DependencyProperty.Register(nameof(SearchQuery),
                 typeof(string), typeof(SearchBox),
@@ -37,40 +37,62 @@ namespace FFSchedule.Controls
 
         private readonly MainWindow _mainWindow;
 
+        private CancellationTokenSource? _searchCts;
+
         public SearchBox()
         {
             InitializeComponent();
             _mainWindow = (MainWindow)Application.Current.MainWindow;
         }
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var query = SearchTextBox.Text.Trim();
+
+            _searchCts?.Cancel();
+
             if (string.IsNullOrWhiteSpace(query))
             {
                 ClearResults();
                 return;
             }
-            SearchButton.IsEnabled = false;
-            SearchResultsLb.ItemsSource = null;
+
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+
             try
             {
+                HideAllStates();
+                LoadingIndicator.Visibility = Visibility.Visible;
+
+                await Task.Delay(500, token);
+
                 var results = await _mainWindow._searchService.SearchAsync(query);
-                if (results == null || results.Count == 0)
+
+                if (token.IsCancellationRequested) return;
+
+                LoadingIndicator.Visibility = Visibility.Collapsed;
+
+                if (results != null && results.Any())
                 {
-                    SearchResultsLb.Visibility = Visibility.Collapsed;
-                    return;
+                    SearchResultsLb.ItemsSource = results;
+                    SearchResultsLb.Visibility = Visibility.Visible;
                 }
-                SearchResultsLb.ItemsSource = results;
-                SearchResultsLb.Visibility = Visibility.Visible;
+                else
+                {
+                    NoResultsText.Visibility = Visibility.Visible;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка поиска:\n{ex.Message}", "Nominatim",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            finally
-            {
-                SearchButton.IsEnabled = true;
+                if (token.IsCancellationRequested) return;
+
+                LoadingIndicator.Visibility = Visibility.Collapsed;
+                ErrorText.Text = $"Ошибка: {ex.Message}";
+                ErrorText.Visibility = Visibility.Visible;
             }
         }
         private void SearchResultsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -78,12 +100,33 @@ namespace FFSchedule.Controls
             if (SearchResultsLb.SelectedItem is NominatimResult res)
                 ResultSelected?.Invoke(this, res);
         }
-
         private void ClearResults()
         {
             _mainWindow._searchService.RemoveSearchPin();
             SearchResultsLb.ItemsSource = null;
             SearchResultsLb.Visibility = Visibility.Collapsed;
+        }
+        private void HideAllStates()
+        {
+            SearchResultsLb.Visibility = Visibility.Collapsed;
+            LoadingIndicator.Visibility = Visibility.Collapsed;
+            NoResultsText.Visibility = Visibility.Collapsed;
+            ErrorText.Visibility = Visibility.Collapsed;
+        }
+        public async Task ExternalSearchAndSelectFirst(double lat, double lon)
+        {
+            var result = await _mainWindow._searchService.ReverseSearchAsync(lat, lon);
+            if (result != null)
+            {
+                SearchTextBox.Text = result.DisplayName;
+                ResultSelected?.Invoke(this, result);
+            }
+        }
+        public void FillAndSelect(NominatimResult result)
+        {
+            SearchTextBox.Text = result.ShortDisplayName;
+            //HideAllStates();
+            ResultSelected?.Invoke(this, result);
         }
     }
 }

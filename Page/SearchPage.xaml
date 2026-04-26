@@ -10,8 +10,6 @@
       Title="SearchPage">
 
     <StackPanel Margin="10">
-        <controls:SearchBox ResultSelected="OnResultSelected"/>
-
         <TextBlock Text="Выберите пожарную часть на карте" 
                    FontStyle="Italic" 
                    Foreground="Gray" 

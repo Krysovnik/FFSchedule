@@ -29,12 +29,6 @@ namespace FFSchedule.Page
             _mainWindow = mainWindow;
             Loaded += (s, e) => LoadRanks();
         }
-        private void OnResultSelected(object sender, NominatimResult res)
-        {
-            _mainWindow.searchLat = res.Lat;
-            _mainWindow.searchLon = res.Lon;
-            _mainWindow._searchService.FlyToResult(res);
-        }
         private async void LoadRanks()
         {
             using (var db = new FfsContext())

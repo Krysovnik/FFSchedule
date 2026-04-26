@@ -100,7 +100,7 @@
                             </Trigger>
                         </ControlTemplate.Triggers>
 
-                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
                                 <Canvas Height="60" Width="60">
                                     <Canvas.Resources>

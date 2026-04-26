@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using FFSchedule.Class;
+using FFSchedule.Controls;
 using FFSchedule.Models;
 using FFSchedule.Page;
 using FFSchedule.Services;
@@ -99,10 +100,11 @@ namespace FFSchedule
 
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
             MapControl.MouseMove += MapControl_MouseMove;
+            MapControl.MouseLeftButtonDown += MapControl_GlobalDoubleClickHandler;
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
             MapControl.Map.Widgets.Add(new ZoomInOutWidget());
             MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());      
-        }
+        } 
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
         {
@@ -255,6 +257,32 @@ namespace FFSchedule
             {
                 MapControl.Cursor = Cursors.Arrow;
             }
+        }
+        private async void MapControl_GlobalDoubleClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount != 2) return;
+
+            var screenPos = e.GetPosition(MapControl);
+            var worldPos = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPos.X, screenPos.Y);
+            var lonLat = Mapsui.Projections.SphericalMercator.ToLonLat(worldPos.X, worldPos.Y);
+
+            if (!(SideFrame.Content is RoutePage) && !(SideFrame.Content is SearchPage))
+            {
+                SideFrame.Navigate(new SearchPage(this));
+            }
+
+            // Обратный геокодинг
+            var result = await _searchService.ReverseSearchAsync(lonLat.lat, lonLat.lon);
+            if (result != null)
+            {
+                GlobalSearchBox.FillAndSelect(result);
+            }
+        }
+        private void OnGlobalResultSelected(object sender, NominatimResult res)
+        {
+            this.searchLat = res.Lat;
+            this.searchLon = res.Lon;
+            this._searchService.FlyToResult(res);
         }
         //Кнопки  
         private void NavigateToSearch(object sender, RoutedEventArgs e)
