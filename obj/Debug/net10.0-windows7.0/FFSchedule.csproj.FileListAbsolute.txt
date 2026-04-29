@@ -544,7 +544,6 @@ C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\MapVector\FireStationPoi
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\MapVector\FireStationPoints.geojson
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Images\firestation.png
 C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\Images\firestation.png
-C:\Users\ДЭН\FFSchedule\bin\Debug\net10.0-windows7.0\System.Net.Http.Json.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Document.NET.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Drawing.NET.dll
 C:\Users\Иван\File\FFSchedule\bin\Debug\net10.0-windows7.0\Xceed.Words.NET.dll
@@ -579,3 +578,11 @@ C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.ba
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.baml
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.g.cs
 C:\Users\Иван\File\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.baml
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.g.cs
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\FireStationsPage.g.cs
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.g.cs
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.g.cs
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Controls\SearchBox.baml
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\FireStationsPage.baml
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\RoutePage.baml
+C:\Users\ДЭН\FFSchedule\obj\Debug\net10.0-windows7.0\Page\SearchPage.baml
