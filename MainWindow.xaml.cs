@@ -284,6 +284,26 @@ namespace FFSchedule
             this.searchLon = res.Lon;
             this._searchService.FlyToResult(res);
         }
+        private void ClearSearchAndRoute_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalSearchBox.ResetView(); ;
+
+            _searchService.RemoveSearchPin();
+
+            routeService.ClearRoute();
+
+            searchLat = 0;
+            searchLon = 0;
+
+            MapControl.Refresh();
+            if (SideFrame.Content is RoutePage routePage)
+            {
+                var distBlock = routePage.FindName("BlockDistance") as TextBlock;
+                var timeBlock = routePage.FindName("BlockDuration") as TextBlock;
+                if (distBlock != null) distBlock.Text = "Длина: -";
+                if (timeBlock != null) timeBlock.Text = "Время: -";
+            }
+        }
         //Кнопки  
         private void NavigateToSearch(object sender, RoutedEventArgs e)
         {

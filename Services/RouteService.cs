@@ -25,6 +25,11 @@ namespace FFSchedule.Services
         private readonly Map map;
         private readonly MapControl mapControl;
         private readonly List<FireStation> fireStations;
+        private readonly Color[] _routeColors =
+        {
+            new Color(255, 82, 82),
+            new Color(76, 175, 80)
+        };
 
         public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations)
         {
@@ -34,137 +39,86 @@ namespace FFSchedule.Services
             this.fireStations = fireStations;
         }
 
-        public async Task<RouteResult> BuildRouteFromFireStationAsync(double toLat, double toLon)
+        public async Task<List<RouteResult>> BuildRoutesByRequirementAsync(double toLat, double toLon, int requiredEquipment)
         {
-            try
-            {
-                var nearestStation = await FindNearestFireStation(toLat, toLon);
-                if (nearestStation == null)
-                {
-                    return new RouteResult { Success = false, ErrorMessage = "Не удалось найти пожарную часть" };
-                }
-                return await BuildRouteAsync(nearestStation.Latitude, nearestStation.Longitude, toLat, toLon);
-            }
-            catch (Exception ex)
-            {
-                return new RouteResult { Success = false, ErrorMessage = $"Ошибка: {ex.Message}" };
-            }
-        }
-
-        public async Task<RouteResult> BuildRouteAsync(double fromLat, double fromLon, double toLat, double toLon)
-        {
+            var results = new List<RouteResult>();
             try
             {
                 ClearRoute();
 
-                string coordinates = $"{fromLon.ToString(CultureInfo.InvariantCulture)},{fromLat.ToString(CultureInfo.InvariantCulture)};" +
-                           $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+                var sortedStations = await GetSortedFireStations(toLat, toLon);
 
-                string osrmUrl = $"http://router.project-osrm.org/route/v1/driving/{Uri.EscapeDataString(coordinates)}?overview=full&geometries=geojson";
-
-                var response = await httpClient.GetAsync(osrmUrl);
-                response.EnsureSuccessStatusCode();
-
-                var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-
-                var code = json.RootElement.GetProperty("code").GetString();
-                if (code != "Ok")
+                int currentEquipmentSum = 0;
+                var selectedStations = new List<FireStation>();
+                foreach (var station in sortedStations)
                 {
-                    return new RouteResult { Success = false, ErrorMessage = $"OSRM ошибка: {code}" };
+                    if (currentEquipmentSum >= requiredEquipment) break;
+
+                    selectedStations.Add(station);
+                    currentEquipmentSum += station.EquipmentCapacity;
                 }
-
-                var routes = json.RootElement.GetProperty("routes");
-                if (routes.GetArrayLength() == 0)
+                for (int i = 0; i < selectedStations.Count; i++)
                 {
-                    return new RouteResult { Success = false, ErrorMessage = "Маршрут не найден" };
+                    var color = new Color(255, 82, 82);
+                    var result = await BuildRouteInternalAsync(
+                        selectedStations[i].Latitude,
+                        selectedStations[i].Longitude,
+                        toLat, toLon, i, color);
+                    results.Add(result);
                 }
-
-                var routeGeometry = json.RootElement
-                    .GetProperty("routes")
-                    .EnumerateArray()
-                    .First()
-                    .GetProperty("geometry")
-                    .GetProperty("coordinates");
-
-                var coordinatesList = new List<Coordinate>();
-                foreach (var coord in routeGeometry.EnumerateArray())
-                {
-                    double lon = coord[0].GetDouble();
-                    double lat = coord[1].GetDouble();
-                    coordinatesList.Add(new Coordinate(lon, lat));
-                }
-
-                double distance = json.RootElement
-                    .GetProperty("routes")[0]
-                    .GetProperty("distance").GetDouble();
-
-                double duration = json.RootElement
-                    .GetProperty("routes")[0]
-                    .GetProperty("duration").GetDouble();
-
-                DrawRoute(coordinatesList);
-
-                return new RouteResult
-                {
-                    Success = true,
-                    Distance = distance,
-                    Duration = duration
-                };
-            }
-            catch (HttpRequestException ex)
-            {
-                return new RouteResult { Success = false, ErrorMessage = $"Ошибка сети: {ex.Message}" };
-            }
-            catch (JsonException ex)
-            {
-                return new RouteResult { Success = false, ErrorMessage = $"Ошибка разбора JSON: {ex.Message}" };
             }
             catch (Exception ex)
             {
-                return new RouteResult { Success = false, ErrorMessage = $"Ошибка при построении маршрута: {ex.Message}" };
+                results.Add(new RouteResult { Success = false, ErrorMessage = ex.Message });
             }
+            return results;
         }
-
-        private async Task<FireStation?> FindNearestFireStation(double toLat, double toLon)
+        private async Task<List<FireStation>> GetSortedFireStations(double toLat, double toLon)
         {
             var coordinates = string.Join(";",
                 fireStations.Select(s => $"{s.Longitude.ToString(CultureInfo.InvariantCulture)},{s.Latitude.ToString(CultureInfo.InvariantCulture)}")) +
-            $";{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+                $";{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
 
             string tableUrl = $"http://router.project-osrm.org/table/v1/driving/{Uri.EscapeDataString(coordinates)}";
 
-            try
-            {
-                var response = await httpClient.GetAsync(tableUrl);
-                response.EnsureSuccessStatusCode();
+            var response = await httpClient.GetAsync(tableUrl);
+            response.EnsureSuccessStatusCode();
 
-                var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-                var durations = json.RootElement.GetProperty("durations");
+            var json  = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var durations = json.RootElement.GetProperty("durations");
+            var lastColumn = durations.EnumerateArray().Last();
 
-                var lastColumn = durations.EnumerateArray().Last(); 
-                double minDuration = double.MaxValue;
-                int nearestIndex = -1;
+            var stationsWithTime = fireStations
+                .Select((station, index) => new { Station = station, Duration = lastColumn[index].GetDouble() })
+                .OrderBy(x => x.Duration)
+                .Select(x => x.Station)
+                .ToList();
 
-                for (int i = 0; i < fireStations.Count; i++)
-                {
-                    var duration = lastColumn[i].GetDouble();
-                    if (duration < minDuration)
-                    {
-                        minDuration = duration;
-                        nearestIndex = i;
-                    }
-                }
-                //MessageBox.Show($"Найдена станция: {(nearestIndex >= 0 ? fireStations[nearestIndex].Name : "null")}");
-                return nearestIndex >= 0 ? fireStations[nearestIndex] : null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при поиске ближайшей станции: {ex.Message}");
-                return null;
-            }
+            return stationsWithTime;
         }
+        private async Task<RouteResult> BuildRouteInternalAsync(double fromLat, double fromLon, double toLat, double toLon, int index, Color color)
+        {
+            string coordinates = $"{fromLon.ToString(CultureInfo.InvariantCulture)},{fromLat.ToString(CultureInfo.InvariantCulture)};" +
+                             $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
 
-        private void DrawRoute(List<Coordinate> coordinatesList, Color lineColor = default, float lineWidth = 4f)
+            string osrmUrl = $"http://router.project-osrm.org/route/v1/driving/{Uri.EscapeDataString(coordinates)}?overview=full&geometries=geojson";
+
+            var response = await httpClient.GetAsync(osrmUrl);
+            var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+            var routeGeometry = json.RootElement.GetProperty("routes")[0].GetProperty("geometry").GetProperty("coordinates");
+            var distance = json.RootElement.GetProperty("routes")[0].GetProperty("distance").GetDouble();
+            var duration = json.RootElement.GetProperty("routes")[0].GetProperty("duration").GetDouble();
+
+            var coords = routeGeometry.EnumerateArray()
+                .Select(c => new Coordinate(c[0].GetDouble(), c[1].GetDouble()))
+                .ToList();
+
+            DrawRoute(coords, distance, duration, index, color);
+
+            return new RouteResult { Success = true, Distance = distance, Duration = duration };
+        }
+        private void DrawRoute(List<Coordinate> coordinatesList, double distance, double duration, int index, Color color)
         {
             var projectedCoords = coordinatesList.Select(c =>
             {
@@ -172,27 +126,31 @@ namespace FFSchedule.Services
                 return new Coordinate(p.x, p.y);
             }).ToArray();
 
-            var routeLine = new LineString(projectedCoords);
+            var routeFeature = new GeometryFeature { Geometry = new LineString(projectedCoords) };
 
-            var color = lineColor != default ? lineColor : Color.Red;
-
-            var routeFeature = new GeometryFeature
+            routeFeature.Styles.Add(new VectorStyle
             {
-                Geometry = routeLine,
-                Styles = new List<IStyle>
-                {
-                    new VectorStyle
-                    {
-                        Fill = null,
-                        Outline = new Pen(color, lineWidth)
-                    }
-                }
-            };
+                Outline = new Pen(color, 2f),
+                MaxVisible = 80
+            });
+
+            string infoText = $"#{index + 1}: {distance / 1000:F1} км, {duration / 60:F0} мин";
+
+            routeFeature.Styles.Add(new LabelStyle
+            {
+                Text = infoText,
+                Font = new Font { Size = 10, Bold = true, FontFamily = "Arial" },
+                ForeColor = Color.Black,
+                CollisionDetection = true,
+                MaxWidth = 100,
+                MaxVisible = 80
+            });
 
             var routeLayer = new MemoryLayer
             {
-                Name = "Route",
-                Features = new[] { routeFeature }
+                Name = $"Route_{index}",
+                Features = new[] { routeFeature },
+                MaxVisible = 80
             };
 
             map.Layers.Add(routeLayer);
@@ -201,12 +159,12 @@ namespace FFSchedule.Services
 
         public void ClearRoute()
         {
-            var routeLayer = map.Layers.FirstOrDefault(l => l.Name == "Route");
-            if (routeLayer != null)
+            var layersToRemove = map.Layers.Where(l => l.Name != null && l.Name.StartsWith("Route")).ToList();
+            foreach (var layer in layersToRemove)
             {
-                map.Layers.Remove(routeLayer);
-                mapControl.Refresh();
+                map.Layers.Remove(layer);
             }
+            mapControl.Refresh();
         }
     }
 }

@@ -46,13 +46,11 @@ namespace FFSchedule.Services
             var results = await _httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
             return results?.OrderByDescending(r => r.Importance).ToList() ?? new List<NominatimResult>();
         }
-
-        /// Размещает маркер на карте по координатам результата.
+ 
         public void PutSearchPin(NominatimResult result)
         {
             var merc = Mapsui.Projections.SphericalMercator.FromLonLat(result.Lon, result.Lat);
 
-            // Удаляем старый маркер, если он есть
             var old = _mapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
             if (old != null) _mapControl.Map.Layers.Remove(old);
 
@@ -63,18 +61,16 @@ namespace FFSchedule.Services
                 ["shortLabel"] = result.ShortDisplayName
             };
 
-            // Стиль маркера
             pin.Styles.Add(new SymbolStyle
             {
                 SymbolType = SymbolType.Rectangle,
-                Fill = new Brush(Color.FromArgb(255, 255, 50, 50)),
+                Fill = new Brush(Color.FromArgb(255, 255, 143, 0)),
                 Outline = new Pen(new Color(255, 255, 255, 255), 3.0f) { PenStyle = PenStyle.Solid },
                 SymbolScale = 0.35f,
                 MinVisible = 1,
                 MaxVisible = 500
             });
 
-            // Стиль подписи
             pin.Styles.Add(new LabelStyle
             {
                 Text = result.ShortDisplayName,

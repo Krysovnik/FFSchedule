@@ -15,6 +15,7 @@ namespace FFSchedule.Models
         public double Latitude { get; set; }  
         public double Longitude { get; set; }
         public override string ToString() => $"{Name} ({Address})";
+        public int EquipmentCapacity => Type?.ToLower() == "псч" ? 2 : 1;
     }
 }
 

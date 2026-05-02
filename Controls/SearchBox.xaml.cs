@@ -128,5 +128,11 @@ namespace FFSchedule.Controls
             //HideAllStates();
             ResultSelected?.Invoke(this, result);
         }
+        public void ResetView()
+        {
+            SearchQuery = string.Empty;
+            SearchTextBox.Text = string.Empty;
+            HideAllStates();
+        }
     }
 }

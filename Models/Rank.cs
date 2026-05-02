@@ -9,7 +9,7 @@ public partial class Rank
 
     public string? RNumber { get; set; }
 
-    public string? RTotalEquipmentQuantity { get; set; }
+    public int? RTotalEquipmentQuantity { get; set; }
 
     public virtual ICollection<RankBudgetAllocation> RankBudgetAllocations { get; set; } = new List<RankBudgetAllocation>();
 

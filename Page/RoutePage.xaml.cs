@@ -37,6 +37,11 @@ namespace FFSchedule.Page
                        .OrderBy(r => r.RNumber)
                        .ToListAsync();
                 RankComboBox.ItemsSource = ranks;
+
+                if (ranks.Any())
+                {
+                    RankComboBox.SelectedIndex = 1;
+                }
             }
         }
         private async void BuildRoute_Click(object sender, RoutedEventArgs e)
@@ -49,23 +54,26 @@ namespace FFSchedule.Page
                     return;
                 }
 
+                var selectedRank = RankComboBox.SelectedItem as Rank;
+                if (selectedRank == null) return;
+
+                int neededEquipment = selectedRank.RTotalEquipmentQuantity ?? 0;
+
                 RouteButton.IsEnabled = false;
                 _mainWindow.LoadingIndicator.Visibility = Visibility.Visible;
-                _mainWindow.routeService.ClearRoute();
 
-                var result = await _mainWindow.routeService.BuildRouteFromFireStationAsync(
-                    _mainWindow.searchLat, _mainWindow.searchLon);
+                var results = await _mainWindow.routeService.BuildRoutesByRequirementAsync(
+                    _mainWindow.searchLat,
+                    _mainWindow.searchLon,
+                    neededEquipment);
 
-                if (result.Success)
+                if (results.Any(r => r.Success))
                 {
-                    BlockDistance.Text = $"Длина: {result.Distance / 1000:F1} км";
-                    BlockDuration.Text = $"Время: {result.Duration / 60:F1} мин";
-                    await Task.Delay(100);
+                    var best = results.First(r => r.Success);
+                    BlockDistance.Text = $"Ближайший: {best.Distance / 1000:F1} км";
+                    BlockDuration.Text = $"Время: {best.Duration / 60:F1} мин";
+
                     _mainWindow.MapControl.Refresh();
-                }
-                else
-                {
-                    MessageBox.Show(result.ErrorMessage);
                 }
             }
             catch (Exception ex)
