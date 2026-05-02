@@ -83,6 +83,10 @@ public partial class FfsContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("DPT_ID");
             entity.Property(e => e.DptAddress).HasColumnName("DPT_Address");
+            entity.Property(e => e.DptFiretrucks).HasColumnName("DPT_Firetrucks");
+            entity.Property(e => e.DptHasLadder)
+                .HasDefaultValue(0)
+                .HasColumnName("DPT_HasLadder");
             entity.Property(e => e.DptName).HasColumnName("DPT_Name");
             entity.Property(e => e.DptPhoneNum).HasColumnName("DPT_PhoneNum");
             entity.Property(e => e.DptShort).HasColumnName("DPT_Short");

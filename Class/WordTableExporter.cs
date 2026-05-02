@@ -19,11 +19,11 @@ namespace FFSchedule.Class
             { "3", 9 },
             { "4", 11 },
             { "5", 13 }
-        };//ранги в шаблоне
+        };
 
         public void ExportSettlementsOnly(List<Settlement> settlements, string templatePath, string outputPath)
         {
-            System.IO.File.Copy(templatePath, outputPath, true);
+            File.Copy(templatePath, outputPath, true);
 
             using var doc = WordprocessingDocument.Open(outputPath, true);
             var body = doc.MainDocumentPart.Document.Body;
@@ -40,48 +40,80 @@ namespace FFSchedule.Class
 
                 var cellSettlement = table.Descendants<TableCell>()
                     .FirstOrDefault(c => c.InnerText.Contains("{{SettlementName}}"));
+
                 var depCell = table.Descendants<TableCell>()
                     .FirstOrDefault(c => c.InnerText.Contains("{{Department}}"));
 
-                var equipments = s.EquipmentTypeQuantities?
-                    .Where(x => x.Dpt != null && x.EtqTime != null && x.EtqQuantity != null && x.EtId != null)
-                    .Select(x => new {
+                //сортировка по времени
+                var orderedDepartments = s.EquipmentTypeQuantities?
+                    .Where(x => x.Dpt != null && x.EtqTime != null)
+                    .Select(x => new
+                    {
                         Dpt = x.Dpt,
-                        TimeMinutes = int.TryParse(x.EtqTime.Replace(" мин", ""), out var t) ? t : int.MaxValue,
-                        EtId = x.EtId.Value,
-                        Quantity = x.EtqQuantity.Value
+                        TimeMinutes = int.TryParse(x.EtqTime.Replace(" мин", ""), out var t)
+                            ? t
+                            : int.MaxValue
+                    })
+                    .GroupBy(x => x.Dpt.DptId)
+                    .Select(g => new
+                    {
+                        Dpt = g.First().Dpt,
+                        TimeMinutes = g.Min(x => x.TimeMinutes)
                     })
                     .OrderBy(x => x.TimeMinutes)
                     .ToList();
 
-                
-                List<string> GenerateRankLines(int rankCount)
+                //общее
+                var result = new List<(string text, string time)>();
+
+                var usedDpts = new HashSet<int>();
+                bool ladderAdded = false;
+
+                foreach (var d in orderedDepartments)
                 {
-                    var lines = new List<string>();
-                    var usedDpts = new HashSet<int>();
+                    var dept = d.Dpt;
+                    if (usedDpts.Contains(dept.DptId))
+                        continue;
 
-                    foreach (var eq in equipments)
+                    usedDpts.Add(dept.DptId);
+
+                    string name = !string.IsNullOrWhiteSpace(dept.DptShort)
+                        ? dept.DptShort
+                        : dept.DptName;
+
+                    int firetrucks = dept.DptFiretrucks ?? 0;
+
+                    //АЦ — 1 от ПЧ
+                    if (firetrucks > 0)
                     {
-                        if (usedDpts.Contains(eq.Dpt.DptId)) continue;
-                        usedDpts.Add(eq.Dpt.DptId);
-
-                        string equipmentType = eq.EtId switch
-                        {
-                            1 => "АЛ",
-                            2 => "АЦ",
-                            _ => "АЦ"
-                        };
-
-                        string name = !string.IsNullOrWhiteSpace(eq.Dpt.DptShort) ? eq.Dpt.DptShort : eq.Dpt.DptName;
-                        lines.Add($"{eq.Quantity} {equipmentType} {name} ({eq.TimeMinutes} мин)");
-
-                        if (lines.Count >= rankCount) break;
+                        result.Add(($"1 АЦ {name}", $"{d.TimeMinutes} мин"));
                     }
 
-                    return lines;
+                    //АЛ - только 1 на пожар
+                    if (!ladderAdded && dept.DptHasLadder == 1)
+                    {
+                        result.Add(($"1 АЛ {name}", $"{d.TimeMinutes} мин"));
+                        ladderAdded = true;
+                    }
                 }
 
-                // Заполнение ячеек рангов 
+                //добавление АЛ
+                if (!ladderAdded)
+                {
+                    var ladder = orderedDepartments
+                        .FirstOrDefault(x => x.Dpt.DptHasLadder == 1);
+
+                    if (ladder != null)
+                    {
+                        string name = !string.IsNullOrWhiteSpace(ladder.Dpt.DptShort)
+                            ? ladder.Dpt.DptShort
+                            : ladder.Dpt.DptName;
+
+                        result.Add(($"1 АЛ {name}", $"{ladder.TimeMinutes} мин"));
+                    }
+                }
+
+                //ранги одной таблицы
                 foreach (var kvp in RankCounts)
                 {
                     string rankName = kvp.Key;
@@ -89,56 +121,58 @@ namespace FFSchedule.Class
 
                     var forcesCell = table.Descendants<TableCell>()
                         .FirstOrDefault(c => c.InnerText.Contains($"{{InvolvedForcesRank{rankName}}}"));
+
                     var timeCell = table.Descendants<TableCell>()
                         .FirstOrDefault(c => c.InnerText.Contains($"{{TimeRank{rankName}}}"));
 
-                    if (forcesCell != null && timeCell != null)
+                    if (forcesCell == null || timeCell == null)
+                        continue;
+
+                    var forcesParagraph = forcesCell.Elements<Paragraph>().FirstOrDefault();
+                    var timeParagraph = timeCell.Elements<Paragraph>().FirstOrDefault();
+
+                    forcesParagraph?.RemoveAllChildren<Run>();
+                    timeParagraph?.RemoveAllChildren<Run>();
+
+                    var slice = result.Take(count).ToList();
+
+                    foreach (var item in slice)
                     {
-                        var forcesParagraph = forcesCell.Elements<Paragraph>().FirstOrDefault();
-                        var timeParagraph = timeCell.Elements<Paragraph>().FirstOrDefault();
+                        forcesParagraph?.Append(new Run(new Text(item.text)));
+                        timeParagraph?.Append(new Run(new Text(item.time)));
 
-                        forcesParagraph.RemoveAllChildren<Run>();
-                        timeParagraph.RemoveAllChildren<Run>();
-
-                        var lines = GenerateRankLines(count);
-
-                        foreach (var line in lines)
-                        {
-                            //"1 АЦ псч-7 (10 мин)"
-                            var splitIndex = line.LastIndexOf('(');
-                            string equipmentText = splitIndex > 0 ? line.Substring(0, splitIndex).Trim() : line;
-                            string timeText = splitIndex > 0 ? line.Substring(splitIndex + 1).Replace(")", "").Trim() : "";
-
-                            forcesParagraph.Append(new Run(new Text(equipmentText)));
-                            timeParagraph.Append(new Run(new Text(timeText)));
-
-                            forcesParagraph.Append(new Run(new Break()));
-                            timeParagraph.Append(new Run(new Break()));
-                        }
+                        forcesParagraph?.Append(new Run(new Break()));
+                        timeParagraph?.Append(new Run(new Break()));
                     }
                 }
 
-                // населенный пункт
+                //населенный пункт
                 if (cellSettlement != null)
                 {
                     var paragraph = cellSettlement.Elements<Paragraph>().FirstOrDefault();
                     string fullName = $"{s.Tol?.TolShortName} {s.SeName} {s.Vc?.VcName} с/с.";
-                    paragraph.RemoveAllChildren<Run>();
-                    paragraph.Append(new Run(new Text(fullName)));
+
+                    paragraph?.RemoveAllChildren<Run>();
+                    paragraph?.Append(new Run(new Text(fullName)));
                 }
 
-                // подразделение пожарной охраны
+                
+                //подразделения пожарной охраны
                 if (depCell != null)
                 {
                     var paragraph = depCell.Elements<Paragraph>().FirstOrDefault();
-                    paragraph.RemoveAllChildren<Run>();
+                    paragraph?.RemoveAllChildren<Run>();
 
-                    var departments = s.SettlementMainDepartaments?.Where(x => x.Dpt != null)
+                    var departments = s.SettlementMainDepartaments?
+                        .Where(x => x.Dpt != null)
                         .Select(x => x.Dpt.DptName)
                         .ToList();
 
-                    string depText = (departments != null && departments.Count > 0) ? string.Join(", ", departments) : "—";
-                    paragraph.Append(new Run(new Text(depText)));
+                    string depText = (departments != null && departments.Count > 0)
+                        ? string.Join(", ", departments)
+                        : "—";
+
+                    paragraph?.Append(new Run(new Text(depText)));
                 }
 
                 body.Append(table);
