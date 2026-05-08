@@ -25,6 +25,8 @@ public partial class Department
 
     public virtual ICollection<DepartamentEquipmentSummary> DepartamentEquipmentSummaries { get; set; } = new List<DepartamentEquipmentSummary>();
 
+    public virtual ICollection<DepartmentVillageCouncilTime> DepartmentVillageCouncilTimes { get; set; } = new List<DepartmentVillageCouncilTime>();
+
     public virtual DepartmentType? Dt { get; set; }
 
     public virtual ICollection<EquipmentTypeQuantity> EquipmentTypeQuantities { get; set; } = new List<EquipmentTypeQuantity>();

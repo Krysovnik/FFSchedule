@@ -21,6 +21,8 @@ public partial class FfsContext : DbContext
 
     public virtual DbSet<DepartmentType> DepartmentTypes { get; set; }
 
+    public virtual DbSet<DepartmentVillageCouncilTime> DepartmentVillageCouncilTimes { get; set; }
+
     public virtual DbSet<Employee> Employees { get; set; }
 
     public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
@@ -108,6 +110,24 @@ public partial class FfsContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("DT_ID");
             entity.Property(e => e.DtName).HasColumnName("DT_Name");
+        });
+
+        modelBuilder.Entity<DepartmentVillageCouncilTime>(entity =>
+        {
+            entity.HasKey(e => new { e.DptId, e.VcId });
+
+            entity.ToTable("DepartmentVillageCouncilTime");
+
+            entity.Property(e => e.DptId).HasColumnName("DPT_ID");
+            entity.Property(e => e.VcId).HasColumnName("VC_ID");
+
+            entity.HasOne(d => d.Dpt).WithMany(p => p.DepartmentVillageCouncilTimes)
+                .HasForeignKey(d => d.DptId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.Vc).WithMany(p => p.DepartmentVillageCouncilTimes)
+                .HasForeignKey(d => d.VcId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -225,6 +245,7 @@ public partial class FfsContext : DbContext
             entity.Property(e => e.SeId)
                 .ValueGeneratedNever()
                 .HasColumnName("SE_ID");
+            entity.Property(e => e.Optkp).HasColumnName("OPTKP");
             entity.Property(e => e.SeName).HasColumnName("SE_Name");
             entity.Property(e => e.TolId).HasColumnName("TOL_ID");
             entity.Property(e => e.VcId).HasColumnName("VC_ID");

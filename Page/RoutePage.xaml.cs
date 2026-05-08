@@ -57,7 +57,7 @@ namespace FFSchedule.Page
                 var selectedRank = RankComboBox.SelectedItem as Rank;
                 if (selectedRank == null) return;
 
-                int neededEquipment = selectedRank.RTotalEquipmentQuantity ?? 0;
+                int neededEquipment = selectedRank.RTotalEquipmentQuantity ?? 0; //rtotalequip - int
 
                 RouteButton.IsEnabled = false;
                 _mainWindow.LoadingIndicator.Visibility = Visibility.Visible;
