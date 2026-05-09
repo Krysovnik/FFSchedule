@@ -54,11 +54,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel DockPanel.Dock="Left" Width="50" Background="{DynamicResource BackgroundBrush}" Orientation="Vertical">
-                <Button Content="🗺️" Height="50" Click="NavigateToSearch"/>
+                <Button Content="🗺️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToSearch"/>
                 <TextBlock Text="Поиск" HorizontalAlignment="Center"/>
-                <Button Content="🚒" Height="50" Click="NavigateToFireStations"/>
+                <Button Content="🚒" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToFireStations"/>
                 <TextBlock Text="ПЧ" HorizontalAlignment="Center"/>
-                <Button Content="🐌" Height="50" Click="NavigateToRoute"/>
+                <Button Content="🛣️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToRoute"/>
                 <TextBlock Text="Маршрут" HorizontalAlignment="Center"/>
             </StackPanel>
 
@@ -73,8 +73,9 @@
                             Panel.ZIndex="1"
                             ResultSelected="OnGlobalResultSelected" 
                             Margin="10" 
-                            HorizontalAlignment="Left"/>
-                        <Button Margin="0,20,0,0"
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Top"/>
+                        <Button Margin="0,22,0,0"
                             Width="25" Height="25"
                             VerticalAlignment="Top"
                             Click="ClearSearchAndRoute_Click"

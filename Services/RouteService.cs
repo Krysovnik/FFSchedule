@@ -64,6 +64,8 @@ namespace FFSchedule.Services
                         selectedStations[i].Latitude,
                         selectedStations[i].Longitude,
                         toLat, toLon, i, color);
+                    result.Station = selectedStations[i];
+
                     results.Add(result);
                 }
             }

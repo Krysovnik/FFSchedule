@@ -10,6 +10,8 @@ namespace FFSchedule.Models
         public string? ErrorMessage { get; set; }
         public double Distance { get; set; }
         public double Duration { get; set; }
+
+        public FireStation? Station { get; set; }
     }
 }
 

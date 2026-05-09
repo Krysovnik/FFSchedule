@@ -298,10 +298,12 @@ namespace FFSchedule
             MapControl.Refresh();
             if (SideFrame.Content is RoutePage routePage)
             {
-                var distBlock = routePage.FindName("BlockDistance") as TextBlock;
-                var timeBlock = routePage.FindName("BlockDuration") as TextBlock;
-                if (distBlock != null) distBlock.Text = "Длина: -";
-                if (timeBlock != null) timeBlock.Text = "Время: -";
+                var stationsList = routePage.FindName("StationsListBox") as ListBox;
+                if (stationsList != null)
+                {
+                    stationsList.Visibility = Visibility.Collapsed;
+                    stationsList.ItemsSource = null;
+                }
             }
         }
         //Кнопки  

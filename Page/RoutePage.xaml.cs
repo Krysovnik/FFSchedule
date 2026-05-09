@@ -57,10 +57,12 @@ namespace FFSchedule.Page
                 var selectedRank = RankComboBox.SelectedItem as Rank;
                 if (selectedRank == null) return;
 
-                int neededEquipment = selectedRank.RTotalEquipmentQuantity ?? 0; //rtotalequip - int
+                int neededEquipment = selectedRank.RTotalEquipmentQuantity ?? 0;
 
                 RouteButton.IsEnabled = false;
                 _mainWindow.LoadingIndicator.Visibility = Visibility.Visible;
+
+                StationsListBox.ItemsSource = null;
 
                 var results = await _mainWindow.routeService.BuildRoutesByRequirementAsync(
                     _mainWindow.searchLat,
@@ -69,9 +71,15 @@ namespace FFSchedule.Page
 
                 if (results.Any(r => r.Success))
                 {
-                    var best = results.First(r => r.Success);
-                    BlockDistance.Text = $"Ближайший: {best.Distance / 1000:F1} км";
-                    BlockDuration.Text = $"Время: {best.Duration / 60:F1} мин";
+                    var displayItems = results.Where(r => r.Success).Select(r => new
+                    {
+                        StationName = r.Station != null ? $"Станция {r.Station.Name}" : "Неизвестная станция",
+                        DistanceText = $"Путь: {r.Distance / 1000:F1} км",
+                        DurationText = $"Время: {r.Duration / 60:F1} мин"
+                    }).ToList();
+
+                    StationsListBox.Visibility = Visibility.Visible;
+                    StationsListBox.ItemsSource = displayItems;
 
                     _mainWindow.MapControl.Refresh();
                 }

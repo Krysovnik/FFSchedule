@@ -6,47 +6,127 @@
              xmlns:local="clr-namespace:FFSchedule.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="250" d:DesignWidth="400">
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Vertical" Margin="0,10,0,0">
-            <TextBox x:Name="SearchTextBox"
-                     Background="White" Height="25" Width="400"
-                     Text="{Binding SearchQuery, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     TextChanged="SearchTextBox_TextChanged"/>
-        </StackPanel>
-        <Grid>
-            <ListBox x:Name="SearchResultsLb"
-                     Visibility="Collapsed"
-                     MaxHeight="200"
-                     Width="400"
-                     Background="White"
-                     MouseDoubleClick="SearchResultsLb_MouseDoubleClick">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding ShortDisplayName}"
-                        ToolTip="{Binding DisplayName}"
-                        TextTrimming="CharacterEllipsis"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+    <Grid MaxWidth="380" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <local:UserControl1 x:Name="LoadingIndicator" 
-                   Visibility="Collapsed" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center" 
-                   Height="60" Width="60" />
+        <Border Grid.Row="0" 
+                Background="White" 
+                BorderBrush="#D1D5DB" 
+                BorderThickness="1"
+                Width="380"
+                CornerRadius="6" 
+                Padding="8,4" 
+                Margin="0,10,0,0">
+            <Grid>
+                <TextBlock Text="Поиск..." 
+                           Foreground="#9CA3AF" 
+                           VerticalAlignment="Center" 
+                           IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text.Length, ElementName=SearchTextBox}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
-            <TextBlock x:Name="NoResultsText" 
-                   Text="Ничего не найдено" 
-                   Visibility="Collapsed" 
-                   HorizontalAlignment="Center" 
-                   Foreground="Gray" 
-                   FontStyle="Italic"/>
+                <TextBox x:Name="SearchTextBox"
+                         Background="Transparent" 
+                         BorderThickness="0" 
+                         VerticalAlignment="Center"
+                         Text="{Binding SearchQuery, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="16"
+                         TextChanged="SearchTextBox_TextChanged"/>
+            </Grid>
+        </Border>
 
-            <TextBlock x:Name="ErrorText" 
-                   Visibility="Collapsed" 
-                   HorizontalAlignment="Center" 
-                   Foreground="IndianRed" 
-                   TextWrapping="Wrap" RenderTransformOrigin="0.5,0.5"/>
-        </Grid>
-    </StackPanel>
+        <Border x:Name="BorderList" Grid.Row="1" 
+                Visibility="Collapsed"
+                Background="White" 
+                BorderBrush="#E5E7EB" 
+                BorderThickness="1" 
+                CornerRadius="4" 
+                Margin="0,4,0,0"
+                Panel.ZIndex="10">
+
+            <Border.Effect>
+                <DropShadowEffect Color="Black" Opacity="0.05" BlurRadius="8" ShadowDepth="2" Direction="270"/>
+            </Border.Effect>
+
+            <Grid MinHeight="30">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Visibility, ElementName=SearchResultsLb}" Value="Collapsed"/>
+                                    <Condition Binding="{Binding Visibility, ElementName=LoadingIndicator}" Value="Collapsed"/>
+                                    <Condition Binding="{Binding Visibility, ElementName=NoResultsText}" Value="Collapsed"/>
+                                    <Condition Binding="{Binding Visibility, ElementName=ErrorText}" Value="Collapsed"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <ListBox x:Name="SearchResultsLb"
+                         Visibility="Collapsed"
+                         MaxHeight="200"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         MouseDoubleClick="SearchResultsLb_MouseDoubleClick">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="10,8"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#F3F4F6"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ShortDisplayName}"
+                                       ToolTip="{Binding DisplayName}"
+                                       FontSize="14"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <local:UserControl1 x:Name="LoadingIndicator" 
+                                    Visibility="Collapsed" 
+                                    HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center" 
+                                    Height="40" Width="40" 
+                                    Margin="10"/>
+
+                <TextBlock x:Name="NoResultsText" 
+                           Text="Ничего не найдено" 
+                           Visibility="Collapsed" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"
+                           Foreground="#6B7280" 
+                           FontStyle="Italic"
+                           Margin="10,15"/>
+
+                <TextBlock x:Name="ErrorText" 
+                           Visibility="Collapsed" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"
+                           Foreground="#EF4444" 
+                           TextWrapping="Wrap" 
+                           TextAlignment="Center"
+                           Margin="10,15"/>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

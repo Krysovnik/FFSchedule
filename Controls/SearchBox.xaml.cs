@@ -46,6 +46,8 @@ namespace FFSchedule.Controls
         }
         private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            BorderList.Visibility = Visibility.Visible;
+
             var query = SearchTextBox.Text.Trim();
 
             _searchCts?.Cancel();
@@ -105,6 +107,7 @@ namespace FFSchedule.Controls
             _mainWindow._searchService.RemoveSearchPin();
             SearchResultsLb.ItemsSource = null;
             SearchResultsLb.Visibility = Visibility.Collapsed;
+            BorderList.Visibility = Visibility.Collapsed;
         }
         private void HideAllStates()
         {

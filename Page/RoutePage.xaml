@@ -9,23 +9,34 @@
       Title="RoutePage">
 
     <StackPanel Margin="10">
-        <ComboBox x:Name="RankComboBox" 
-                  DisplayMemberPath="RNumber" 
-                  Width="115" 
-                  HorizontalAlignment="Left" 
-                  Margin="0,20,0,20"/>
-        <Button Content="Построить маршрут" 
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Построить" 
                 x:Name="RouteButton"
+                Style="{StaticResource OutlineActionButtonStyle}"
                 Click="BuildRoute_Click" 
                 HorizontalAlignment="Left" 
-                Margin="0,20,0,0"/>
-        <TextBlock x:Name="BlockDistance" 
-                   Text="Расстояние: —" 
-                   Margin="0,10,0,0" 
-                   HorizontalAlignment="Left"/>
-        <TextBlock x:Name="BlockDuration" 
-                   Text="Время: —" 
-                   Margin="0,10,0,0" 
-                   HorizontalAlignment="Left" />
+                Margin="0,20,10,20"/>
+            <ComboBox x:Name="RankComboBox" 
+                DisplayMemberPath="RNumber" 
+                Width="80" 
+                Margin="0,20,0,20"/>
+        </StackPanel>
+        <ListBox x:Name="StationsListBox"
+             Visibility="Collapsed"
+             HorizontalAlignment="Left" 
+             Width="380" 
+             BorderThickness="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,5">
+                        <TextBlock Text="{Binding StationName}" FontWeight="SemiBold" FontSize="14"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                            <TextBlock Text="{Binding DistanceText}" Margin="0,0,15,0" Foreground="#444"/>
+                            <TextBlock Text="{Binding DurationText}" Foreground="#444"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
 </Page>

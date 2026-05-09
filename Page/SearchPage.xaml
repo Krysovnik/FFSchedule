@@ -17,7 +17,8 @@
                    HorizontalAlignment="Left" />
 
         <Button Content="Создать таблицу в Word" 
-                Click="GenerateWordTable_Click" 
+                Click="GenerateWordTable_Click"
+                Style="{StaticResource OutlineActionButtonStyle}"
                 Margin="0,20,0,0" 
                 HorizontalAlignment="Left" />
     </StackPanel>
