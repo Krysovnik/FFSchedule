@@ -48,12 +48,12 @@
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="0.6*" MinWidth="200"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Width="50" Background="{DynamicResource BackgroundBrush}">
+            <Grid Grid.Column="0" Width="60" Background="{DynamicResource BackgroundBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -69,7 +69,11 @@
                         Foreground="{DynamicResource MainTextColorBrush}"/>
 
                     <Button Content="🛣️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToRoute"/>
-                    <TextBlock Text="Маршрут" HorizontalAlignment="Center"
+                    <TextBlock Text="Маршрут" HorizontalAlignment="Center" Margin="0,0,0,10"
+                        Foreground="{DynamicResource MainTextColorBrush}"/>
+
+                    <Button Content="📃" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="WordToRoute"/>
+                    <TextBlock Text="Документ" HorizontalAlignment="Center"
                         Foreground="{DynamicResource MainTextColorBrush}"/>
                 </StackPanel>
 

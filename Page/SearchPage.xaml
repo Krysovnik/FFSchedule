@@ -15,11 +15,5 @@
                    Foreground="{DynamicResource SecTextColorBrush}"
                    Margin="5,20,0,10" 
                    HorizontalAlignment="Left" />
-
-        <Button Content="Создать таблицу в Word" 
-                Click="GenerateWordTable_Click"
-                Style="{StaticResource OutlineActionButtonStyle}"
-                Margin="5,20,0,0" 
-                HorizontalAlignment="Left" />
     </StackPanel>
 </Page>

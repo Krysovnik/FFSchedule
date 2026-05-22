@@ -27,24 +27,5 @@ namespace FFSchedule.Page
             InitializeComponent();
             _mainWindow = mainWindow;
         }
-        private void GenerateWordTable_Click(object sender, RoutedEventArgs e)
-        {
-            var settlements = _mainWindow._dbcontext.Settlements
-                .Include(s => s.Vc)
-                .Include(s => s.Tol)
-                .Include(s => s.SettlementMainDepartaments)
-                .ThenInclude(smd => smd.Dpt)
-                .Include(s => s.SettlementDepartamentDistances)
-                .ThenInclude(sdd => sdd.Dpt)
-                .Include(s => s.EquipmentTypeQuantities)
-                .ThenInclude(etq => etq.Dpt)
-                .ToList();
-
-            var exporter = new WordTableExporter();
-            string templatePath = @"FFS/template.docx";
-            string outputPath = @"FFS/Schedule.docx";
-            exporter.ExportSettlementsOnly(settlements, templatePath, outputPath);
-            MessageBox.Show("Word документ создан!");
-        }
     }
 }

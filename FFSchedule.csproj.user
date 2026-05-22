@@ -23,5 +23,8 @@
     <Compile Update="Page\SearchPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Page\WordPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

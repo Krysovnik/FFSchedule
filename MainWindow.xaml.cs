@@ -321,6 +321,10 @@ namespace FFSchedule
         {
             SideFrame.Navigate(new RoutePage(this));
         }
+        private void WordToRoute(object sender, RoutedEventArgs e)
+        {
+            SideFrame.Navigate(new WordPage(this));
+        }
         private void FireStationsToggleButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleFireStationsVisibility();
