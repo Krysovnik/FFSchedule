@@ -41,7 +41,7 @@ namespace FFSchedule
 
         public ObservableCollection<FireStation> fireStations = new ObservableCollection<FireStation>();
 
-        private MemoryLayer _hoverLayer;
+        private MemoryLayer? _hoverLayer;
 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
 

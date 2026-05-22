@@ -22,6 +22,8 @@
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
     <SolidColorBrush x:Key="OutlinesBrush" Color="{StaticResource OutlinesColor}"/>
+    <SolidColorBrush x:Key="MainTextColorBrush" Color="{StaticResource MainTextColor}"/>
+    <SolidColorBrush x:Key="SecTextColorBrush" Color="{StaticResource SecTextColor}"/>
     <SolidColorBrush x:Key="BackgroundTextBoxBrush" Color="{StaticResource BackgroundTextBoxColor}"/>
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}"/>
     <SolidColorBrush x:Key="OrangeBrushLight" Color="{StaticResource OrangeColorLight}"/>

@@ -53,14 +53,32 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel DockPanel.Dock="Left" Width="50" Background="{DynamicResource BackgroundBrush}" Orientation="Vertical">
-                <Button Content="🗺️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToSearch"/>
-                <TextBlock Text="Поиск" HorizontalAlignment="Center"/>
-                <Button Content="🚒" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToFireStations"/>
-                <TextBlock Text="ПЧ" HorizontalAlignment="Center"/>
-                <Button Content="🛣️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToRoute"/>
-                <TextBlock Text="Маршрут" HorizontalAlignment="Center"/>
-            </StackPanel>
+            <Grid Grid.Column="0" Width="50" Background="{DynamicResource BackgroundBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Vertical">
+                    <Button Content="🗺️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToSearch"/>
+                    <TextBlock Text="Поиск" HorizontalAlignment="Center" Margin="0,0,0,10"
+                        Foreground="{DynamicResource MainTextColorBrush}"/>
+
+                    <Button Content="🚒" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToFireStations"/>
+                    <TextBlock Text="ПЧ" HorizontalAlignment="Center" Margin="0,0,0,10"
+                        Foreground="{DynamicResource MainTextColorBrush}"/>
+
+                    <Button Content="🛣️" FontSize="25" Style="{StaticResource TransparentTextButtonStyle}" Height="50" Click="NavigateToRoute"/>
+                    <TextBlock Text="Маршрут" HorizontalAlignment="Center"
+                        Foreground="{DynamicResource MainTextColorBrush}"/>
+                </StackPanel>
+
+                <controls:ThemeToggleButton Grid.Row="1" 
+                                x:Name="ThemeButton"
+                                FontSize="25"
+                                HorizontalAlignment="Center" 
+                                Margin="0,0,0,20"/>
+            </Grid>
 
             <Grid Grid.Column="1" Background="{DynamicResource OutlinesBrush}">
                 <Grid.RowDefinitions>
@@ -72,7 +90,7 @@
                         <controls:SearchBox x:Name="GlobalSearchBox" 
                             Panel.ZIndex="1"
                             ResultSelected="OnGlobalResultSelected" 
-                            Margin="10" 
+                            Margin="10,10,10,10" 
                             HorizontalAlignment="Stretch" 
                             VerticalAlignment="Top"/>
                         <Button Margin="0,22,0,0"

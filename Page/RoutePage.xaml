@@ -15,26 +15,56 @@
                 Style="{StaticResource OutlineActionButtonStyle}"
                 Click="BuildRoute_Click" 
                 HorizontalAlignment="Left" 
-                Margin="0,20,10,20"/>
+                Margin="5,20,10,20"/>
             <ComboBox x:Name="RankComboBox" 
+                Style="{StaticResource ModernComboBoxStyle}"
                 DisplayMemberPath="RNumber" 
                 Width="80" 
                 Margin="0,20,0,20"/>
         </StackPanel>
         <ListBox x:Name="StationsListBox"
-             Visibility="Collapsed"
-             HorizontalAlignment="Left" 
-             Width="380" 
-             BorderThickness="0">
+         Style="{StaticResource ModernListBoxStyle}"
+         Visibility="Collapsed"
+         HorizontalAlignment="Left" 
+         Width="380" 
+         BorderThickness="0"
+         Margin="0,0,0,10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="0,5">
-                        <TextBlock Text="{Binding StationName}" FontWeight="SemiBold" FontSize="14"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                            <TextBlock Text="{Binding DistanceText}" Margin="0,0,15,0" Foreground="#444"/>
-                            <TextBlock Text="{Binding DurationText}" Foreground="#444"/>
+                    <StackPanel Margin="2,0">
+                        <TextBlock Text="{Binding StationName}" 
+                           FontWeight="SemiBold" 
+                           FontSize="14"
+                           Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock x:Name="DistanceTxt" 
+                               Text="{Binding DistanceText}" 
+                               Margin="0,0,15,0" 
+                               FontSize="12"
+                               Foreground="{DynamicResource SecTextColorBrush}"/>
+
+                            <TextBlock x:Name="DurationTxt" 
+                               Text="{Binding DurationText}" 
+                               FontSize="12"
+                               Foreground="{DynamicResource SecTextColorBrush}"/>
                         </StackPanel>
                     </StackPanel>
+
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}" Value="True">
+                            <Setter TargetName="DistanceTxt" Property="Foreground" Value="White"/>
+                            <Setter TargetName="DurationTxt" Property="Foreground" Value="White"/>
+                            <Setter TargetName="DistanceTxt" Property="Opacity" Value="0.8"/>
+                            <Setter TargetName="DurationTxt" Property="Opacity" Value="0.8"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsMouseOver}" Value="True">
+                            <Setter TargetName="DistanceTxt" Property="Foreground" Value="White"/>
+                            <Setter TargetName="DurationTxt" Property="Foreground" Value="White"/>
+                            <Setter TargetName="DistanceTxt" Property="Opacity" Value="0.8"/>
+                            <Setter TargetName="DurationTxt" Property="Opacity" Value="0.8"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
