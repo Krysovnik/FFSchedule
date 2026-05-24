@@ -60,14 +60,11 @@ namespace FFSchedule
         public RouteService routeService;
 
         public readonly FfsContext _dbcontext;
-  
+
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeMap();
-
-            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
 
             _dbcontext = new FfsContext();
 
@@ -76,6 +73,10 @@ namespace FFSchedule
                 Timeout = TimeSpan.FromSeconds(70),
                 DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
             };
+
+            InitializeMap();
+
+            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
 
             _searchService = new SearchService(httpClient, MapControl);
 
@@ -112,6 +113,7 @@ namespace FFSchedule
             {
                 if (MapControl.Map?.Layers != null)
                 {
+                    fireStations.Clear();
                     MapControl.Map.Layers.Clear();
                     MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
                     LoadGeoJsonLayer(MapControl.Map, @"MapVector\nskDISTandKSTV.geojson");
@@ -119,6 +121,7 @@ namespace FFSchedule
                     {
                         LoadGeoJsonLayer(MapControl.Map, @"MapVector\FireStationPoints.geojson");
                     }
+                    routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
                     SetInitialView(MapControl.Map);
                     MapControl.Refresh();
                 }
@@ -302,8 +305,13 @@ namespace FFSchedule
                 if (stationsList != null)
                 {
                     stationsList.Visibility = Visibility.Collapsed;
-                    stationsList.ItemsSource = null;
                 }
+                var addButton = routePage.FindName("AddRouteButton") as Button;
+                if (addButton != null)
+                {
+                    addButton.Visibility = Visibility.Collapsed;
+                }
+                routePage.ClearView();
             }
         }
         //Кнопки  

@@ -20,16 +20,15 @@ using Color = Mapsui.Styles.Color;
 namespace FFSchedule.Services
 {
     public class RouteService
-    {
+    {        
         private readonly HttpClient httpClient;
         private readonly Map map;
         private readonly MapControl mapControl;
         private readonly List<FireStation> fireStations;
-        private readonly Color[] _routeColors =
-        {
-            new Color(255, 82, 82),
-            new Color(76, 175, 80)
-        };
+
+        private readonly HashSet<FireStation> _usedStations = new HashSet<FireStation>();
+        private readonly List<string> _additionalLayerNames = new List<string>();
+        private (double Lat, double Lon)? _lastTargetLocation;
 
         public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations)
         {
@@ -42,6 +41,7 @@ namespace FFSchedule.Services
         public async Task<List<RouteResult>> BuildRoutesByRequirementAsync(double toLat, double toLon, int requiredEquipment)
         {
             var results = new List<RouteResult>();
+
             try
             {
                 ClearRoute();
@@ -59,11 +59,14 @@ namespace FFSchedule.Services
                 }
                 for (int i = 0; i < selectedStations.Count; i++)
                 {
+                    var station = selectedStations[i];
+                    _usedStations.Add(station);
+
                     var color = new Color(255, 82, 82);
                     var result = await BuildRouteInternalAsync(
                         selectedStations[i].Latitude,
                         selectedStations[i].Longitude,
-                        toLat, toLon, i, color);
+                        toLat, toLon, i, color, false);
                     result.Station = selectedStations[i];
 
                     results.Add(result);
@@ -75,6 +78,39 @@ namespace FFSchedule.Services
             }
             return results;
         }
+
+        public async Task<RouteResult?> BuildNextAdditionalRouteAsync(double toLat, double toLon)
+        {
+            try
+            {
+                var sortedStations = await GetSortedFireStations(toLat, toLon);
+
+                var nextStation = sortedStations.FirstOrDefault(s => !_usedStations.Contains(s));
+
+                if (nextStation == null)
+                {
+                    throw new Exception("Все доступные пожарные части уже задействованы на карте.");
+                }
+
+                _usedStations.Add(nextStation);
+                int index = _usedStations.Count - 1;
+
+                var color = new Color(76, 175, 80); 
+
+                var result = await BuildRouteInternalAsync(
+                    nextStation.Latitude, nextStation.Longitude,
+                    toLat, toLon,
+                    index, color, true);
+
+                result.Station = nextStation;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new RouteResult { Success = false, ErrorMessage = ex.Message };
+            }
+        }
+
         private async Task<List<FireStation>> GetSortedFireStations(double toLat, double toLon)
         {
             var coordinates = string.Join(";",
@@ -98,10 +134,11 @@ namespace FFSchedule.Services
 
             return stationsWithTime;
         }
-        private async Task<RouteResult> BuildRouteInternalAsync(double fromLat, double fromLon, double toLat, double toLon, int index, Color color)
+
+        private async Task<RouteResult> BuildRouteInternalAsync(double fromLat, double fromLon, double toLat, double toLon, int index, Color color, bool isDash)
         {
             string coordinates = $"{fromLon.ToString(CultureInfo.InvariantCulture)},{fromLat.ToString(CultureInfo.InvariantCulture)};" +
-                             $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
+                                 $"{toLon.ToString(CultureInfo.InvariantCulture)},{toLat.ToString(CultureInfo.InvariantCulture)}";
 
             string osrmUrl = $"http://router.project-osrm.org/route/v1/driving/{Uri.EscapeDataString(coordinates)}?overview=full&geometries=geojson";
 
@@ -116,11 +153,12 @@ namespace FFSchedule.Services
                 .Select(c => new Coordinate(c[0].GetDouble(), c[1].GetDouble()))
                 .ToList();
 
-            DrawRoute(coords, distance, duration, index, color);
+            DrawRoute(coords, distance, duration, index, color, isDash);
 
             return new RouteResult { Success = true, Distance = distance, Duration = duration };
         }
-        private void DrawRoute(List<Coordinate> coordinatesList, double distance, double duration, int index, Color color)
+
+        private void DrawRoute(List<Coordinate> coordinatesList, double distance, double duration, int index, Color color, bool isDash)
         {
             var projectedCoords = coordinatesList.Select(c =>
             {
@@ -130,13 +168,20 @@ namespace FFSchedule.Services
 
             var routeFeature = new GeometryFeature { Geometry = new LineString(projectedCoords) };
 
+            var pen = new Pen(color, 2f);
+            if (isDash)
+            {
+                pen.PenStyle = PenStyle.Dash; 
+            }
+
             routeFeature.Styles.Add(new VectorStyle
             {
-                Outline = new Pen(color, 2f),
+                Outline = pen,
                 MaxVisible = 80
             });
 
-            string infoText = $"#{index + 1}: {distance / 1000:F1} км, {duration / 60:F0} мин";
+            string prefix = isDash ? "Доп. #" : "#";
+            string infoText = $"{prefix}{index + 1}: {distance / 1000:F1} км, {duration / 60:F0} мин";
 
             routeFeature.Styles.Add(new LabelStyle
             {
@@ -148,9 +193,12 @@ namespace FFSchedule.Services
                 MaxVisible = 80
             });
 
+            string layerName = isDash ? $"Route_Additional_{index}" : $"Route_{index}";
+            if (isDash) _additionalLayerNames.Add(layerName);
+
             var routeLayer = new MemoryLayer
             {
-                Name = $"Route_{index}",
+                Name = layerName,
                 Features = new[] { routeFeature },
                 MaxVisible = 80
             };
@@ -161,7 +209,11 @@ namespace FFSchedule.Services
 
         public void ClearRoute()
         {
-            var layersToRemove = map.Layers.Where(l => l.Name != null && l.Name.StartsWith("Route")).ToList();
+            _usedStations.Clear();
+            _additionalLayerNames.Clear();
+            _lastTargetLocation = null;
+
+            var layersToRemove = map.Layers.Where(l => l.Name != null && (l.Name.StartsWith("Route"))).ToList();
             foreach (var layer in layersToRemove)
             {
                 map.Layers.Remove(layer);

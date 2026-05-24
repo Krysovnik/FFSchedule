@@ -16,18 +16,30 @@
                 Click="BuildRoute_Click" 
                 HorizontalAlignment="Left" 
                 Margin="5,20,10,20"/>
+
+            <Button Content="+" 
+                x:Name="AddRouteButton"
+                Style="{StaticResource OutlineActionButtonStyle}"
+                Click="AddRouteButton_Click" 
+                Visibility="Collapsed" 
+                HorizontalAlignment="Left" 
+                Margin="0,20,10,20"/>
+            
             <ComboBox x:Name="RankComboBox" 
                 Style="{StaticResource ModernComboBoxStyle}"
                 DisplayMemberPath="RNumber" 
                 Width="80" 
                 Margin="0,20,0,20"/>
+            
         </StackPanel>
         <ListBox x:Name="StationsListBox"
          Style="{StaticResource ModernListBoxStyle}"
          Visibility="Collapsed"
          HorizontalAlignment="Left" 
          Width="380" 
-         BorderThickness="0"
+         MaxHeight="250" 
+         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+         ScrollViewer.CanContentScroll="True"
          Margin="0,0,0,10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
