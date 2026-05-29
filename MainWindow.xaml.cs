@@ -61,6 +61,7 @@ namespace FFSchedule
 
         public readonly FfsContext _dbcontext;
 
+        public MeasureService _measureService;
 
         public MainWindow()
         {
@@ -79,6 +80,8 @@ namespace FFSchedule
             routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
 
             _searchService = new SearchService(httpClient, MapControl);
+
+            _measureService = new MeasureService(MapControl);
 
             SideFrame.Navigate(new SearchPage(this));
         }
@@ -140,6 +143,12 @@ namespace FFSchedule
             var screenPosition = e.GetPosition(MapControl);
             var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
                 screenPosition.X, screenPosition.Y);
+
+            if (_measureService.CurrentMode != MeasureMode.None)
+            {
+                _measureService.HandleClick(worldPosition);
+                return;
+            }
 
             var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
             if (layer is MemoryLayer memoryLayer)
@@ -367,6 +376,21 @@ namespace FFSchedule
                     MapControl.Refresh();
                 }
             }
+        }
+
+        private void MeasureDistance_Click(object sender, RoutedEventArgs e)
+        {
+            _measureService.StartMeasurement(MeasureMode.Distance);
+        }
+
+        private void MeasureArea_Click(object sender, RoutedEventArgs e)
+        {
+            _measureService.StartMeasurement(MeasureMode.Area);
+        }
+
+        private void ClearMeasure_Click(object sender, RoutedEventArgs e)
+        {
+            _measureService.Clear();
         }
 
         //загрузка и отрисовка векторного слоя

@@ -17,13 +17,12 @@
                 <Separator/>
                 <MenuItem Header="Выход"/>
             </MenuItem>
-            <MenuItem Header="Правка">
-                <MenuItem Header="Отменить"/>
-                <MenuItem Header="Повторить"/>
+            <MenuItem Header="Инструменты">
+                <MenuItem Header="Линейка" Click="MeasureDistance_Click"/>
+                <MenuItem Header="Площадь" Click="MeasureArea_Click"/>
+                <MenuItem Header="Очистить замеры" Click="ClearMeasure_Click"/>
             </MenuItem>
             <MenuItem Header="Карта">
-                <MenuItem Header="Добавить маркер"/>
-                <MenuItem Header="Удалить маркер"/>
                 <MenuItem Header="Обновить карту" Click="RefreshMap_Click"/>
             </MenuItem>
 
