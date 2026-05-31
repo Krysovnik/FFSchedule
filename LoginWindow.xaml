@@ -40,6 +40,7 @@
                     </Border>
                     <TextBox 
                         x:Name="LoginTextBox"
+                        Text="admin"
                         Grid.Column="1" 
                         Height="35" 
                         VerticalContentAlignment="Center" 
@@ -58,6 +59,7 @@
                     </Border>
                     <PasswordBox 
                         x:Name="PasswordBox"
+                        Password="admin"
                         Grid.Column="1" 
                         Height="35" 
                         VerticalContentAlignment="Center" 
@@ -66,7 +68,7 @@
                         BorderBrush="{DynamicResource OrangeBrush}" 
                         BorderThickness="1"/>
                 </Grid>
-                <Button Height="35" Width="150" Margin="20"></Button>
+                <Button Height="35" Width="150" Margin="20" Content="Войти" Click="LoginButton_Click" FontSize="14" FontWeight="Bold" FontFamily="Arial Black" Background="{DynamicResource OrangeBrush}" Cursor="Hand"/>
             </StackPanel>
         </Grid>
     </Grid>

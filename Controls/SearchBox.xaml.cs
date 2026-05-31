@@ -35,15 +35,23 @@ namespace FFSchedule.Controls
 
         public event EventHandler<NominatimResult>? ResultSelected;
 
-        private readonly MainWindow _mainWindow;
+        //private readonly MainWindow _mainWindow;
 
         private CancellationTokenSource? _searchCts;
 
         public SearchBox()
         {
             InitializeComponent();
-            _mainWindow = (MainWindow)Application.Current.MainWindow;
+            //_mainWindow = (MainWindow)Application.Current.MainWindow;
         }
+
+        private MainWindow? GetMainWindow()
+        {
+            return Application.Current.Windows
+                .OfType<MainWindow>()
+                .FirstOrDefault();
+        }
+
         private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             BorderList.Visibility = Visibility.Visible;
@@ -51,6 +59,9 @@ namespace FFSchedule.Controls
             var query = SearchTextBox.Text.Trim();
 
             _searchCts?.Cancel();
+
+            var main = GetMainWindow();
+            if (main == null) return;
 
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -68,7 +79,7 @@ namespace FFSchedule.Controls
 
                 await Task.Delay(500, token);
 
-                var results = await _mainWindow._searchService.SearchAsync(query);
+                var results = await main._searchService.SearchAsync(query);
 
                 if (token.IsCancellationRequested) return;
 
@@ -104,7 +115,9 @@ namespace FFSchedule.Controls
         }
         private void ClearResults()
         {
-            _mainWindow._searchService.RemoveSearchPin();
+            var main = GetMainWindow();
+            if (main == null) return;
+            main._searchService.RemoveSearchPin();
             SearchResultsLb.ItemsSource = null;
             SearchResultsLb.Visibility = Visibility.Collapsed;
             BorderList.Visibility = Visibility.Collapsed;
@@ -118,7 +131,9 @@ namespace FFSchedule.Controls
         }
         public async Task ExternalSearchAndSelectFirst(double lat, double lon)
         {
-            var result = await _mainWindow._searchService.ReverseSearchAsync(lat, lon);
+            var main = GetMainWindow();
+            if (main == null) return;
+            var result = await main._searchService.ReverseSearchAsync(lat, lon);
             if (result != null)
             {
                 SearchTextBox.Text = result.DisplayName;
