@@ -69,7 +69,7 @@ namespace FFSchedule.Page
 
                 _displayTracks.Clear();
 
-                var results = await _mainWindow.routeService.BuildRoutesByRequirementAsync(
+                var results = await _mainWindow._routeService.BuildRoutesByRequirementAsync(
                     _mainWindow.searchLat,
                     _mainWindow.searchLon,
                     neededEquipment);
@@ -115,7 +115,7 @@ namespace FFSchedule.Page
                 AddRouteButton.IsEnabled = false;
                 _mainWindow.LoadingIndicator.Visibility = Visibility.Visible;
 
-                var additionalRoute = await _mainWindow.routeService.BuildNextAdditionalRouteAsync(
+                var additionalRoute = await _mainWindow._routeService.BuildNextAdditionalRouteAsync(
                     _mainWindow.searchLat,
                     _mainWindow.searchLon);
 

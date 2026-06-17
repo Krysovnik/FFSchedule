@@ -50,17 +50,15 @@ namespace FFSchedule
         private bool _polygonFillEnabled = true;
         private double _polygonBorderWidth = 0.5;
 
-        private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();
-
-        public readonly SearchService _searchService;
+        private Dictionary<Mapsui.IFeature, Brush> _originalFills = new Dictionary<Mapsui.IFeature, Brush>();   
 
         public double searchLat;
         public double searchLon;
-
-        public RouteService routeService;
-
+    
         public readonly FfsContext _dbcontext;
 
+        public RouteService _routeService;
+        public readonly SearchService _searchService;
         public MeasureService _measureService;
 
         public MainWindow()
@@ -77,10 +75,8 @@ namespace FFSchedule
 
             InitializeMap();
 
-            routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
-
+            _routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
             _searchService = new SearchService(httpClient, MapControl);
-
             _measureService = new MeasureService(MapControl);
 
             SideFrame.Navigate(new SearchPage(this));
@@ -118,15 +114,31 @@ namespace FFSchedule
             {
                 if (MapControl.Map?.Layers != null)
                 {
+                    _measureService?.Clear();
+                    _routeService?.ClearRoute();
+                    _searchService?.RemoveSearchPin();
+
+                    _hoverLayer = null;
+                    _polygonLayer = null;
+                    _originalFills.Clear();
+                    _originalStyles.Clear();
+
                     fireStations.Clear();
+
                     MapControl.Map.Layers.Clear();
+
+                    //Заново собираем карту
                     MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
                     LoadGeoJsonLayer(MapControl.Map, @"MapVector\nskDISTandKSTV.geojson");
+
                     if (fireStationsVisible)
                     {
                         LoadGeoJsonLayer(MapControl.Map, @"MapVector\FireStationPoints.geojson");
                     }
-                    routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
+
+                    //Пересоздаем сервис с новым списком станций
+                    _routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
+
                     SetInitialView(MapControl.Map);
                     MapControl.Refresh();
                 }
@@ -313,7 +325,7 @@ namespace FFSchedule
 
             _searchService.RemoveSearchPin();
 
-            routeService.ClearRoute();
+            _routeService.ClearRoute();
 
             searchLat = 0;
             searchLon = 0;
