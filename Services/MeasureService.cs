@@ -11,6 +11,7 @@ using Mapsui.Tiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTK.Graphics.OpenGL;
 
 namespace FFSchedule.Services
 {
@@ -39,13 +40,21 @@ namespace FFSchedule.Services
             Clear();
             CurrentMode = measureMode;
         }
+        public void StopMeasurement()
+        {
+            CurrentMode = MeasureMode.None;
+            _mapControl?.Refresh();
+        }
 
         public void Clear()
         {
             _points.Clear();
-            _measureLayer.Features = new List<IFeature>();
+            if(_measureLayer != null)
+            {
+                _measureLayer.Features = new List<IFeature>();
+            }
             CurrentMode = MeasureMode.None;
-            _mapControl.Refresh();
+            _mapControl?.Refresh();
         }
 
         public void HandleClick(MPoint worldPosition)

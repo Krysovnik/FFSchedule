@@ -105,6 +105,8 @@ namespace FFSchedule
             MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
             MapControl.MouseMove += MapControl_MouseMove;
             MapControl.MouseLeftButtonDown += MapControl_GlobalDoubleClickHandler;
+            MapControl.MouseRightButtonDown += MapControl_MouseRightButtonDown;
+
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
             MapControl.Map.Widgets.Add(new ZoomInOutWidget());
             MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());      
@@ -179,6 +181,15 @@ namespace FFSchedule
                         }), System.Windows.Threading.DispatcherPriority.Background);
                     }
                 }
+            }
+        }
+        private void MapControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Если в данный момент мы что-то измеряем — завершаем процесс по клику ПКМ
+            if (_measureService.CurrentMode != MeasureMode.None)
+            {
+                _measureService.StopMeasurement();
+                e.Handled = true;
             }
         }
         private void MapControl_MouseMove(object sender, MouseEventArgs e)
