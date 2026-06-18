@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using FFSchedule.Class;
+using FFSchedule.Container;
 using FFSchedule.Controls;
 using FFSchedule.DepartamentWindows;
 using FFSchedule.DepartamentWindows.JsonModels;
@@ -60,6 +61,7 @@ namespace FFSchedule
         public RouteService _routeService;
         public readonly SearchService _searchService;
         public MeasureService _measureService;
+        public readonly MapDataService _mapDataService; 
 
         private System.Windows.Point _mouseDownPosition;
         private bool _isDraggingMap;
@@ -83,11 +85,13 @@ namespace FFSchedule
 
             _dbcontext = new FfsContext();
 
+            _mapDataService = new MapDataService();
+
             InitializeMap();
 
             _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
             _searchService = new SearchService(App.HttpClient, MapControl);
-            _measureService = new MeasureService(MapControl);
+            _measureService = new MeasureService(MapControl);                
 
             SideFrame.Navigate(new SearchPage(this));
         }
@@ -296,7 +300,10 @@ namespace FFSchedule
                 }
             }
 
-            if (_isDraggingMap) return;
+            if (e.LeftButton == MouseButtonState.Pressed && _isDraggingMap)
+            {
+                return; 
+            }
 
             if (Math.Abs(currentPosition.X - _lastMousePosition.X) < 3 &&
                 Math.Abs(currentPosition.Y - _lastMousePosition.Y) < 3)
@@ -531,112 +538,42 @@ namespace FFSchedule
         private void LoadGeoJsonLayer(Map map, string geojsonPath)
         {
             if (map == null || string.IsNullOrEmpty(geojsonPath)) return;
-            if (!File.Exists(geojsonPath))
-            {
-                MessageBox.Show($"Файл GeoJSON не найден: {geojsonPath}");
-                return;
-            }
-
             try
             {
-                string geojson = File.ReadAllText(geojsonPath);
-                var reader = new NetTopologySuite.IO.GeoJsonReader();
-                var fc = reader.Read<NetTopologySuite.Features.FeatureCollection>(geojson);
+                var loadedData = _mapDataService.ParseGeoJson(geojsonPath);
 
-                var polygonFeatures = new List<Mapsui.Nts.GeometryFeature>();
-                var pointFeatures = new List<Mapsui.Nts.GeometryFeature>();
-
-                foreach (var f in fc)
+                if(loadedData.PolygonFeatures.Count > 0)
                 {
-                    var geom = f.Geometry;
-
-                    if (geom is NetTopologySuite.Geometries.Polygon || geom is NetTopologySuite.Geometries.MultiPolygon)
+                    foreach (var feature in loadedData.PolygonFeatures)
                     {
-                        foreach (var polygon in ConvertGeometry(geom))
-                        {
-                            var projectedCoords = polygon.Coordinates
-                                .Select(c =>
-                                {
-                                    var p = Mapsui.Projections.SphericalMercator.FromLonLat(c.X, c.Y);
-                                    return new NetTopologySuite.Geometries.Coordinate(p.x, p.y);
-                                }).ToArray();
-
-                            var projectedPolygon = polygon.Factory.CreatePolygon(projectedCoords);
-
-                            string nameAttr = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null;
-
-                            var feature = new Mapsui.Nts.GeometryFeature
-                            {
-                                Geometry = projectedPolygon,
-                                Styles = new List<IStyle>
-                                {
-                                    VectorStyles.GetPolygonStyle(nameAttr),
-                                    VectorStyles.GetLabelStyle(nameAttr)
-                                }
-                            };
-
-                            var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
-                            if (vs != null)
-                            {
-                                _originalFills[feature] = vs.Fill;
-                            }
-
-                            foreach (var attributeName in f.Attributes.GetNames())
-                            {
-                                feature[attributeName] = f.Attributes[attributeName];
-                            }
-                            polygonFeatures.Add(feature);
-                        }
+                        var vs = feature.Styles.OfType<VectorStyle>().FirstOrDefault();
+                        if (vs != null) _originalFills[feature] = vs.Fill;
                     }
-                    else if (geom is NetTopologySuite.Geometries.Point point)
-                    {
-                        var p = Mapsui.Projections.SphericalMercator.FromLonLat(point.X, point.Y);
-                        var projectedPoint = new NetTopologySuite.Geometries.Point(p.x, p.y);
-                        var feature = new Mapsui.Nts.GeometryFeature
-                        {
-                            Geometry = projectedPoint,
-                            Styles = VectorStyles.GetPointStylesWithLabel(
-                                f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null,
-                                f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : null)
-                        };
 
-                        foreach (var attributeName in f.Attributes.GetNames())
-                        {
-                            feature[attributeName] = f.Attributes[attributeName];
-                        }
-                        _originalStyles[feature] = new List<IStyle>(feature.Styles);
-                        var station = new FireStation
-                        {
-                            Name = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : "Не указано",
-                            Address = f.Attributes.Exists("address") ? f.Attributes["address"]?.ToString() : "Не указано",
-                            District = f.Attributes.Exists("district") ? f.Attributes["district"]?.ToString() : "Не указано",
-                            Type = f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : "Не указано",
-                            Phone = f.Attributes.Exists("phone") ? f.Attributes["phone"]?.ToString() : "Не указано",
-                            Longitude = point.X,
-                            Latitude = point.Y
-                        };
-                        fireStations.Add(station);
-                        pointFeatures.Add(feature);
-                    }
-                }
-                if (polygonFeatures.Count > 0)
-                {
-                    _polygonLayer = new Mapsui.Layers.MemoryLayer
+                    _polygonLayer = new MemoryLayer
                     {
                         Name = "Polygons",
-                        Features = polygonFeatures,
+                        Features = loadedData.PolygonFeatures,
                         Style = null,
                         Enabled = villageCouncilsVisible
                     };
                     map.Layers.Add(_polygonLayer);
                 }
 
-                if (pointFeatures.Count > 0)
+                if(loadedData.PointFeatures.Count > 0)
                 {
-                    map.Layers.Add(new Mapsui.Layers.MemoryLayer
+                    foreach(var feature in loadedData.PointFeatures)
+                    {
+                        _originalStyles[feature] = new List<IStyle>(feature.Styles);
+                    }
+                    foreach(var station in loadedData.FireStations)
+                    {
+                        fireStations.Add(station);
+                    }
+                    map.Layers.Add(new MemoryLayer
                     {
                         Name = "Points",
-                        Features = pointFeatures,
+                        Features = loadedData.PointFeatures,
                         Style = null,
                         Enabled = fireStationsVisible
                     });
@@ -644,7 +581,8 @@ namespace FFSchedule
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки GeoJSON: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки векторного слоя: {ex.Message}",
+                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

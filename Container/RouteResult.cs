@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFSchedule.Models
+namespace FFSchedule.Container
 {
     public class RouteResult
     {

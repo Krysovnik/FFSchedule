@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace FFSchedule.Services
+namespace FFSchedule.Container
 {
     public record NominatimResult(
     [property: JsonPropertyName("display_name")] string DisplayName,
