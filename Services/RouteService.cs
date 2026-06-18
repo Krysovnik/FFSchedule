@@ -149,11 +149,20 @@ namespace FFSchedule.Services
 
             using var stream = await response.Content.ReadAsStreamAsync();
             using var json = await JsonDocument.ParseAsync(stream);
-            var durations = json.RootElement.GetProperty("durations");
-            var lastColumn = durations.EnumerateArray().Last();
+
+            var durationsElement = json.RootElement.GetProperty("durations");
+            var durations = durationsElement.EnumerateArray().ToList();
+
+            int targetIndex = durations.Count - 1;
 
             var stationsWithTime = fireStations
-                .Select((station, index) => new { Station = station, Duration = lastColumn[index].GetDouble() })
+                .Select((station, index) =>
+                {
+                    var durationRow = durations[index].EnumerateArray().ToList();
+                    var durationToTarget = durationRow[targetIndex].GetDouble();
+
+                    return new { Station = station, Duration = durationToTarget };
+                })
                 .OrderBy(x => x.Duration)
                 .Select(x => x.Station)
                 .ToList();
