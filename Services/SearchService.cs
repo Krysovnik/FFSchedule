@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Globalization;
 
 namespace FFSchedule.Services
 {
@@ -32,19 +33,28 @@ namespace FFSchedule.Services
             if (string.IsNullOrWhiteSpace(query))
                 return new List<NominatimResult>();
 
-            query = $"{query}, Новосибирск";
+            string viewbox = string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
+                82.55, 55.15, 83.20, 54.80);
 
             var url = $"https://nominatim.openstreetmap.org/search" +
-                      $"?q={Uri.EscapeDataString(query)}" +
+                      $"?q={Uri.EscapeDataString(query.Trim())}" +
                       $"&format=jsonv2" +
                       $"&addressdetails=1" +
                       $"&extratags=1" +
                       $"&countrycodes=RU" +
+                      $"&viewbox={viewbox}" +
                       $"&bounded=1" +
                       $"&limit=5";
 
-            var results = await _httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
-            return results?.OrderByDescending(r => r.Importance).ToList() ?? new List<NominatimResult>();
+            try
+            {
+                var results = await _httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
+                return results?.OrderByDescending(r => r.Importance).ToList() ?? new List<NominatimResult>();
+            }
+            catch (HttpRequestException)
+            {
+                return new List<NominatimResult>();
+            }
         }
  
         public void PutSearchPin(NominatimResult result)
@@ -52,7 +62,7 @@ namespace FFSchedule.Services
             var merc = Mapsui.Projections.SphericalMercator.FromLonLat(result.Lon, result.Lat);
 
             var old = _mapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
-            if (old != null) _mapControl.Map.Layers.Remove(old);
+            if (old != null) _mapControl?.Map?.Layers.Remove(old);
 
             var pin = new GeometryFeature
             {
@@ -84,7 +94,7 @@ namespace FFSchedule.Services
                 MaxVisible = 80
             });
 
-            _mapControl.Map?.Layers.Add(new MemoryLayer
+            _mapControl?.Map?.Layers.Add(new MemoryLayer
             {
                 Name = SEARCH_PIN_LAYER,
                 Features = new[] { pin },
@@ -102,8 +112,8 @@ namespace FFSchedule.Services
         }
         public async Task<NominatimResult?> ReverseSearchAsync(double lat, double lon)
         {
-            var latStr = lat.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            var lonStr = lon.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var latStr = lat.ToString(CultureInfo.InvariantCulture);
+            var lonStr = lon.ToString(CultureInfo.InvariantCulture);
 
             var url = $"https://nominatim.openstreetmap.org/reverse?lat={latStr}&lon={lonStr}&format=jsonv2&addressdetails=1";
 
@@ -119,7 +129,7 @@ namespace FFSchedule.Services
         {
             var old = _mapControl.Map?.Layers.FirstOrDefault(l => l.Name == SEARCH_PIN_LAYER);
             if (old != null)
-                _mapControl.Map.Layers.Remove(old);
+                _mapControl?.Map?.Layers.Remove(old);
         }
         #endregion
     }

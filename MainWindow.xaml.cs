@@ -34,8 +34,6 @@ namespace FFSchedule
     {
         private Map map;
 
-        private readonly HttpClient httpClient = new HttpClient();
-
         private bool fireStationsVisible = true;
         private bool villageCouncilsVisible = true;
 
@@ -72,16 +70,10 @@ namespace FFSchedule
 
             _dbcontext = new FfsContext();
 
-            httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(70),
-                DefaultRequestHeaders = { { "User-Agent", "FFSchedule/1.0 (popovis@mer.ci.nsu.ru)" } }
-            };
-
             InitializeMap();
 
-            _routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
-            _searchService = new SearchService(httpClient, MapControl);
+            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
+            _searchService = new SearchService(App.HttpClient, MapControl);
             _measureService = new MeasureService(MapControl);
 
             SideFrame.Navigate(new SearchPage(this));
@@ -147,7 +139,7 @@ namespace FFSchedule
                     }
 
                     //Пересоздаем сервис с новым списком станций
-                    _routeService = new RouteService(httpClient, map, MapControl, fireStations.ToList());
+                    _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
 
                     SetInitialView(MapControl.Map);
                     MapControl.Refresh();

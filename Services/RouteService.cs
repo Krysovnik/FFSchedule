@@ -122,7 +122,8 @@ namespace FFSchedule.Services
             var response = await httpClient.GetAsync(tableUrl);
             response.EnsureSuccessStatusCode();
 
-            var json  = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var json = await JsonDocument.ParseAsync(stream);
             var durations = json.RootElement.GetProperty("durations");
             var lastColumn = durations.EnumerateArray().Last();
 
