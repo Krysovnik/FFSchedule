@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
+using NetTopologySuite.Algorithm;
 
 namespace FFSchedule.Services
 {
@@ -72,7 +73,8 @@ namespace FFSchedule.Services
             var features = new List<IFeature>();
             if (_points.Count == 0) return;
 
-            foreach(var p in _points)
+            // Отрисовка опорных точек (маркеров клика)
+            foreach (var p in _points)
             {
                 var mercator = SphericalMercator.FromLonLat(p.X, p.Y);
                 features.Add(new GeometryFeature(new Point(mercator.x, mercator.y))
@@ -113,13 +115,13 @@ namespace FFSchedule.Services
                 {
                     Styles = new List<IStyle> {
                         new VectorStyle { Fill = new Brush(new Color(255, 0, 0, 50)), Outline = new Pen(Color.Red, 2) },
-                        new LabelStyle { Text = $"{areaHectares:F2} га", Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
+                        new LabelStyle { Text = $"{areaHectares:F2} м²", Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
                     }
                 });
             }
 
-            _measureLayer.Features = features;
-            _mapControl.Refresh();
+            _measureLayer?.Features = features;
+            _mapControl?.Refresh();
         }
 
         private double CalculateDistance(List<Coordinate> points)
@@ -136,23 +138,33 @@ namespace FFSchedule.Services
         {
             if (points.Count < 3) return 0;
 
-            var latRad = points.Average(p => p.Y) * Math.PI / 180.0;
-            var kX = 111320.0 * Math.Cos(latRad);
-            var kY = 110574.0;
+            //для начала найдем среднию широту (проеция какого-то Меркатора)
+            var avgLat = points.Average(p => p.Y);
+            var latRad = avgLat * Math.PI / 180.0;
 
-            double area = 0;
-            for (int i = 0; i < points.Count; i++)
+            //потом в метры 
+            var projectedCoords = points.Select(p =>
             {
-                var j = (i + 1) % points.Count;
-                area += (points[i].X * kX) * (points[j].Y * kY);
-                area -= (points[j].X * kX) * (points[i].Y * kY);
-            }
-            return Math.Abs(area) / 2.0 / 10000.0;
+                var merc = SphericalMercator.FromLonLat(p.X, p.Y);
+                return new Coordinate(merc.x, merc.y);
+            }).ToList();
+
+            //замыкаем
+            projectedCoords.Add(new Coordinate(projectedCoords[0].X, projectedCoords[0].Y));
+
+            //площадь в метры Меркатора
+            double mercatorArea = Math.Abs(Area.OfRing(projectedCoords.ToArray()));
+
+            //корректируем искажение Меркатора для широты Новосибирска (делением на cos²(lat))
+            double cosLat = Math.Cos(latRad);
+            double areaSquareMeters = mercatorArea * cosLat * cosLat;
+
+            return areaSquareMeters;
         }
 
         private double HaversineDistance(Coordinate p1, Coordinate p2)
         {
-            double r = 6371000;
+            double r = 6371000;//радиус земли, чтоб не забыл
             double phi1 = p1.Y * Math.PI / 180;
             double phi2 = p2.Y * Math.PI / 180;
             double dPhi = (p2.Y - p1.Y) * Math.PI / 180;
