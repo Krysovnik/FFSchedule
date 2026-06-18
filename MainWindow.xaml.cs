@@ -41,7 +41,7 @@ namespace FFSchedule
 
         public ObservableCollection<FireStation> fireStations = new ObservableCollection<FireStation>();
 
-        private MemoryLayer? _hoverLayer;
+        private readonly MemoryLayer _hoverLayer = new MemoryLayer { Name = "HoverLayer", Enabled = false };
 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
 
@@ -60,6 +60,11 @@ namespace FFSchedule
         public RouteService _routeService;
         public readonly SearchService _searchService;
         public MeasureService _measureService;
+
+        private System.Windows.Point _mouseDownPosition;
+        private bool _isDraggingMap;
+
+        private System.Windows.Point _lastMousePosition;
 
         public MainWindow()
         {
@@ -85,12 +90,14 @@ namespace FFSchedule
         {
             map = new Map();
             //Тайловая подложка
-            map.Layers.Add(OpenStreetMap.CreateTileLayer());
+            map.Layers.Add(CreateOsmLayerWithCache());
             //Районы
             LoadGeoJsonLayer(map, @"MapVector\nskDISTandKSTV.geojson");
 
             //Точки пч/псч
             LoadGeoJsonLayer(map, @"MapVector\FireStationPoints.geojson");
+
+            map.Layers.Add(_hoverLayer);
 
             //Начальный вид
             SetInitialView(map);
@@ -98,7 +105,8 @@ namespace FFSchedule
             //Контролер lib
             MapControl.Map = map;
 
-            MapControl.MouseLeftButtonDown += MapControl_MouseLeftButtonDown;
+            MapControl.PreviewMouseLeftButtonDown += MapControl_PreviewMouseLeftButtonDown;
+            MapControl.MouseLeftButtonUp += MapControl_MouseLeftButtonUp;
             MapControl.MouseMove += MapControl_MouseMove;
             MapControl.MouseLeftButtonDown += MapControl_GlobalDoubleClickHandler;
             MapControl.MouseRightButtonDown += MapControl_MouseRightButtonDown;
@@ -118,7 +126,9 @@ namespace FFSchedule
                     _routeService?.ClearRoute();
                     _searchService?.RemoveSearchPin();
 
-                    _hoverLayer = null;
+                    _hoverLayer.Enabled = false;
+                    _hoverLayer.Features = Enumerable.Empty<IFeature>();
+
                     _polygonLayer = null;
                     _originalFills.Clear();
                     _originalStyles.Clear();
@@ -128,7 +138,7 @@ namespace FFSchedule
                     MapControl.Map.Layers.Clear();
 
                     //Заново собираем карту
-                    MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+                    MapControl.Map.Layers.Add(CreateOsmLayerWithCache());
                     LoadGeoJsonLayer(MapControl.Map, @"MapVector\nskDISTandKSTV.geojson");
 
                     if (fireStationsVisible)
@@ -150,40 +160,55 @@ namespace FFSchedule
             }
         }
         //Карта
-        private void MapControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _mouseDownPosition = e.GetPosition(MapControl);
+            _isDraggingMap = false;
+
+            if (_hoverLayer.Enabled)
+            {
+                _hoverLayer.Enabled = false;
+                _hoverLayer.Features = Enumerable.Empty<IFeature>();
+                MapControl.Cursor = Cursors.Arrow;
+                MapControl.Refresh();
+            }
+        }
+
+        private void MapControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!fireStationsVisible) return;
 
-            var screenPosition = e.GetPosition(MapControl);
-            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
-                screenPosition.X, screenPosition.Y);
+            if (_isDraggingMap) return;
 
             if (_measureService.CurrentMode != MeasureMode.None)
             {
+                var screenPosition = e.GetPosition(MapControl);
+                var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPosition.X, screenPosition.Y);
                 _measureService.HandleClick(worldPosition);
                 return;
             }
 
+            var screenPos = e.GetPosition(MapControl);
+            var worldPos = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPos.X, screenPos.Y);
+
             var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
             if (layer is MemoryLayer memoryLayer)
             {
-                var features = memoryLayer.GetFeatures(
-                    new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
-                    MapControl.Map.Navigator.Viewport.Resolution);
+                double screenRadius = 15;
+                double worldRadius = screenRadius * MapControl.Map.Navigator.Viewport.Resolution;
+                var searchRect = new MRect(worldPos.X - worldRadius, worldPos.Y - worldRadius, worldPos.X + worldRadius, worldPos.Y + worldRadius);
 
+                var features = memoryLayer.GetFeatures(searchRect, 0);
                 var closest = features.FirstOrDefault();
+
                 if (closest != null)
                 {
-                    // Извлекаем имя ПЧ
                     var stationName = closest["name"]?.ToString();
 
                     if (!string.IsNullOrWhiteSpace(stationName))
                     {
-                        // ✅ Переключаемся на страницу с ПЧ
                         SideFrame.Navigate(new FireStationsPage(this));
 
-                        // ✅ Ждём, пока страница загрузится, и вызываем выбор
-                        // Используем Dispatcher для отложенного вызова
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
                             if (SideFrame.Content is FireStationsPage fireStationsPage)
@@ -206,51 +231,69 @@ namespace FFSchedule
         }
         private void MapControl_MouseMove(object sender, MouseEventArgs e)
         {
+            var currentPosition = e.GetPosition(MapControl);
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (Math.Abs(currentPosition.X - _mouseDownPosition.X) > 4 ||
+                    Math.Abs(currentPosition.Y - _mouseDownPosition.Y) > 4)
+                {
+                    _isDraggingMap = true;
+                }
+            }
+
+            if (_isDraggingMap) return;
+
+            if (Math.Abs(currentPosition.X - _lastMousePosition.X) < 3 &&
+                Math.Abs(currentPosition.Y - _lastMousePosition.Y) < 3)
+                return;
+
+            _lastMousePosition = currentPosition;
+
             if (!fireStationsVisible)
             {
-                if (_hoverLayer != null)
+                if (_hoverLayer.Enabled)
                 {
-                    MapControl.Map.Layers.Remove(_hoverLayer);
-                    _hoverLayer = null;
+                    _hoverLayer.Enabled = false;
+                    _hoverLayer.Features = Enumerable.Empty<IFeature>();
                     MapControl.Refresh();
                 }
                 MapControl.Cursor = Cursors.Arrow;
                 return;
             }
+
             if (MapControl.Map?.Layers == null) return;
 
-            if (_hoverLayer != null)
-            {
-                MapControl.Map.Layers.Remove(_hoverLayer);
-                _hoverLayer = null;
-            }
-
             var screenPosition = e.GetPosition(MapControl);
-            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
-                screenPosition.X,
-                screenPosition.Y
-            );
+            var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPosition.X, screenPosition.Y);
 
             var pointsLayer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points") as MemoryLayer;
             if (pointsLayer == null) return;
 
-            var features = pointsLayer.GetFeatures(
-                new MRect(worldPosition.X, worldPosition.Y, worldPosition.X, worldPosition.Y),
-                MapControl.Map.Navigator.Viewport.Resolution
+            double screenRadius = 15;
+            double worldRadius = screenRadius * MapControl.Map.Navigator.Viewport.Resolution;
+
+            var searchRect = new MRect(
+                worldPosition.X - worldRadius,
+                worldPosition.Y - worldRadius,
+                worldPosition.X + worldRadius,
+                worldPosition.Y + worldRadius
             );
 
-            var hoveredFeature = features.FirstOrDefault();
+            var features = pointsLayer.GetFeatures(searchRect, 0);
 
-            if (hoveredFeature != null && hoveredFeature is GeometryFeature geometryFeature)
+            var geometryFeature = features.FirstOrDefault() as GeometryFeature;
+
+            if (geometryFeature != null)
             {
                 if (!_originalStyles.TryGetValue(geometryFeature, out var originalStyles))
                     return;
 
-                _hoverLayer = new MemoryLayer
+                if (_hoverLayer.Enabled && _hoverLayer.Features.FirstOrDefault() == geometryFeature)
                 {
-                    Name = "HoverLayer",
-                    Enabled = true
-                };
+                    MapControl.Cursor = Cursors.Hand;
+                    return;
+                }
 
                 var highlightedStyle = new List<IStyle>();
 
@@ -259,7 +302,6 @@ namespace FFSchedule
                     if (style is SymbolStyle symbolStyle)
                     {
                         var originalFill = symbolStyle.Fill.Color;
-                        var originalOutline = symbolStyle.Outline.Color;
 
                         int r = Math.Min(255, (int)(originalFill.Value.R * 2));
                         int g = Math.Min(255, (int)(originalFill.Value.G * 2));
@@ -270,7 +312,8 @@ namespace FFSchedule
                         {
                             SymbolType = symbolStyle.SymbolType,
                             Fill = new Brush(highlightedFill),
-                            SymbolScale = symbolStyle.SymbolScale,
+                            Outline = symbolStyle.Outline,
+                            SymbolScale = symbolStyle.SymbolScale * 1.15f,
                             Opacity = symbolStyle.Opacity,
                             MinVisible = symbolStyle.MinVisible,
                             MaxVisible = symbolStyle.MaxVisible
@@ -283,16 +326,28 @@ namespace FFSchedule
                 }
 
                 _hoverLayer.Features = new List<GeometryFeature> { geometryFeature };
-                _hoverLayer.Style = null;
-                MapControl.Map.Layers.Add(_hoverLayer);
+                var styleCollection = new StyleCollection();
+                foreach (var s in highlightedStyle)
+                {
+                    styleCollection.Styles.Add(s);
+                }
+                _hoverLayer.Style = styleCollection;
+                _hoverLayer.Enabled = true;
 
                 MapControl.Cursor = Cursors.Hand;
+                MapControl.Refresh();
             }
             else
             {
-                MapControl.Cursor = Cursors.Arrow;
+                if (_hoverLayer.Enabled)
+                {
+                    _hoverLayer.Enabled = false;
+                    _hoverLayer.Features = Enumerable.Empty<IFeature>();
+                    MapControl.Cursor = Cursors.Arrow;
+                    MapControl.Refresh();
+                }
             }
-        }
+        }    
         private async void MapControl_GlobalDoubleClickHandler(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount != 2) return;
@@ -595,6 +650,32 @@ namespace FFSchedule
             map.Navigator.ZoomTo(200);
         }
 
+        private Mapsui.Layers.ILayer CreateOsmLayerWithCache()
+        {
+            string cacheFolder = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "FFSchedule",
+            "TileCache"
+            );
+
+            if (!Directory.Exists(cacheFolder))
+            {
+                Directory.CreateDirectory(cacheFolder);
+            }
+
+            var fileCache = new BruTile.Cache.FileCache(cacheFolder, "png");
+
+            var osmSource = BruTile.Predefined.KnownTileSources.Create(
+                BruTile.Predefined.KnownTileSource.OpenStreetMap,
+                persistentCache: fileCache
+            );
+
+            return new Mapsui.Tiling.Layers.TileLayer(osmSource)
+            {
+                Name = "OpenStreetMap"
+            };
+        }
+
         #region Вспомогательные методы
 
         private List<Polygon> ConvertGeometry(Geometry geom)
@@ -612,6 +693,6 @@ namespace FFSchedule
 
             return result;
         }
-        #endregion        
+        #endregion     
     }
 }
