@@ -1,6 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using FFSchedule.Class;
 using FFSchedule.Controls;
+using FFSchedule.DepartamentWindows;
+using FFSchedule.DepartamentWindows.JsonModels;
 using FFSchedule.Models;
 using FFSchedule.Page;
 using FFSchedule.Services;
@@ -64,6 +66,17 @@ namespace FFSchedule
 
         private System.Windows.Point _lastMousePosition;
 
+        private enum MapMode
+        {
+            None,
+            Add,
+            Delete,
+            Measure,
+            Default
+        }
+
+        private MapMode _mapMode = MapMode.Default;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -106,7 +119,20 @@ namespace FFSchedule
             MapControl.Map.Widgets.Add(new ScaleBarWidget(map));
             MapControl.Map.Widgets.Add(new ZoomInOutWidget());
             MapControl.Map.Widgets.Add(new MouseCoordinatesWidget());      
-        } 
+        }
+
+        public void StartAddDepartmentMode()
+        {
+            _mapMode = MapMode.Add;
+        }
+
+        private bool _skipNextClick = false;
+        public void StartDeleteDepartmentMode()
+        {
+            _mapMode = MapMode.Delete;
+            _skipNextClick = false;
+        }
+
         //Menu
         private void RefreshMap_Click(object sender, RoutedEventArgs e)
         {
@@ -168,50 +194,86 @@ namespace FFSchedule
 
         private void MapControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!fireStationsVisible) return;
+            System.Diagnostics.Debug.WriteLine($"MouseUp: _mapMode={_mapMode}, _skipNextClick={_skipNextClick}, _isDraggingMap={_isDraggingMap}");
 
-            if (_isDraggingMap) return;
+            if (_mapMode == MapMode.Delete)
+            {
+                if (_skipNextClick)
+                {
+                    _skipNextClick = false;
+                    System.Diagnostics.Debug.WriteLine("Skipped!");
+                    return;
+                }
+                HandleDeleteDepartment(e);
+                return;
+            }
+
+            if (_mapMode == MapMode.Add)
+            {
+                HandleAddDepartment(e);
+                return;
+            }
+
+            if (_mapMode == MapMode.Delete)
+            {
+                HandleDeleteDepartment(e);
+                return;
+            }
+
+            if (_isDraggingMap)
+                return;
 
             if (_measureService.CurrentMode != MeasureMode.None)
             {
                 var screenPosition = e.GetPosition(MapControl);
-                var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPosition.X, screenPosition.Y);
+                var worldPosition = MapControl.Map.Navigator.Viewport.ScreenToWorld(
+                    screenPosition.X, screenPosition.Y);
+
                 _measureService.HandleClick(worldPosition);
                 return;
             }
 
+            if (_mapMode != MapMode.Default)
+                return;
+
+            if (!fireStationsVisible)
+                return;
+
             var screenPos = e.GetPosition(MapControl);
             var worldPos = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPos.X, screenPos.Y);
 
-            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points");
-            if (layer is MemoryLayer memoryLayer)
+            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points") as MemoryLayer;
+            if (layer == null)
+                return;
+
+            double screenRadius = 15;
+            double worldRadius = screenRadius * MapControl.Map.Navigator.Viewport.Resolution;
+
+            var searchRect = new MRect(
+                worldPos.X - worldRadius,
+                worldPos.Y - worldRadius,
+                worldPos.X + worldRadius,
+                worldPos.Y + worldRadius);
+
+            var closest = layer.GetFeatures(searchRect, 0).FirstOrDefault();
+            if (closest == null)
+                return;
+
+            var stationName = closest["name"]?.ToString();
+            if (string.IsNullOrWhiteSpace(stationName))
+                return;
+
+            SideFrame.Navigate(new FireStationsPage(this));
+
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                double screenRadius = 15;
-                double worldRadius = screenRadius * MapControl.Map.Navigator.Viewport.Resolution;
-                var searchRect = new MRect(worldPos.X - worldRadius, worldPos.Y - worldRadius, worldPos.X + worldRadius, worldPos.Y + worldRadius);
-
-                var features = memoryLayer.GetFeatures(searchRect, 0);
-                var closest = features.FirstOrDefault();
-
-                if (closest != null)
+                if (SideFrame.Content is FireStationsPage page)
                 {
-                    var stationName = closest["name"]?.ToString();
-
-                    if (!string.IsNullOrWhiteSpace(stationName))
-                    {
-                        SideFrame.Navigate(new FireStationsPage(this));
-
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            if (SideFrame.Content is FireStationsPage fireStationsPage)
-                            {
-                                fireStationsPage.SelectFireStation(stationName);
-                            }
-                        }), System.Windows.Threading.DispatcherPriority.Background);
-                    }
+                    page.SelectFireStation(stationName);
                 }
-            }
+            }));
         }
+
         private void MapControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Если в данный момент мы что-то измеряем — завершаем процесс по клику ПКМ
@@ -606,6 +668,105 @@ namespace FFSchedule
             MapControl.Refresh();
         }
 
+        private void HandleAddDepartment(MouseButtonEventArgs e)
+        {
+            var screenPos = e.GetPosition(MapControl);
+
+            var worldPos = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPos.X, screenPos.Y);
+
+            var lonLat = SphericalMercator.ToLonLat(worldPos.X, worldPos.Y);
+
+            var result = MessageBox.Show(
+                $"Создать ПЧ здесь?\n\n" +
+                $"Широта: {lonLat.lat:F6}\n" +
+                $"Долгота: {lonLat.lon:F6}",
+                "Подтверждение",
+                MessageBoxButton.YesNo);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            var wnd = new AddDepartmentWindow(_dbcontext, lonLat.lat, lonLat.lon);
+
+            wnd.Owner = this;
+
+            wnd.ShowDialog();
+        }
+
+        private void HandleDeleteDepartment(MouseButtonEventArgs e)
+        {
+            if (_skipNextClick)
+            {
+                _skipNextClick = false;
+                return;
+            }
+
+            var screenPos = e.GetPosition(MapControl);
+            var worldPos = MapControl.Map.Navigator.Viewport.ScreenToWorld(screenPos.X, screenPos.Y);
+
+            var layer = MapControl.Map.Layers.FirstOrDefault(l => l.Name == "Points") as MemoryLayer;
+            if (layer == null) return;
+
+            double screenRadius = 15;
+            double worldRadius = screenRadius * MapControl.Map.Navigator.Viewport.Resolution;
+
+            var searchRect = new MRect(
+                worldPos.X - worldRadius,
+                worldPos.Y - worldRadius,
+                worldPos.X + worldRadius,
+                worldPos.Y + worldRadius);
+
+            var feature = layer.GetFeatures(searchRect, 0).FirstOrDefault() as GeometryFeature;
+            if (feature == null) return;
+
+            var name = feature["name"]?.ToString();
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            var result = MessageBox.Show(
+                $"Удалить пожарную часть:\n{name}?",
+                "Подтверждение",
+                MessageBoxButton.YesNo);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            DeleteFromDatabase(name);
+            DeleteFromGeoJson(name);
+
+            MessageBox.Show("Удалено");
+
+            RefreshMap_Click(null, null);
+        }
+
+        private void DeleteFromDatabase(string name)
+        {
+            var dept = _dbcontext.Departments.FirstOrDefault(x => x.DptName == name);
+            if (dept == null) return;
+
+            _dbcontext.Departments.Remove(dept);
+            _dbcontext.SaveChanges();
+        }
+
+        private void DeleteFromGeoJson(string name)
+        {
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "MapVector", "FireStationPoints.geojson");
+
+            var json = File.ReadAllText(path);
+
+            var geo = JsonSerializer.Deserialize<GeoJson>(json);
+
+            if (geo?.features == null) return;
+
+            geo.features = geo.features
+                .Where(f => f.properties["name"]?.ToString() != name)
+                .ToList();
+
+            File.WriteAllText(path, JsonSerializer.Serialize(geo, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            }));
+        }
 
         private void TogglePolygonFill_Click(object sender, RoutedEventArgs e)
         {
@@ -670,7 +831,7 @@ namespace FFSchedule
 
         #region Вспомогательные методы
 
-        private List<Polygon> ConvertGeometry(Geometry geom)
+        private List<Polygon> ConvertGeometry(NetTopologySuite.Geometries.Geometry geom)
         {
             var result = new List<Polygon>();
 

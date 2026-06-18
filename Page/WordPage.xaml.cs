@@ -45,5 +45,16 @@ namespace FFSchedule.Page
             exporter.ExportSettlementsOnly(settlements, templatePath, outputPath);
             MessageBox.Show("Word документ создан!");
         }
+
+        private void AddDepartment_Click(object sender, RoutedEventArgs e)
+        {
+            _mainWindow.StartAddDepartmentMode();
+        }
+
+        private void DeleteDepartment_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Выберите ПЧ на карте для удаления");
+            _mainWindow.StartDeleteDepartmentMode();
+        }
     }
 }

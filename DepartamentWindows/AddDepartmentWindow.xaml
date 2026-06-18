@@ -1,0 +1,136 @@
+﻿<Window x:Class="FFSchedule.DepartamentWindows.AddDepartmentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FFSchedule.DepartamentWindows"
+        mc:Ignorable="d"
+        Title="AddDepartmentWindow" Height="450" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+        <Grid Margin="15">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Название -->
+            <TextBlock Grid.Row="0"
+                       Text="Название:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBox x:Name="TbName"
+                     Grid.Row="0"
+                     Grid.Column="1"
+                     Style="{StaticResource FormTextBoxStyle}"/>
+
+            <!-- Краткое название -->
+            <TextBlock Grid.Row="1"
+                       Text="Краткое название:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBox x:Name="TbShort"
+                     Grid.Row="1"
+                     Grid.Column="1"
+                     Style="{StaticResource FormTextBoxStyle}"/>
+
+            <!-- Адрес -->
+            <TextBlock Grid.Row="2"
+                       Text="Адрес:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBox x:Name="TbAddress"
+                     Grid.Row="2"
+                     Grid.Column="1"
+                     Style="{StaticResource FormTextBoxStyle}"/>
+
+            <!-- Телефон -->
+            <TextBlock Grid.Row="3"
+                       Text="Телефон:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBox x:Name="TbPhone"
+                     Grid.Row="3"
+                     Grid.Column="1"
+                     Style="{StaticResource FormTextBoxStyle}"/>
+
+            <!-- Тип части -->
+            <TextBlock Grid.Row="4"
+                       Text="Тип части:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <ComboBox x:Name="CbDepartmentType"
+                      Margin="5"
+                      Grid.Row="4"
+                      Grid.Column="1"
+                      Style="{StaticResource ModernComboBoxStyle}"/>
+
+            <!-- Отряд -->
+            <TextBlock Grid.Row="5"
+                       Text="Отряд:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <ComboBox x:Name="CbFireBrigade"
+                      Margin="5"
+                      Grid.Row="5"
+                      Grid.Column="1"
+                      Style="{StaticResource ModernComboBoxStyle}"/>
+
+            <!-- Количество АЦ -->
+            <TextBlock Grid.Row="6"
+                       Text="Количество АЦ:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBox x:Name="TbFiretrucks"
+                     Grid.Row="6"
+                     Grid.Column="1"
+                     Style="{StaticResource FormTextBoxStyle}"/>
+
+            <!-- Автолестница -->
+            <TextBlock Grid.Row="7"
+                       Text="Автолестница:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <CheckBox x:Name="ChkLadder"
+                      Grid.Row="7"
+                      Grid.Column="1"
+                      Style="{StaticResource FormCheckBoxStyle}"/>
+
+            <!-- Координаты -->
+            <TextBlock Grid.Row="8"
+                       Text="Координаты:"
+                       Style="{StaticResource FormLabelStyle}"/>
+
+            <TextBlock x:Name="TbCoordinates"
+                       Grid.Row="8"
+                       Grid.Column="1"
+                       FontWeight="Bold"
+                       Margin="5"
+                       Foreground="{DynamicResource ForegroundBrush}"/>
+
+            <!-- Кнопка -->
+            <Button Grid.Row="9"
+                    Grid.ColumnSpan="2"
+                    Height="35"
+                    Margin="0,5,0,0"
+                    Content="Сохранить"
+                    Style="{StaticResource OutlineActionButtonStyle}"
+                    Click="Save_Click"/>
+
+        </Grid>
+    </ScrollViewer>
+</Window>

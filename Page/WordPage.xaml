@@ -10,11 +10,27 @@
 
     <Grid>
         <StackPanel Margin="10">
+            <Button Content="Добавить пожарную часть"
+                    Click="AddDepartment_Click"
+                    Margin="5,10,0,0"
+                    Style="{StaticResource OutlineActionButtonStyle}" 
+                    HorizontalAlignment="Left"
+                    Width="200"/>
+
+            <Button Content="Удалить пожарную часть"
+                    Click="DeleteDepartment_Click"
+                    Margin="5,10,0,0"
+                    Style="{StaticResource OutlineActionButtonStyle}"
+                    HorizontalAlignment="Left"
+                    Width="200"/>
+
             <Button Content="Создать таблицу в Word" 
-                Click="GenerateWordTable_Click"
-                Style="{StaticResource OutlineActionButtonStyle}"
-                Margin="5,20,0,0" 
-                HorizontalAlignment="Left" />
+                    Click="GenerateWordTable_Click"
+                    Style="{StaticResource OutlineActionButtonStyle}"
+                    Margin="5,20,0,0" 
+                    HorizontalAlignment="Left"
+                    Width="200"/>
+            
         </StackPanel>
     </Grid>
 </Page>

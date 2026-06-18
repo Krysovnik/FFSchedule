@@ -11,6 +11,9 @@
     <Compile Update="Controls\UserControl1.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="DepartamentWindows\AddDepartmentWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="LoginWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
