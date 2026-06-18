@@ -45,7 +45,7 @@ namespace FFSchedule
 
         private Dictionary<GeometryFeature, List<IStyle>> _originalStyles = new Dictionary<GeometryFeature, List<IStyle>>();
 
-        private Mapsui.Layers.MemoryLayer _polygonLayer;
+        private Mapsui.Layers.MemoryLayer? _polygonLayer;
 
         private bool _polygonFillEnabled = true;
         private double _polygonBorderWidth = 0.5;
@@ -355,7 +355,7 @@ namespace FFSchedule
                 {
                     if (style is SymbolStyle symbolStyle)
                     {
-                        var originalFill = symbolStyle.Fill.Color;
+                        var originalFill = symbolStyle?.Fill?.Color;
 
                         int r = Math.Min(255, (int)(originalFill.Value.R * 2));
                         int g = Math.Min(255, (int)(originalFill.Value.G * 2));
@@ -419,6 +419,7 @@ namespace FFSchedule
             var result = await _searchService.ReverseSearchAsync(lonLat.lat, lonLat.lon);
             if (result != null)
             {
+                _searchService.AddToHistory(result);
                 GlobalSearchBox.FillAndSelect(result);
             }
         }
@@ -426,6 +427,7 @@ namespace FFSchedule
         {
             this.searchLat = res.Lat;
             this.searchLon = res.Lon;
+            this._searchService.AddToHistory(res);
             this._searchService.FlyToResult(res);
         }
         private void ClearSearchAndRoute_Click(object sender, RoutedEventArgs e)

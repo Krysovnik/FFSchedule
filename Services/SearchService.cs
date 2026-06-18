@@ -19,6 +19,8 @@ namespace FFSchedule.Services
         private readonly MapControl _mapControl;
         private const string SEARCH_PIN_LAYER = "SearchPin";
 
+        private readonly List<NominatimResult> _searchHistory = new List<NominatimResult>();
+
         public SearchService(HttpClient httpClient, MapControl mapControl)
         {
             _httpClient = httpClient;
@@ -27,34 +29,68 @@ namespace FFSchedule.Services
 
         #region Публичные методы
 
+        public void AddToHistory(NominatimResult result)
+        {
+            if(!_searchHistory.Any(h => h.DisplayName == result.DisplayName))
+            {
+                _searchHistory.Add(result);
+            }
+        }
+
         /// Выполняет поиск по запросу и возвращает отсортированный список результатов.
         public async Task<List<NominatimResult>> SearchAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return new List<NominatimResult>();
 
-            string viewbox = string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
+            const int maxTotalResults = 5;
+
+            string cleanedQuery = query.Trim().ToLower();
+
+            var finalResults = new List<NominatimResult>();
+
+            var cachedResults = _searchHistory.Where(h => 
+                h.DisplayName.ToLower().Contains(cleanedQuery) || 
+                (h.ShortDisplayName != null && h.ShortDisplayName.ToLower().Contains(cleanedQuery)))
+                .Take(maxTotalResults).ToList();
+
+            finalResults.AddRange(cachedResults);
+
+            if(finalResults.Count < maxTotalResults)
+            {
+                int remainingSlots = maxTotalResults - finalResults.Count;
+
+                string viewbox = string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}",
                 82.55, 55.15, 83.20, 54.80);
 
-            var url = $"https://nominatim.openstreetmap.org/search" +
-                      $"?q={Uri.EscapeDataString(query.Trim())}" +
-                      $"&format=jsonv2" +
-                      $"&addressdetails=1" +
-                      $"&extratags=1" +
-                      $"&countrycodes=RU" +
-                      $"&viewbox={viewbox}" +
-                      $"&bounded=1" +
-                      $"&limit=5";
+                var url = $"https://nominatim.openstreetmap.org/search" +
+                          $"?q={Uri.EscapeDataString(query.Trim())}" +
+                          $"&format=jsonv2" +
+                          $"&addressdetails=1" +
+                          $"&extratags=1" +
+                          $"&countrycodes=RU" +
+                          $"&viewbox={viewbox}" +
+                          $"&bounded=1" +
+                          $"&limit={maxTotalResults}";
+                try
+                {
+                    var networkResults = await _httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
+                    if (networkResults != null)
+                    {
+                        var uniqueNetworkResults = networkResults
+                            .Where(nr => !finalResults.Any(fr => fr.DisplayName == nr.DisplayName))
+                            .OrderByDescending(r => r.Importance)
+                            .Take(remainingSlots);
 
-            try
-            {
-                var results = await _httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
-                return results?.OrderByDescending(r => r.Importance).ToList() ?? new List<NominatimResult>();
+                        finalResults.AddRange(uniqueNetworkResults);
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    System.Diagnostics.Debug.WriteLine("Nominatim недоступен. Выведены только результаты из кэша.");
+                }
             }
-            catch (HttpRequestException)
-            {
-                return new List<NominatimResult>();
-            }
+            return finalResults;
         }
  
         public void PutSearchPin(NominatimResult result)
