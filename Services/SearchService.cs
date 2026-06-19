@@ -168,6 +168,11 @@ namespace FFSchedule.Services
             if (old != null)
                 _mapControl?.Map?.Layers.Remove(old);
         }
+
+        public void ClearCache()
+        {
+            _searchHistory.Clear();
+        }
         #endregion
     }
 }

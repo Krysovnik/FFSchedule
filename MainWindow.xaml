@@ -11,11 +11,11 @@
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top" Background="#F0F0F0">
             <MenuItem Header="Файл">
-                <MenuItem Header="Новый проект"/>
-                <MenuItem Header="Открыть проект"/>
-                <MenuItem Header="Сохранить проект"/>
+                <MenuItem Header="Экспорт отчета в Word..." Click="WordToRoute"/>
+                <MenuItem Header="Печать карты / Скриншот..." Click="ExportMapImage_Click"/>
+                <MenuItem Header="Очистить кэш" Click="ClearCache_Click"/>
                 <Separator/>
-                <MenuItem Header="Выход"/>
+                <MenuItem Header="Выход" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Инструменты">
                 <MenuItem Header="Линейка" Click="MeasureDistance_Click"/>

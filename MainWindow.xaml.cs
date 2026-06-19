@@ -181,6 +181,68 @@ namespace FFSchedule
                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void ClearCache_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string cacheFolder = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "FFSchedule", "TileCache"
+                );
+
+                if (System.IO.Directory.Exists(cacheFolder))
+                {
+                    _routeService.ClearCache();
+                    _searchService.ClearCache();
+                    System.IO.Directory.Delete(cacheFolder, true);
+                    System.IO.Directory.CreateDirectory(cacheFolder);
+                    MessageBox.Show("Кэш изображений карты, маршрутов и поиска очищен. Изменения вступят со следующим запуском.",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось очистить кэш: {ex.Message}", "Ошибка");
+            }
+        }
+
+        private void ExportMapImage_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "PNG Image|*.png",
+                FileName = $"Map_Export_{DateTime.Now:yyyyMMdd_HHmmss}"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    byte[] snapshot = MapControl.GetSnapshot();
+                    if (snapshot != null && snapshot.Length > 0)
+                    {
+                        System.IO.File.WriteAllBytes(saveFileDialog.FileName, snapshot);
+                        MessageBox.Show("Изображение карты успешно сохранено!", "Экспорт",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Не удалось получить снимок карты (карта пуста или еще не отрисовалась).",
+                            "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка");
+                }
+            }
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
         //Карта
         private void MapControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -794,6 +856,6 @@ namespace FFSchedule
 
             return result;
         }
-        #endregion     
+        #endregion       
     }
 }
