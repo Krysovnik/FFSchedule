@@ -50,15 +50,17 @@ namespace FFSchedule.Services
             this.map.Layers.Add(_routeLayer);
         }
 
-        private string GetCacheKey(double lat, double lon)
+        private string GetCacheKey(double lat, double lon, int requiredEquipment)
         {
-            return $"{Math.Round(lat, 5).ToString(CultureInfo.InvariantCulture)};{Math.Round(lon, 5).ToString(CultureInfo.InvariantCulture)}";
+            return $"{Math.Round(lat, 5).ToString(CultureInfo.InvariantCulture)};" +
+            $"{Math.Round(lon, 5).ToString(CultureInfo.InvariantCulture)};" +
+            $"{requiredEquipment}";
         }
 
         public async Task<List<RouteResult>> BuildRoutesByRequirementAsync(double toLat, double toLon, int requiredEquipment)
         {        
             _lastTargetLocation = (toLat, toLon);
-            string cacheKey = GetCacheKey(toLat, toLon);
+            string cacheKey = GetCacheKey(toLat, toLon, requiredEquipment);
 
             if (_routeCache.TryGetValue(cacheKey, out var cachedData))
             {
