@@ -630,6 +630,12 @@ namespace FFSchedule
 
             wnd.Owner = this;
 
+            if (wnd.ShowDialog() == true)
+            {
+                _routeService?.ClearCache();
+                RefreshMap_Click(null, null);
+            }
+
             wnd.ShowDialog();
         }
 
@@ -672,6 +678,8 @@ namespace FFSchedule
 
             DeleteFromDatabase(name);
             DeleteFromGeoJson(name);
+
+            _routeService?.ClearCache();
 
             MessageBox.Show("Удалено");
 

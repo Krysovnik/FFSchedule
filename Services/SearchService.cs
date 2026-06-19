@@ -22,6 +22,8 @@ namespace FFSchedule.Services
 
         private readonly List<NominatimResult> _searchHistory = new List<NominatimResult>();
 
+        private const int maxTotalResults = 5;
+
         public SearchService(HttpClient httpClient, MapControl mapControl)
         {
             _httpClient = httpClient;
@@ -42,9 +44,7 @@ namespace FFSchedule.Services
         public async Task<List<NominatimResult>> SearchAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
-                return new List<NominatimResult>();
-
-            const int maxTotalResults = 5;
+                return new List<NominatimResult>();         
 
             string cleanedQuery = query.Trim().ToLower();
 

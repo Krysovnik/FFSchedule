@@ -8,6 +8,7 @@ using Mapsui.UI;
 using Mapsui.UI.Wpf;
 using NetTopologySuite.Geometries;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
@@ -30,6 +31,9 @@ namespace FFSchedule.Services
         private readonly MemoryLayer _routeLayer;
         private (double Lat, double Lon)? _lastTargetLocation;
 
+        private readonly ConcurrentDictionary<string, CachedRouteData> _routeCache = new();
+        private const int maxCache = 100;
+
         public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations)
         {
             this.httpClient = httpClient;
@@ -46,11 +50,34 @@ namespace FFSchedule.Services
             this.map.Layers.Add(_routeLayer);
         }
 
-        public async Task<List<RouteResult>> BuildRoutesByRequirementAsync(double toLat, double toLon, int requiredEquipment)
+        private string GetCacheKey(double lat, double lon)
         {
-            var results = new List<RouteResult>();
-            _lastTargetLocation = (toLat, toLon);
+            return $"{Math.Round(lat, 5).ToString(CultureInfo.InvariantCulture)};{Math.Round(lon, 5).ToString(CultureInfo.InvariantCulture)}";
+        }
 
+        public async Task<List<RouteResult>> BuildRoutesByRequirementAsync(double toLat, double toLon, int requiredEquipment)
+        {        
+            _lastTargetLocation = (toLat, toLon);
+            string cacheKey = GetCacheKey(toLat, toLon);
+
+            if (_routeCache.TryGetValue(cacheKey, out var cachedData))
+            {
+                System.Diagnostics.Debug.WriteLine("Маршрут взят из локального кэша");
+
+                _usedStations.Clear();
+                foreach (var station in cachedData.UsedStations) _usedStations.Add(station);
+
+                lock (_routeLayer.Features)
+                {
+                    // Клонируем фичи, чтобы Mapsui корректно их перерисовывал
+                    _routeLayer.Features = cachedData.Features.ToList();
+                }
+                mapControl.Refresh();
+
+                return cachedData.RouteResults.ToList();
+            }
+
+            var results = new List<RouteResult>();
             try
             {
                 ClearRoute();
@@ -88,6 +115,8 @@ namespace FFSchedule.Services
                     _routeLayer.Features = tempFeatures;
                 }
                 mapControl.Refresh();
+
+                SaveToCache(cacheKey, results, tempFeatures, _usedStations);
             }
             catch (Exception ex)
             {
@@ -134,6 +163,37 @@ namespace FFSchedule.Services
             {
                 return new RouteResult { Success = false, ErrorMessage = ex.Message };
             }
+        }
+
+        private void SaveToCache(string key, List<RouteResult> results, List<GeometryFeature> features, HashSet<FireStation> usedStations, bool isUpdate = false, RouteResult newResult = null)
+        {
+            if (isUpdate && _routeCache.TryGetValue(key, out var existing))
+            {
+                existing.Features = features.ToList();
+                existing.UsedStations = new HashSet<FireStation>(usedStations);
+                if (newResult != null) existing.RouteResults.Add(newResult);
+            }
+            else
+            {
+                if (_routeCache.Count >= maxCache)
+                {
+                    var firstKey = _routeCache.Keys.FirstOrDefault();
+                    if (firstKey != null) _routeCache.TryRemove(firstKey, out _);
+                }
+
+                var cacheEntry = new CachedRouteData
+                {
+                    RouteResults = results?.ToList() ?? new List<RouteResult>(),
+                    Features = features.ToList(),
+                    UsedStations = new HashSet<FireStation>(usedStations)
+                };
+                _routeCache[key] = cacheEntry;
+            }
+        }
+
+        public void ClearCache()
+        {
+            _routeCache.Clear();
         }
 
         private async Task<List<FireStation>> GetSortedFireStations(double toLat, double toLon)
