@@ -18,26 +18,26 @@ namespace FFSchedule.Services
     {
         private readonly HttpClient _httpClient;
         private readonly MapControl _mapControl;
+        private readonly ISearchCache _cache;
         private const string SEARCH_PIN_LAYER = "SearchPin";
 
-        private readonly List<NominatimResult> _searchHistory = new List<NominatimResult>();
+        //private readonly List<NominatimResult> _searchHistory = new List<NominatimResult>();
 
         private const int maxTotalResults = 5;
 
-        public SearchService(HttpClient httpClient, MapControl mapControl)
+        public SearchService(HttpClient httpClient, MapControl mapControl, ISearchCache cache)
         {
             _httpClient = httpClient;
             _mapControl = mapControl;
+            _cache = cache;
         }
+
 
         #region Публичные методы
 
-        public void AddToHistory(NominatimResult result)
+        public async Task AddToHistory(NominatimResult result)
         {
-            if(!_searchHistory.Any(h => h.DisplayName == result.DisplayName))
-            {
-                _searchHistory.Add(result);
-            }
+            await _cache.AddToCacheAsync(result);
         }
 
         /// Выполняет поиск по запросу и возвращает отсортированный список результатов.
@@ -48,16 +48,9 @@ namespace FFSchedule.Services
 
             string cleanedQuery = query.Trim().ToLower();
 
-            var finalResults = new List<NominatimResult>();
+            var finalResults = await _cache.GetCachedResultsAsync(cleanedQuery, maxTotalResults);
 
-            var cachedResults = _searchHistory.Where(h => 
-                h.DisplayName.ToLower().Contains(cleanedQuery) || 
-                (h.ShortDisplayName != null && h.ShortDisplayName.ToLower().Contains(cleanedQuery)))
-                .Take(maxTotalResults).ToList();
-
-            finalResults.AddRange(cachedResults);
-
-            if(finalResults.Count < maxTotalResults)
+            if (finalResults.Count < maxTotalResults)
             {
                 int remainingSlots = maxTotalResults - finalResults.Count;
 
@@ -169,10 +162,7 @@ namespace FFSchedule.Services
                 _mapControl?.Map?.Layers.Remove(old);
         }
 
-        public void ClearCache()
-        {
-            _searchHistory.Clear();
-        }
+        public async Task ClearCache() => await _cache.ClearCacheAsync();
         #endregion
     }
 }

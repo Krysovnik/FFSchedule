@@ -90,7 +90,8 @@ namespace FFSchedule
             InitializeMap();
 
             _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
-            _searchService = new SearchService(App.HttpClient, MapControl);
+            ISearchCache searchCache = new JsonFileSearchCache();
+            _searchService = new SearchService(App.HttpClient, MapControl, searchCache);
             _measureService = new MeasureService(MapControl);                
 
             SideFrame.Navigate(new SearchPage(this));
