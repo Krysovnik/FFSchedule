@@ -20,6 +20,17 @@ public partial class App : Application
     {
         base.OnStartup(e);
         HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("FFSchedule/1.0 (popovis@mer.ci.nsu.ru)");
+
+        if (FFSchedule.Properties.Settings.Default.IsLoggedIn)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+        else
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+        }
     }
 }
 

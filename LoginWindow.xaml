@@ -6,9 +6,13 @@
         xmlns:local="clr-namespace:FFSchedule"
         xmlns:controls="clr-namespace:FFSchedule.Controls"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="400" Background="{DynamicResource BackgroundBrush}">
+        Title="Авторизация" Height="450" Width="400" Background="{DynamicResource BackgroundBrush}" ResizeMode="NoResize">
     <Grid>
-        <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="251*"/>
+            <ColumnDefinition Width="149*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -68,7 +72,12 @@
                         BorderBrush="{DynamicResource OrangeBrush}" 
                         BorderThickness="1"/>
                 </Grid>
-                <Button Height="35" Width="150" Margin="20" Content="Войти" Click="LoginButton_Click" FontSize="14" FontWeight="Bold" FontFamily="Arial Black" Background="{DynamicResource OrangeBrush}" Cursor="Hand"/>
+                <Button Height="35"
+                        Width="150"
+                        Margin="20"
+                        Content="Войти"
+                        Click="LoginButton_Click"
+                        Style="{StaticResource OutlineActionButtonStyle}"/>
             </StackPanel>
         </Grid>
     </Grid>

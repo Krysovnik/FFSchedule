@@ -243,6 +243,18 @@ namespace FFSchedule
         {
             Application.Current.Shutdown();
         }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            FFSchedule.Properties.Settings.Default.IsLoggedIn = false;
+            FFSchedule.Properties.Settings.Default.Save();
+
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+
+            this.Close();
+        }
+
         //Карта
         private void MapControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -856,6 +868,6 @@ namespace FFSchedule
 
             return result;
         }
-        #endregion       
+        #endregion
     }
 }

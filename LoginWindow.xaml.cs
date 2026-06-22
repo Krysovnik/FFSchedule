@@ -19,27 +19,26 @@ namespace FFSchedule
             string login = LoginTextBox.Text.Trim();
             string password = PasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(login) ||
-                string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show(
                     "Введите логин и пароль",
                     "Ошибка",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
-
                 return;
             }
 
             Employee? employee = _context.Employees
-                .FirstOrDefault(x =>
-                    x.EmLogin == login &&
-                    x.EmPassword == password);
+                .FirstOrDefault(x => x.EmLogin == login && x.EmPassword == password);
 
             if (employee != null)
             {
-                MainWindow mainWindow = new MainWindow();
 
+                FFSchedule.Properties.Settings.Default.IsLoggedIn = true;
+                FFSchedule.Properties.Settings.Default.Save(); 
+
+                MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
                 this.Close();
             }
