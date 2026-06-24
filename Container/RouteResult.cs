@@ -12,6 +12,8 @@ namespace FFSchedule.Container
         public double Duration { get; set; }
 
         public FireStation? Station { get; set; }
+
+        public List<CoordinateDto>? RawCoordinates { get; set; }
     }
 }
 

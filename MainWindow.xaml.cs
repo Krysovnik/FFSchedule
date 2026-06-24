@@ -68,6 +68,9 @@ namespace FFSchedule
 
         private System.Windows.Point _lastMousePosition;
 
+        public IRouteCache routeCache;
+        public ISearchCache searchCache;
+
         private enum MapMode
         {
             None,
@@ -89,8 +92,10 @@ namespace FFSchedule
 
             InitializeMap();
 
-            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
-            ISearchCache searchCache = new JsonFileSearchCache();
+            searchCache = new JsonFileSearchCache();
+            routeCache = new JsonFileRouteCache();
+
+            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);     
             _searchService = new SearchService(App.HttpClient, MapControl, searchCache);
             _measureService = new MeasureService(MapControl);                
 
@@ -159,6 +164,8 @@ namespace FFSchedule
                     fireStations.Clear();
 
                     MapControl.Map.Layers.Clear();
+                    MapControl.Map.Layers.Add(_hoverLayer);
+                    MapControl.Map.Layers.Add(CreateOsmLayerWithCache());
 
                     //Заново собираем карту
                     MapControl.Map.Layers.Add(CreateOsmLayerWithCache());
@@ -170,7 +177,7 @@ namespace FFSchedule
                     }
 
                     //Пересоздаем сервис с новым списком станций
-                    _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList());
+                    _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);
 
                     SetInitialView(MapControl.Map);
                     MapControl.Refresh();
@@ -194,8 +201,8 @@ namespace FFSchedule
 
                 if (System.IO.Directory.Exists(cacheFolder))
                 {
-                    _routeService.ClearCache();
-                    _searchService.ClearCache();
+                    _routeService?.ClearCache();
+                    _searchService?.ClearCache();
                     System.IO.Directory.Delete(cacheFolder, true);
                     System.IO.Directory.CreateDirectory(cacheFolder);
                     MessageBox.Show("Кэш изображений карты, маршрутов и поиска очищен. Изменения вступят со следующим запуском.",
@@ -501,7 +508,7 @@ namespace FFSchedule
             var result = await _searchService.ReverseSearchAsync(lonLat.lat, lonLat.lon);
             if (result != null)
             {
-                _searchService.AddToHistory(result);
+                _searchService?.AddToHistory(result);
                 GlobalSearchBox.FillAndSelect(result);
             }
         }
@@ -509,8 +516,8 @@ namespace FFSchedule
         {
             this.searchLat = res.Lat;
             this.searchLon = res.Lon;
-            this._searchService.AddToHistory(res);
-            this._searchService.FlyToResult(res);
+            this._searchService?.AddToHistory(res);
+            this._searchService?.FlyToResult(res);
         }
         private void ClearSearchAndRoute_Click(object sender, RoutedEventArgs e)
         {

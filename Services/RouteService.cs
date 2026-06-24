@@ -26,20 +26,22 @@ namespace FFSchedule.Services
         private readonly Map map;
         private readonly MapControl mapControl;
         private readonly List<FireStation> fireStations;
+        private readonly IRouteCache _fileCache;
 
         private readonly HashSet<FireStation> _usedStations = new HashSet<FireStation>();
         private readonly MemoryLayer _routeLayer;
         private (double Lat, double Lon)? _lastTargetLocation;
 
-        private readonly ConcurrentDictionary<string, CachedRouteData> _routeCache = new();
-        private const int maxCache = 100;
+        private Dictionary<string, List<RouteResult>> _memoryCache = new();
+        private bool _isCacheLoaded = false;
 
-        public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations)
+        public RouteService(HttpClient httpClient, Map map, MapControl mapControl, List<FireStation> fireStations, IRouteCache fileCache)
         {
             this.httpClient = httpClient;
             this.map = map;
             this.mapControl = mapControl;
             this.fireStations = fireStations;
+            _fileCache = fileCache;
 
             _routeLayer = new MemoryLayer
             {
@@ -48,6 +50,15 @@ namespace FFSchedule.Services
                 Features = new List<GeometryFeature>()
             };
             this.map.Layers.Add(_routeLayer);
+        }
+        // Вспомогательный метод для ленивой загрузки кэша с диска при первом обращении
+        private async Task EnsureCacheLoadedAsync()
+        {
+            if (!_isCacheLoaded)
+            {
+                _memoryCache = await _fileCache.LoadCacheAsync();
+                _isCacheLoaded = true;
+            }
         }
 
         private string GetCacheKey(double lat, double lon, int requiredEquipment)
@@ -62,21 +73,52 @@ namespace FFSchedule.Services
             _lastTargetLocation = (toLat, toLon);
             string cacheKey = GetCacheKey(toLat, toLon, requiredEquipment);
 
-            if (_routeCache.TryGetValue(cacheKey, out var cachedData))
+            await EnsureCacheLoadedAsync();
+
+            if (_memoryCache.TryGetValue(cacheKey, out var cachedResults))
             {
                 System.Diagnostics.Debug.WriteLine("Маршрут взят из локального кэша");
 
                 _usedStations.Clear();
-                foreach (var station in cachedData.UsedStations) _usedStations.Add(station);
+                var tempFeatures = new List<GeometryFeature>();
 
+                for(int i = 0; i < cachedResults.Count; i++)
+                {
+                    var res = cachedResults[i];
+                    if(res.Station != null)
+                    {
+                        var station = fireStations.FirstOrDefault(s =>
+                        s.Name == res.Station.Name && s.Address == res.Station.Address);
+
+                        if (station != null)
+                        {
+                            _usedStations.Add(station);
+
+                            res.Station = station;
+                        }
+                        else
+                        {
+                            _usedStations.Add(res.Station);
+                        }
+
+                    }
+                    if(res.Success && res.RawCoordinates != null)
+                    {
+                        var color = new Color(255, 82, 82);
+                        // Переводим DTO-координаты обратно в формат Mapsui/NetTopologySuite
+                        var mapsuiCoords = res.RawCoordinates
+                            .Select(c => new Coordinate(c.X, c.Y))
+                            .ToList();
+                        PrepareRouteFeature(mapsuiCoords, res.Distance, res.Duration, i, color, false, tempFeatures);
+                    }
+                }
                 lock (_routeLayer.Features)
                 {
-                    // Клонируем фичи, чтобы Mapsui корректно их перерисовывал
-                    _routeLayer.Features = cachedData.Features.ToList();
+                    _routeLayer.Features = tempFeatures;
                 }
                 mapControl.Refresh();
 
-                return cachedData.RouteResults.ToList();
+                return cachedResults.ToList();
             }
 
             var results = new List<RouteResult>();
@@ -118,7 +160,8 @@ namespace FFSchedule.Services
                 }
                 mapControl.Refresh();
 
-                SaveToCache(cacheKey, results, tempFeatures, _usedStations);
+                _memoryCache[cacheKey] = results;
+                await _fileCache.SaveCacheAsync(_memoryCache);
             }
             catch (Exception ex)
             {
@@ -167,35 +210,10 @@ namespace FFSchedule.Services
             }
         }
 
-        private void SaveToCache(string key, List<RouteResult> results, List<GeometryFeature> features, HashSet<FireStation> usedStations, bool isUpdate = false, RouteResult newResult = null)
+        public async Task ClearCache()
         {
-            if (isUpdate && _routeCache.TryGetValue(key, out var existing))
-            {
-                existing.Features = features.ToList();
-                existing.UsedStations = new HashSet<FireStation>(usedStations);
-                if (newResult != null) existing.RouteResults.Add(newResult);
-            }
-            else
-            {
-                if (_routeCache.Count >= maxCache)
-                {
-                    var firstKey = _routeCache.Keys.FirstOrDefault();
-                    if (firstKey != null) _routeCache.TryRemove(firstKey, out _);
-                }
-
-                var cacheEntry = new CachedRouteData
-                {
-                    RouteResults = results?.ToList() ?? new List<RouteResult>(),
-                    Features = features.ToList(),
-                    UsedStations = new HashSet<FireStation>(usedStations)
-                };
-                _routeCache[key] = cacheEntry;
-            }
-        }
-
-        public void ClearCache()
-        {
-            _routeCache.Clear();
+            _memoryCache.Clear();
+            await _fileCache.ClearCacheAsync();
         }
 
         private async Task<List<FireStation>> GetSortedFireStations(double toLat, double toLon)
@@ -255,7 +273,10 @@ namespace FFSchedule.Services
 
             PrepareRouteFeature(coords, distance, duration, index, color, isDash, outputFeatures);
 
-            return new RouteResult { Success = true, Distance = distance, Duration = duration };
+            // Изменение: Сохраняем координаты в создаваемый RouteResult, чтобы они попали в JSON кэш
+            var rawCoordsDto = coords.Select(c => new CoordinateDto { X = c.X, Y = c.Y }).ToList();
+
+            return new RouteResult { Success = true, Distance = distance, Duration = duration, RawCoordinates = rawCoordsDto };
         }
 
         private void PrepareRouteFeature(List<Coordinate> coordinatesList, double distance, double duration, int index, Color color, bool isDash, List<GeometryFeature> outputFeatures)
