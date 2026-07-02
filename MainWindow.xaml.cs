@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using FFSchedule.Class;
+﻿using FFSchedule.Class;
 using FFSchedule.Container;
-using FFSchedule.Controls;
 using FFSchedule.DepartamentWindows;
 using FFSchedule.DepartamentWindows.JsonModels;
 using FFSchedule.Models;
@@ -54,6 +52,7 @@ namespace FFSchedule
         public RouteService _routeService;
         public readonly SearchService _searchService;
         public MeasureService _measureService;
+        private MeasureVisualizer _measureVisualizer;
         public readonly MapDataService _mapDataService;
         private readonly MapVisualizer _mapVisualizer;
 
@@ -85,7 +84,8 @@ namespace FFSchedule
             _mapDataService = new MapDataService();
             _mapVisualizer = new MapVisualizer(MapControl);
 
-            _measureService = new MeasureService(MapControl);
+            _measureService = new MeasureService();
+            _measureVisualizer = new MeasureVisualizer(MapControl);
 
             InitializeMap();
 
@@ -102,11 +102,9 @@ namespace FFSchedule
             map = new Map();
             MapControl.Map = map;
             map.Layers.Add(CreateOsmLayerWithCache());
+
             _mapVisualizer.InitializeLayers(map);
-            if (_measureService?.MeasureLayer != null)
-            {
-                map.Layers.Add(_measureService.MeasureLayer);
-            }
+            _measureVisualizer.InitializeLayers(map);
 
             LoadMapData();
             SetInitialView(map);
@@ -171,10 +169,8 @@ namespace FFSchedule
                     MapControl.Map.Layers.Add(CreateOsmLayerWithCache());
                     _mapVisualizer.InitializeLayers(MapControl.Map);
 
-                    if (_measureService?.MeasureLayer != null)
-                    {
-                        MapControl.Map.Layers.Add(_measureService.MeasureLayer);
-                    }
+                    _mapVisualizer.InitializeLayers(map);
+                    _measureVisualizer.InitializeLayers(map);
 
                     LoadMapData();
 
@@ -291,7 +287,11 @@ namespace FFSchedule
 
             if (_measureService.CurrentMode != MeasureMode.None)
             {
-                _measureService.HandleClick(worldPosition);
+                var lonLat = Mapsui.Projections.SphericalMercator.ToLonLat(worldPosition.X, worldPosition.Y);
+                _measureService.HandleClick(new NetTopologySuite.Geometries.Coordinate(lonLat.lon, lonLat.lat));
+
+                string resultText = _measureService.GetFormattedResult();
+                _measureVisualizer.Render(_measureService.Points, _measureService.MouseMovePoint, _measureService.CurrentMode, resultText);
                 return;
             }
 
@@ -312,10 +312,10 @@ namespace FFSchedule
 
         private void MapControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Если в данный момент мы что-то измеряем — завершаем процесс по клику ПКМ
             if (_measureService.CurrentMode != MeasureMode.None)
             {
                 _measureService.StopMeasurement();
+                _measureVisualizer.ClearGraphics();
                 e.Handled = true;
             }
         }
@@ -326,7 +326,11 @@ namespace FFSchedule
 
             if (_measureService != null && _measureService.CurrentMode != MeasureMode.None)
             {
-                _measureService.HandleMouseMove(worldPosition);
+                var lonLat = Mapsui.Projections.SphericalMercator.ToLonLat(worldPosition.X, worldPosition.Y);
+                _measureService.HandleMouseMove(new NetTopologySuite.Geometries.Coordinate(lonLat.lon, lonLat.lat));
+
+                string resultText = _measureService.GetFormattedResult();
+                _measureVisualizer.Render(_measureService.Points, _measureService.MouseMovePoint, _measureService.CurrentMode, resultText);
             }
 
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -466,6 +470,7 @@ namespace FFSchedule
         private void ClearMeasure_Click(object sender, RoutedEventArgs e)
         {
             _measureService.Clear();
+            _measureVisualizer.ClearGraphics();
         }
 
         //загрузка и отрисовка векторного слоя

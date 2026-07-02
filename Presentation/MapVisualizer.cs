@@ -45,7 +45,6 @@ namespace FFSchedule.Presentation
             map.Layers.Add(_stationLayer);
             map.Layers.Add(_hoverLayer);
         }
-
         public void RenderGeoJsonData(GeoJsonLoadResult data, bool villageCouncilsVisible, bool fireStationsVisible)
         {
             _lastLoadedData = data;
@@ -111,7 +110,6 @@ namespace FFSchedule.Presentation
             UpdatePolygonStylesInternal();
             _mapControl.Refresh();
         }
-
         public GeometryFeature? FindFeatureAtPosition(MPoint worldPos, double screenRadius = 15)
         {
             if (!_stationLayer.Enabled) return null;
@@ -124,7 +122,6 @@ namespace FFSchedule.Presentation
 
             return _stationLayer.GetFeatures(searchRect, 0).FirstOrDefault() as GeometryFeature;
         }
-
         public void HandleHover(MPoint worldPos)
         {
             var feature = FindFeatureAtPosition(worldPos);
@@ -171,7 +168,6 @@ namespace FFSchedule.Presentation
                 ClearHover();
             }
         }
-
         public void ClearHover()
         {
             if (_hoverLayer.Enabled)
@@ -181,14 +177,12 @@ namespace FFSchedule.Presentation
                 _mapControl.Refresh();
             }
         }
-
         public void SetPolygonStyles(bool fillEnabled, double borderWidth)
         {
             _polygonFillEnabled = fillEnabled;
             _polygonBorderWidth = borderWidth;
             UpdatePolygonStylesInternal();
         }
-
         private void UpdatePolygonStylesInternal()
         {
             if (_polygonLayer.Features == null) return;
@@ -210,7 +204,6 @@ namespace FFSchedule.Presentation
             }
             _mapControl.Refresh();
         }
-
         public void SetLayerVisibility(string layerName, bool visible)
         {
             var layer = _mapControl.Map.Layers.FirstOrDefault(l => l.Name == layerName);
@@ -220,7 +213,6 @@ namespace FFSchedule.Presentation
                 _mapControl.Refresh();
             }
         }
-
         public void ClearAllGraphics()
         {
             _hoverLayer.Enabled = false;
