@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Features;
 using FFSchedule.Container;
+using FFSchedule.Models;
 using Mapsui.Nts;
 using Mapsui.Projections;
 using Mapsui.Styles;
@@ -24,64 +25,33 @@ namespace FFSchedule.Services
                 throw new FileNotFoundException($"Файл GeoJSON не найден: {geojsonPath}");
 
             var result = new GeoJsonLoadResult();
-
             string geojson = File.ReadAllText(geojsonPath);
+
             var reader = new GeoJsonReader();
             var fc = reader.Read<NetTopologySuite.Features.FeatureCollection>(geojson);
 
-            foreach(var f in fc)
+            foreach (var f in fc)
             {
                 var geom = f.Geometry;
 
-                if(geom is Polygon || geom is MultiPolygon)
+                if (geom is Polygon || geom is MultiPolygon)
                 {
-                    foreach(var polygon in ConvertGeometry(geom))
+                    foreach (var polygon in ConvertGeometry(geom))
                     {
-                        var projectedCoords = polygon.Coordinates.Select(c =>
+                        var spatialObj = new SpatialObject
                         {
-                            var p = Mapsui.Projections.SphericalMercator.FromLonLat(c.X, c.Y);
-                            return new Coordinate(p.x, p.y);
-                        }).ToArray();
-
-                        var projectedPolygon = polygon.Factory.CreatePolygon(projectedCoords);
-                        string? nameAttr = f.Attributes.Exists("name") 
-                            ? f.Attributes["name"]?.ToString() : null;
-
-                        var feature = new GeometryFeature
-                        {
-                            Geometry = projectedPolygon,
-                            Styles = new List<IStyle>
-                            {
-                                VectorStyles.GetPolygonStyle(nameAttr),
-                                VectorStyles.GetLabelStyle(nameAttr)
-                            }
+                            Geometry = polygon
                         };
 
                         foreach (var attributeName in f.Attributes.GetNames())
                         {
-                            feature[attributeName] = f.Attributes[attributeName];
+                            spatialObj.Attributes[attributeName] = f.Attributes[attributeName];
                         }
-                        result.PolygonFeatures.Add(feature);
+                        result.Polygons.Add(spatialObj);
                     }
                 }
                 else if (geom is Point point)
                 {
-                    var p = SphericalMercator.FromLonLat(point.X, point.Y);
-                    var projectedPoint = new Point(p.x, p.y);
-
-                    var feature = new GeometryFeature
-                    {
-                        Geometry = projectedPoint,
-                        Styles = VectorStyles.GetPointStylesWithLabel(
-                            f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : null,
-                            f.Attributes.Exists("type") ? f.Attributes["type"]?.ToString() : null)
-                    };
-
-                    foreach (var attributeName in f.Attributes.GetNames())
-                    {
-                        feature[attributeName] = f.Attributes[attributeName];
-                    }
-
                     var station = new FireStation
                     {
                         Name = f.Attributes.Exists("name") ? f.Attributes["name"]?.ToString() : "Не указано",
@@ -94,11 +64,11 @@ namespace FFSchedule.Services
                     };
 
                     result.FireStations.Add(station);
-                    result.PointFeatures.Add(feature);
                 }
             }
             return result;
         }
+
         private List<Polygon> ConvertGeometry(Geometry geom)
         {
             var result = new List<Polygon>();

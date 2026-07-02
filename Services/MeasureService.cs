@@ -17,23 +17,26 @@ using NetTopologySuite.Algorithm;
 namespace FFSchedule.Services
 {
     public enum MeasureMode { None, Distance, Area }
+
     public class MeasureService
     {
         private readonly MapControl? _mapControl;
-        private readonly MemoryLayer? _measureLayer;
+        public MemoryLayer? MeasureLayer { get; }
+
         private readonly List<Coordinate> _points = new List<Coordinate>();
+
+        private Coordinate? _mouseMovePoint;
 
         public MeasureMode CurrentMode { get; private set; } = MeasureMode.None;
 
         public MeasureService(MapControl mapControl)
         {
             _mapControl = mapControl;
-            _measureLayer = new MemoryLayer
+            MeasureLayer = new MemoryLayer
             {
                 Name = "MeasureLayer",
-                Style = null
+                Style = null 
             };
-            _mapControl.Map.Layers.Add(_measureLayer);
         }
 
         public void StartMeasurement(MeasureMode measureMode)
@@ -41,18 +44,21 @@ namespace FFSchedule.Services
             Clear();
             CurrentMode = measureMode;
         }
+
         public void StopMeasurement()
         {
             CurrentMode = MeasureMode.None;
+            _mouseMovePoint = null;
             _mapControl?.Refresh();
         }
 
         public void Clear()
         {
             _points.Clear();
-            if(_measureLayer != null)
+            _mouseMovePoint = null;
+            if (MeasureLayer != null)
             {
-                _measureLayer.Features = new List<IFeature>();
+                MeasureLayer.Features = new List<IFeature>();
             }
             CurrentMode = MeasureMode.None;
             _mapControl?.Refresh();
@@ -60,10 +66,20 @@ namespace FFSchedule.Services
 
         public void HandleClick(MPoint worldPosition)
         {
-            if(CurrentMode == MeasureMode.None) return;
+            if (CurrentMode == MeasureMode.None) return;
 
             var lonLat = SphericalMercator.ToLonLat(worldPosition.X, worldPosition.Y);
             _points.Add(new Coordinate(lonLat.lon, lonLat.lat));
+
+            Redraw();
+        }
+
+        public void HandleMouseMove(MPoint worldPosition)
+        {
+            if (CurrentMode == MeasureMode.None || _points.Count == 0) return;
+
+            var lonLat = SphericalMercator.ToLonLat(worldPosition.X, worldPosition.Y);
+            _mouseMovePoint = new Coordinate(lonLat.lon, lonLat.lat);
 
             Redraw();
         }
@@ -73,54 +89,67 @@ namespace FFSchedule.Services
             var features = new List<IFeature>();
             if (_points.Count == 0) return;
 
-            // Отрисовка опорных точек (маркеров клика)
+            // 1. Рисуем все зафиксированные кликами точки
             foreach (var p in _points)
             {
                 var mercator = SphericalMercator.FromLonLat(p.X, p.Y);
                 features.Add(new GeometryFeature(new Point(mercator.x, mercator.y))
                 {
-                    Styles = new List<IStyle> { new SymbolStyle { Fill = new Brush(Color.Red), SymbolScale = 0.5 } }
+                    Styles = new List<IStyle> { new SymbolStyle { Fill = new Brush(Color.Red), SymbolScale = 0.5f } }
                 });
             }
 
-            // Логика для Линейки
-            if (CurrentMode == MeasureMode.Distance && _points.Count > 1)
+            var renderPoints = new List<Coordinate>(_points);
+            if (_mouseMovePoint != null)
             {
-                var lineCoords = _points.Select(p => SphericalMercator.FromLonLat(p.X, p.Y))
-                                       .Select(p => new Coordinate(p.x, p.y)).ToArray();
+                renderPoints.Add(_mouseMovePoint);
+            }
+
+            // 2. ЛОГИКА ДЛЯ ЛИНЕЙКИ
+            if (CurrentMode == MeasureMode.Distance && renderPoints.Count > 1)
+            {
+                var lineCoords = renderPoints.Select(p => SphericalMercator.FromLonLat(p.X, p.Y))
+                                             .Select(p => new Coordinate(p.x, p.y)).ToArray();
 
                 var lineString = new LineString(lineCoords);
-                var distance = CalculateDistance(_points);
+
+                double distanceMeters = CalculateDistance(renderPoints);
+                string distanceText = FormatDistance(distanceMeters);
 
                 features.Add(new GeometryFeature(lineString)
                 {
                     Styles = new List<IStyle> {
                         new VectorStyle { Outline = new Pen(Color.Red, 2) },
-                        new LabelStyle { Text = $"{distance:F2} км", Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
+                        new LabelStyle { Text = distanceText, Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
                     }
                 });
             }
 
-            // Логика для Площади
-            if (CurrentMode == MeasureMode.Area && _points.Count > 2)
+            // 3. ЛОГИКА ДЛЯ ПЛОЩАДИ
+            if (CurrentMode == MeasureMode.Area && renderPoints.Count > 2)
             {
-                var polyCoords = _points.Select(p => SphericalMercator.FromLonLat(p.X, p.Y))
-                                       .Select(p => new Coordinate(p.x, p.y)).ToList();
+                var polyCoords = renderPoints.Select(p => SphericalMercator.FromLonLat(p.X, p.Y))
+                                             .Select(p => new Coordinate(p.x, p.y)).ToList();
                 polyCoords.Add(polyCoords[0]);
 
                 var polygon = new Polygon(new LinearRing(polyCoords.ToArray()));
-                var areaHectares = CalculateArea(_points);
+
+                double areaSquareMeters = CalculateArea(renderPoints);
+                string areaText = FormatArea(areaSquareMeters);
 
                 features.Add(new GeometryFeature(polygon)
                 {
                     Styles = new List<IStyle> {
-                        new VectorStyle { Fill = new Brush(new Color(255, 0, 0, 50)), Outline = new Pen(Color.Red, 2) },
-                        new LabelStyle { Text = $"{areaHectares:F2} м²", Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
+                        new VectorStyle { Fill = new Brush(new Color(255, 0, 0, 40)), Outline = new Pen(Color.Red, 2) },
+                        new LabelStyle { Text = areaText, Font = new Font { Size = 12, Bold = true }, BackColor = new Brush(Color.White) }
                     }
                 });
             }
 
-            _measureLayer?.Features = features;
+            if (MeasureLayer != null)
+            {
+                MeasureLayer.Features = features;
+            }
             _mapControl?.Refresh();
         }
 
@@ -131,40 +160,39 @@ namespace FFSchedule.Services
             {
                 totalDist += HaversineDistance(points[i], points[i + 1]);
             }
-            return totalDist / 1000; 
+            return totalDist;
         }
 
         private double CalculateArea(List<Coordinate> points)
         {
             if (points.Count < 3) return 0;
 
-            //для начала найдем среднию широту (проеция какого-то Меркатора)
+            // 1. Вычисляем среднюю широту полигона для коррекции искажения Меркатора
             var avgLat = points.Average(p => p.Y);
             var latRad = avgLat * Math.PI / 180.0;
 
-            //потом в метры 
+            // 2. Переводим точки в плоские координаты Меркатора (в метрах)
             var projectedCoords = points.Select(p =>
             {
                 var merc = SphericalMercator.FromLonLat(p.X, p.Y);
                 return new Coordinate(merc.x, merc.y);
             }).ToList();
 
-            //замыкаем
             projectedCoords.Add(new Coordinate(projectedCoords[0].X, projectedCoords[0].Y));
 
-            //площадь в метры Меркатора
+            // 3. Считаем "искаженную" площадь в проекции Меркатора
             double mercatorArea = Math.Abs(Area.OfRing(projectedCoords.ToArray()));
 
-            //корректируем искажение Меркатора для широты Новосибирска (делением на cos²(lat))
+            // 4. Корректируем площадь: делим на масштабный коэффициент проекции в квадрате!
             double cosLat = Math.Cos(latRad);
-            double areaSquareMeters = mercatorArea * cosLat * cosLat;
+            double realAreaSquareMeters = mercatorArea * (cosLat * cosLat);
 
-            return areaSquareMeters;
+            return realAreaSquareMeters;
         }
 
         private double HaversineDistance(Coordinate p1, Coordinate p2)
         {
-            double r = 6371000;//радиус земли, чтоб не забыл
+            double r = 6371000; // Радиус Земли в метрах
             double phi1 = p1.Y * Math.PI / 180;
             double phi2 = p2.Y * Math.PI / 180;
             double dPhi = (p2.Y - p1.Y) * Math.PI / 180;
@@ -177,5 +205,22 @@ namespace FFSchedule.Services
             return r * c;
         }
 
+        private string FormatDistance(double meters)
+        {
+            if (meters < 1000)
+                return $"{meters:F1} м";
+
+            return $"{meters / 1000:F2} км";
+        }
+
+        private string FormatArea(double squareMeters)
+        {
+            if (squareMeters < 100_000)
+                return $"{squareMeters:F1} м²";
+            if (squareMeters < 10_000_000)
+                return $"{squareMeters / 10_000:F2} га";
+
+            return $"{squareMeters / 1_000_000:F2} км²";
+        }
     }
 }

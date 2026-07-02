@@ -102,7 +102,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <local:UserControl1 x:Name="LoadingIndicator" 
+                <local:ControlBar x:Name="LoadingIndicator" 
                                     Visibility="Collapsed" 
                                     HorizontalAlignment="Center" 
                                     VerticalAlignment="Center" 

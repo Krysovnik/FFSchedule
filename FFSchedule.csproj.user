@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup>
+    <_LastSelectedProfileId>C:\Users\Иван\File\FFSchedule\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Update="Controls\SearchBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\ThemeToggleButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Controls\UserControl1.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="DepartamentWindows\AddDepartmentWindow.xaml.cs">
