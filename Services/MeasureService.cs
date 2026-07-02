@@ -1,17 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Mapsui.Layers;
-using Mapsui.UI.Wpf;
-using NetTopologySuite.Geometries;
-using System.Text;
-using Mapsui;
-using Mapsui.Nts;
-using Mapsui.Projections;
-using Mapsui.Styles;
-using Mapsui.Tiling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using OpenTK.Graphics.OpenGL;
+﻿using NetTopologySuite.Geometries;
 using NetTopologySuite.Algorithm;
 
 namespace FFSchedule.Services

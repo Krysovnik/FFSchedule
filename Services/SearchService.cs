@@ -1,14 +1,5 @@
-﻿using Mapsui;
-using Mapsui.Layers;
-using Mapsui.Nts;
-using Mapsui.Styles;
-using Mapsui.UI.Wpf;
-using NetTopologySuite.Geometries;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Globalization;
 using FFSchedule.Container;
 

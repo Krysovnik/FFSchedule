@@ -8,23 +8,13 @@ using FFSchedule.Presentation;
 using FFSchedule.Services;
 using Mapsui;
 using Mapsui.Extensions;
-using Mapsui.Layers;
-using Mapsui.Nts;
 using Mapsui.Projections;
-using Mapsui.Styles;
-using Mapsui.Tiling;
-using Mapsui.Tiling.Layers;
-using Mapsui.UI;
 using Mapsui.UI.Wpf;
 using Mapsui.Widgets.ButtonWidgets;
 using Mapsui.Widgets.InfoWidgets;
 using Mapsui.Widgets.ScaleBar;
-using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Geometries;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
-using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,6 +40,7 @@ namespace FFSchedule
         public readonly FfsContext _dbcontext;
 
         public RouteService _routeService;
+        public RouteVisualizer _routeVisualizer { get; private set; }
         public readonly SearchService _searchService;
         private SearchVisualizer _searchVisualizer;
         public MeasureService _measureService;
@@ -94,9 +85,10 @@ namespace FFSchedule
             _searchService = new SearchService(App.HttpClient, searchCache);
             _searchVisualizer = new SearchVisualizer(MapControl);
 
-            InitializeMap();
+            _routeService = new RouteService(App.HttpClient, fireStations, routeCache);
+            _routeVisualizer = new RouteVisualizer(MapControl);
 
-            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);
+            InitializeMap();
 
             SideFrame.Navigate(new SearchPage(this));
         }
@@ -109,6 +101,7 @@ namespace FFSchedule
             _mapVisualizer.InitializeLayers(map);
             _measureVisualizer.InitializeLayers(map);
             _searchVisualizer.InitializeLayers(map);
+            _routeVisualizer.InitializeLayers(map);
 
             LoadMapData();
             SetInitialView(map);
@@ -164,7 +157,7 @@ namespace FFSchedule
                 if (MapControl.Map?.Layers != null)
                 {
                     _measureService?.Clear();
-                    _routeService?.ClearRoute();
+                    ClearRoute();
                     _searchVisualizer?.RemoveSearchPin();
 
                     _mapVisualizer.ClearAllGraphics();
@@ -176,9 +169,11 @@ namespace FFSchedule
                     _mapVisualizer.InitializeLayers(map);
                     _measureVisualizer.InitializeLayers(map);
 
+                    _routeService = new RouteService(App.HttpClient, fireStations, routeCache);
+                    _routeVisualizer = new RouteVisualizer(MapControl);
+
                     LoadMapData();
 
-                    _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);
                     SetInitialView(MapControl.Map);
                 }
             }
@@ -400,7 +395,7 @@ namespace FFSchedule
             GlobalSearchBox.ResetView();
 
             _searchVisualizer.RemoveSearchPin();
-            _routeService.ClearRoute();
+            ClearRoute();
 
             searchLat = 0;
             searchLon = 0;
@@ -479,6 +474,22 @@ namespace FFSchedule
         {
             _measureService.Clear();
             _measureVisualizer.ClearGraphics();
+        }
+
+        public void ClearRoute()
+        {
+            _routeService.ResetActiveRouteState();
+            _routeVisualizer.ClearRouteGraphics();
+        }
+
+        public void RenderRoutesOnMap(List<RouteResult> results)
+        {
+            _routeVisualizer?.RenderRoutes(results);
+        }
+
+        public void RenderAdditionalRouteOnMap(RouteResult additionalResult, int globalIndex)
+        {
+            _routeVisualizer?.RenderAdditionalRoute(additionalResult, globalIndex);
         }
 
         //загрузка и отрисовка векторного слоя

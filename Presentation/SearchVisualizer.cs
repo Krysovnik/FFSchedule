@@ -1,13 +1,10 @@
-﻿using DocumentFormat.OpenXml.Office2010.Word;
-using Mapsui;
+﻿using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.UI.Wpf;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace FFSchedule.Presentation
 {

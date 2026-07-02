@@ -1,16 +1,8 @@
-﻿using DocumentFormat.OpenXml.Features;
-using FFSchedule.Container;
+﻿using FFSchedule.Container;
 using FFSchedule.Models;
-using Mapsui.Nts;
-using Mapsui.Projections;
-using Mapsui.Styles;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace FFSchedule.Services
 {

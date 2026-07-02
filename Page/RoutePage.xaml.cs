@@ -1,25 +1,10 @@
 ﻿using FFSchedule.Models;
-using FFSchedule.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FFSchedule.Page
 {
-    /// <summary>
-    /// Логика взаимодействия для RoutePage.xaml
-    /// </summary>
     public partial class RoutePage : System.Windows.Controls.Page
     {
         private readonly MainWindow _mainWindow;
@@ -68,6 +53,7 @@ namespace FFSchedule.Page
                 _mainWindow.LoadingIndicator.Visibility = Visibility.Visible;
 
                 _displayTracks.Clear();
+                _mainWindow.ClearRoute();
 
                 var results = await _mainWindow._routeService.BuildRoutesByRequirementAsync(
                     _mainWindow.searchLat,
@@ -76,6 +62,8 @@ namespace FFSchedule.Page
 
                 if (results.Any(r => r.Success))
                 {
+                    _mainWindow.RenderRoutesOnMap(results);
+
                     foreach (var r in results.Where(r => r.Success))
                     {
                         _displayTracks.Add(new
@@ -88,8 +76,6 @@ namespace FFSchedule.Page
 
                     StationsListBox.Visibility = Visibility.Visible;
                     AddRouteButton.Visibility = Visibility.Visible;
-
-                    _mainWindow.MapControl.Refresh();
                 }
             }
             catch (Exception ex)
@@ -102,6 +88,7 @@ namespace FFSchedule.Page
                 RouteButton.IsEnabled = true;
             }
         }
+
         private async void AddRouteButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -123,14 +110,16 @@ namespace FFSchedule.Page
                 {
                     if (additionalRoute.Success)
                     {
+                        int globalIndex = _mainWindow._routeService.UsedStationsCount - 1;
+
+                        _mainWindow.RenderAdditionalRouteOnMap(additionalRoute, globalIndex);
+
                         _displayTracks.Add(new
                         {
                             StationName = additionalRoute.Station != null ? $"Доп. Станция {additionalRoute.Station.Name}" : "Доп. станция",
                             DistanceText = $"Путь: {additionalRoute.Distance / 1000:F1} км",
                             DurationText = $"Время: {additionalRoute.Duration / 60:F1} мин"
                         });
-
-                        _mainWindow.MapControl.Refresh();
                     }
                     else
                     {

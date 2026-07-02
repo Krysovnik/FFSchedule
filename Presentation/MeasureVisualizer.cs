@@ -5,10 +5,6 @@ using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.UI.Wpf;
 using NetTopologySuite.Geometries;
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FFSchedule.Presentation
 {
