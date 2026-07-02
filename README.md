@@ -39,7 +39,7 @@
 * **Работа с геометриями:** NetTopologySuite (NTS)
 * **База данных / ORM:** Entity Framework Core (EF Core), СУБД <Укажи свою, например, PostgreSQL / MS SQL Server / SQLite>
 * **Интеграция с API:** HttpClient, OSRM API (Маршруты и Матрицы), Nominatim API (Геокодинг)
-* **Генерация документов:** <Укажи библиотеку, например, DocX / Microsoft.Office.Interop.Word / OpenXML>
+* **Генерация документов:** DocX / Microsoft.Office.Interop.Word / OpenXML
 * **Сериализация:** System.Text.Json
 
 ---
