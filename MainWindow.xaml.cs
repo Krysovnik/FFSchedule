@@ -51,6 +51,7 @@ namespace FFSchedule
 
         public RouteService _routeService;
         public readonly SearchService _searchService;
+        private SearchVisualizer _searchVisualizer;
         public MeasureService _measureService;
         private MeasureVisualizer _measureVisualizer;
         public readonly MapDataService _mapDataService;
@@ -87,13 +88,15 @@ namespace FFSchedule
             _measureService = new MeasureService();
             _measureVisualizer = new MeasureVisualizer(MapControl);
 
-            InitializeMap();
-
             searchCache = new JsonFileSearchCache();
             routeCache = new JsonFileRouteCache();
+     
+            _searchService = new SearchService(App.HttpClient, searchCache);
+            _searchVisualizer = new SearchVisualizer(MapControl);
 
-            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);     
-            _searchService = new SearchService(App.HttpClient, MapControl, searchCache);
+            InitializeMap();
+
+            _routeService = new RouteService(App.HttpClient, map, MapControl, fireStations.ToList(), routeCache);
 
             SideFrame.Navigate(new SearchPage(this));
         }
@@ -105,6 +108,7 @@ namespace FFSchedule
 
             _mapVisualizer.InitializeLayers(map);
             _measureVisualizer.InitializeLayers(map);
+            _searchVisualizer.InitializeLayers(map);
 
             LoadMapData();
             SetInitialView(map);
@@ -161,7 +165,7 @@ namespace FFSchedule
                 {
                     _measureService?.Clear();
                     _routeService?.ClearRoute();
-                    _searchService?.RemoveSearchPin();
+                    _searchVisualizer?.RemoveSearchPin();
 
                     _mapVisualizer.ClearAllGraphics();
                     MapControl.Map.Layers.Clear();
@@ -389,14 +393,13 @@ namespace FFSchedule
             this.searchLat = res.Lat;
             this.searchLon = res.Lon;
             this._searchService?.AddToHistory(res);
-            this._searchService?.FlyToResult(res);
+            this._searchVisualizer?.FlyToResult(res.Lon, res.Lat, res.DisplayName, res.ShortDisplayName);
         }
         private void ClearSearchAndRoute_Click(object sender, RoutedEventArgs e)
         {
-            GlobalSearchBox.ResetView(); ;
+            GlobalSearchBox.ResetView();
 
-            _searchService.RemoveSearchPin();
-
+            _searchVisualizer.RemoveSearchPin();
             _routeService.ClearRoute();
 
             searchLat = 0;
@@ -417,6 +420,11 @@ namespace FFSchedule
                 }
                 routePage.ClearView();
             }
+        }
+
+        public void RemoveSearchPin()
+        {
+            _searchVisualizer?.RemoveSearchPin();
         }
         //Кнопки  
         private void NavigateToSearch(object sender, RoutedEventArgs e)

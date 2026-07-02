@@ -36,14 +36,11 @@ namespace FFSchedule.Controls
 
         public event EventHandler<NominatimResult>? ResultSelected;
 
-        //private readonly MainWindow _mainWindow;
-
         private CancellationTokenSource? _searchCts;
 
         public SearchBox()
         {
             InitializeComponent();
-            //_mainWindow = (MainWindow)Application.Current.MainWindow;
         }
 
         private MainWindow? GetMainWindow()
@@ -118,7 +115,7 @@ namespace FFSchedule.Controls
         {
             var main = GetMainWindow();
             if (main == null) return;
-            main._searchService.RemoveSearchPin();
+            main.RemoveSearchPin();
             SearchResultsLb.ItemsSource = null;
             SearchResultsLb.Visibility = Visibility.Collapsed;
             BorderList.Visibility = Visibility.Collapsed;
@@ -144,7 +141,6 @@ namespace FFSchedule.Controls
         public void FillAndSelect(NominatimResult result)
         {
             SearchTextBox.Text = result.ShortDisplayName;
-            //HideAllStates();
             ResultSelected?.Invoke(this, result);
         }
         public void ResetView()
