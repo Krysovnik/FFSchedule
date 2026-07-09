@@ -61,4 +61,4 @@
 
 1. Склонируйте репозиторий:
    ```bash
-   git clone [https://github.com/ваш-юзернейм/FFSchedule.git]
+   git clone https://github.com/KuvoKuvo/FFSchedule.git
